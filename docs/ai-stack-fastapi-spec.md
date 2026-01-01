@@ -342,8 +342,8 @@ my-ai-app/
 - **Reranking:** Optional cross-encoder (sentence-transformers)
 
 ### Frontend Stack
-- **Framework:** Next.js 14+ (React 18+)
-- **Styling:** Tailwind CSS 3+
+- **Framework:** Next.js 16+ (React 19+)
+- **Styling:** Tailwind CSS 4+
 - **Components:** shadcn/ui (unstyled, accessible components)
 - **State Management:** React hooks + Context API (or SWR for data fetching)
 - **API Client:** fetch / axios
