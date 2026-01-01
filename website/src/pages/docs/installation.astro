@@ -1,0 +1,51 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="Installation Guide">
+  <h1>Installation Guide</h1>
+
+  <p>Comprehensive guide to setting up AI Stack manually or via CLI.</p>
+
+  <h2>Interactive CLI (Recommended)</h2>
+  <p>The easiest way to start is using our CLI tool:</p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">npx create-ai-stack@latest my-app</code></pre>
+
+  <h2>Manual Setup</h2>
+  <p>If you prefer to clone the repository manually:</p>
+
+  <h3>1. Clone Repository</h3>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">git clone https://github.com/yourusername/ai-stack.git
+cd ai-stack</code></pre>
+
+  <h3>2. Install Tools</h3>
+  <p>Ensure you have the following installed:</p>
+  <ul>
+    <li><strong>Node.js 18+</strong> & pnpm</li>
+    <li><strong>Python 3.12+</strong> & uv</li>
+    <li><strong>Docker</strong> & Docker Compose</li>
+  </ul>
+
+  <h3>3. Install Dependencies</h3>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># Frontend
+cd apps/frontend
+pnpm install
+
+# Backend
+cd ../backend
+uv sync</code></pre>
+
+  <h3>4. Start Infrastructure</h3>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">docker-compose up -d</code></pre>
+
+  <h3>5. Run Migrations</h3>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">cd apps/backend
+uv run alembic upgrade head</code></pre>
+
+  <p>You are now ready to start development!</p>
+</DocsLayout>

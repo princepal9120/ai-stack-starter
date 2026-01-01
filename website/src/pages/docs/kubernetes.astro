@@ -1,0 +1,137 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="Kubernetes Deployment">
+  <h1>Kubernetes Deployment</h1>
+
+  <p>
+    This guide explains how to deploy AI Stack to a Kubernetes cluster using
+    standard manifests.
+  </p>
+
+  <h2>Prerequisites</h2>
+  <ul>
+    <li>A running Kubernetes cluster (EKS, GKE, AKS, or Minikube)</li>
+    <li><code>kubectl</code> installed and configured</li>
+    <li>Docker registry to push images (Docker Hub, ECR, GCR)</li>
+  </ul>
+
+  <h2>1. Build and Push Images</h2>
+  <p>First, build and push the backend and frontend images to your registry.</p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># Backend
+docker build -t your-registry/ai-stack-backend:latest ./apps/backend
+docker push your-registry/ai-stack-backend:latest
+
+# Frontend
+docker build -t your-registry/ai-stack-frontend:latest ./apps/frontend
+docker push your-registry/ai-stack-frontend:latest</code></pre>
+
+  <h2>2. Secrets Management</h2>
+  <p>Create a Kubernetes Secret for your sensitive environment variables.</p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ai-stack-secrets
+type: Opaque
+data:
+  # Base64 encoded values
+  OPENAI_API_KEY: c2stLi4u...
+  DATABASE_URL: cG9zdGdyZXNxbDovLy4uLi4=</code></pre>
+
+  <p>Apply it:</p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">kubectl apply -f secrets.yaml</code></pre>
+
+  <h2>3. Deploy Backend</h2>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># backend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: your-registry/ai-stack-backend:latest
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - secretRef:
+            name: ai-stack-secrets
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"</code></pre>
+
+  <h2>4. Deploy Frontend</h2>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># frontend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: your-registry/ai-stack-frontend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API_URL
+          value: "http://backend"</code></pre>
+
+  <h2>5. Ingress (Optional)</h2>
+  <p>
+    Use NGINX Ingress Controller or your cloud provider's Load Balancer to
+    expose the services.
+  </p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ai-stack-ingress
+spec:
+  rules:
+  - host: ai-stack.example.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80</code></pre>
+</DocsLayout>

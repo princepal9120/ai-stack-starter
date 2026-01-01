@@ -1,0 +1,71 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="Quick Start">
+  <h1>Quick Start</h1>
+
+  <p>Get your AI Stack project running in <strong>under 5 minutes</strong>.</p>
+
+  <div class="bg-slate-900/50 border-l-4 border-sky-500 p-4 mb-8">
+    <p class="text-slate-300 m-0">
+      <strong>Prerequisites:</strong> Node.js 18+, Python 3.12+, Docker & Docker Compose.
+    </p>
+  </div>
+
+  <h2>1. Create Project</h2>
+  <p>Run the interactive CLI to scaffold your project:</p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">npx create-ai-stack@latest my-ai-app</code></pre>
+
+  <p>You'll be asked to select your preferred stack:</p>
+  <ul>
+    <li><strong>LLM Provider:</strong> OpenAI / Anthropic / Gemini / Ollama</li>
+    <li><strong>Vector DB:</strong> Qdrant / Weaviate / pgvector</li>
+    <li><strong>Auth:</strong> Clerk / JWT</li>
+  </ul>
+
+  <h2>2. Configure Environment</h2>
+  <p>
+    The CLI creates <code>.env</code> files with sensible defaults. Add your API keys:
+  </p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># apps/backend/.env
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+
+VECTOR_DB_PROVIDER=qdrant
+QDRANT_URL=http://localhost:6333
+
+AUTH_PROVIDER=clerk
+CLERK_SECRET_KEY=sk_test_...</code></pre>
+
+  <h2>3. Start Infrastructure</h2>
+  <p>Start the database and vector store services:</p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">cd my-ai-app
+docker-compose up -d</code></pre>
+
+  <h2>4. Run Migrations</h2>
+  <p>Initialize the database schema:</p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">cd apps/backend
+uv run alembic upgrade head</code></pre>
+
+  <h2>5. Start Development</h2>
+  <p>Open two terminals:</p>
+
+  <p><strong>Terminal 1 (Backend):</strong></p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">cd apps/backend
+uv run uvicorn app.main:app --reload</code></pre>
+
+  <p><strong>Terminal 2 (Frontend):</strong></p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">cd apps/frontend
+pnpm dev</code></pre>
+
+  <p>
+    Visit <a href="http://localhost:3000">http://localhost:3000</a> to see your app!
+  </p>
+</DocsLayout>

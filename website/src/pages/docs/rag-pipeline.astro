@@ -1,0 +1,70 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="RAG Pipeline">
+  <h1>RAG Pipeline</h1>
+
+  <p>Deep dive into the Retrieval-Augmented Generation pipeline.</p>
+
+  <h2>Overview</h2>
+  <p>
+    The <code>RAGPipeline</code> class (<code
+      >apps/backend/app/rag/pipeline.py</code
+    >) orchestrates the flow of data from user query to LLM response.
+  </p>
+
+  <h2>Stages</h2>
+
+  <h3>1. Query Embedding</h3>
+  <p>
+    The user's query is converted into a vector representation using the
+    configured Embedding Model (e.g., <code>text-embedding-3-small</code>).
+  </p>
+
+  <h3>2. Retrieval (Vector Search)</h3>
+  <p>
+    We search the <code>VectorStore</code> for the nearest neighbors to the query
+    vector.
+  </p>
+  <ul>
+    <li><strong>Top K</strong>: Defaults to 5.</li>
+    <li>
+      <strong>Filtering</strong>: Can filter by metadata (e.g., user_id,
+      document_type).
+    </li>
+  </ul>
+
+  <h3>3. Reranking (Optional)</h3>
+  <p>
+    If a reranker is configured (e.g., Cohere), retrieved results are re-scored
+    for semantic relevance.
+  </p>
+
+  <h3>4. Context Assembly</h3>
+  <p>
+    Retrieved text chunks are assembled into a context window, ensuring we don't
+    exceed the LLM's token limit.
+  </p>
+
+  <h3>5. Generation</h3>
+  <p>The context and query are sent to the <code>LLMClient</code>.</p>
+  <ul>
+    <li>
+      <strong>System Prompt</strong>: Instructions for the AI (persona, rules).
+    </li>
+    <li>
+      <strong>User Prompt</strong>: The actual question with injected context.
+    </li>
+  </ul>
+
+  <h2>Streaming</h2>
+  <p>
+    The pipeline supports full streaming via Server-Sent Events (SSE). This
+    allows the frontend to display tokens as they are generated, reducing
+    perceived latency.
+  </p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">async for chunk in rag.chat_stream(message, context):
+    yield chunk</code></pre>
+</DocsLayout>

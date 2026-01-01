@@ -1,0 +1,68 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const projects = [
+  {
+    name: 'Enterprise RAG Platform',
+    desc: 'Internal knowledge base with 10M+ documents for a Fortune 500 company.',
+    tags: ['OpenAI', 'Qdrant', 'K8s'],
+    color: 'bg-purple-500'
+  },
+  {
+    name: 'Legal Contract Analyst',
+    desc: 'AI-powered contract review system utilizing running Llama 3 locally for privacy.',
+    tags: ['Ollama', 'pgvector', 'Docker'],
+    color: 'bg-emerald-500'
+  },
+  {
+    name: 'Medical Research Assistant',
+    desc: 'Multimodal analysis of medical journals and imaging using Gemini 1.5 Pro.',
+    tags: ['Gemini', 'Weaviate', 'Cloud Run'],
+    color: 'bg-blue-500'
+  }
+];
+---
+
+<Layout title="Showcase - AI Stack">
+    <div class="pt-32 pb-20 px-4 min-h-screen">
+        <div class="max-w-7xl mx-auto text-center mb-16">
+             <h1 class="text-5xl font-bold mb-6">
+                Built with <span class="text-gradient">AI Stack</span>
+            </h1>
+            <p class="text-slate-400 text-xl max-w-2xl mx-auto">
+                Discover production applications built by the community.
+            </p>
+        </div>
+
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 px-4">
+            {projects.map(project => (
+                <div class="glass-panel p-8 group hover:border-primary-500/30 transition-all duration-300">
+                    <div class={`w-12 h-12 rounded-xl ${project.color} mb-6 opacity-80 group-hover:opacity-100 transition`} />
+                    <h3 class="text-2xl font-bold mb-3 text-white">{project.name}</h3>
+                    <p class="text-slate-400 mb-6 leading-relaxed">
+                        {project.desc}
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        {project.tags.map(tag => (
+                            <span class="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+
+        <div class="mt-20 text-center">
+            <div class="glass-panel p-12 max-w-3xl mx-auto">
+                <h2 class="text-3xl font-bold mb-4">Have you built something?</h2>
+                <p class="text-slate-400 mb-8">
+                    Submit your project to be featured in our showcase and inspire others.
+                </p>
+                <a href="https://github.com" class="px-8 py-3 bg-white text-slate-900 rounded-full font-bold hover:bg-slate-200 transition">
+                    Submit Project
+                </a>
+            </div>
+        </div>
+    </div>
+</Layout>

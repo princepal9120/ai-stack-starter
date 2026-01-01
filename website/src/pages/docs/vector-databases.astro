@@ -1,0 +1,59 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="Vector Databases">
+  <h1>Vector Databases</h1>
+
+  <p>Production-grade vector storage with automatic Docker integration.</p>
+
+  <h2>Supported Databases</h2>
+
+  <h3>1. Qdrant (Recommended)</h3>
+  <p>
+    High-performance, scalable, and easy to run locally. Recommended for most
+    production use cases.
+  </p>
+  <ul>
+    <li><strong>Type</strong>: Dedicated Vector DB</li>
+    <li><strong>Language</strong>: Rust</li>
+    <li>
+      <strong>Features</strong>: Filtering, distributed deployment,
+      quantization.
+    </li>
+  </ul>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">VECTOR_DB_PROVIDER=qdrant
+QDRANT_URL=http://localhost:6333</code></pre>
+
+  <h3>2. Weaviate</h3>
+  <p>Great for hybrid search (keyword + vector) and GraphQL workflows.</p>
+  <ul>
+    <li><strong>Type</strong>: AI Native Vector DB</li>
+    <li><strong>Language</strong>: Go</li>
+    <li><strong>Features</strong>: Hybrid search, modules, GraphQL.</li>
+  </ul>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">VECTOR_DB_PROVIDER=weaviate
+WEAVIATE_URL=http://localhost:8080</code></pre>
+
+  <h3>3. pgvector (PostgreSQL)</h3>
+  <p>
+    Perfect if you want a single database for everything. Uses your existing
+    Postgres instance.
+  </p>
+  <ul>
+    <li><strong>Type</strong>: Postgres Extension</li>
+    <li><strong>Features</strong>: ACID compliance, SQL interface.</li>
+  </ul>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">VECTOR_DB_PROVIDER=pgvector
+# Uses DATABASE_URL automatically</code></pre>
+
+  <h2>Switching Databases</h2>
+  <p>
+    To switch databases, simply update the <code>VECTOR_DB_PROVIDER</code> environment
+    variable and restart your backend. The <code>VectorStore</code> factory will automatically
+    load the correct client.
+  </p>
+</DocsLayout>

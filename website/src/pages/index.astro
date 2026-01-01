@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero';
+import StackBuilder from '../components/StackBuilder';
+---
+
+<Layout title="AI Stack - Production RAG Boilerplate">
+	<main>
+		<Hero client:load />
+        
+        <div id="builder" className="bg-slate-900/30 border-y border-slate-800/50">
+            <StackBuilder client:visible />
+        </div>
+
+        {/* Feature Grid */}
+        <section className="py-24 px-4 max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+                <h2 className="text-3xl md:text-5xl font-bold mb-6">Why AI Stack?</h2>
+                <p className="text-slate-400 max-w-2xl mx-auto">
+                    Built for engineers who want control, speed, and production readiness without the vendor lock-in capability.
+                </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+                {[
+                    {
+                        title: "Zero Vendor Lock-in",
+                        desc: "Abstract interfaces for LLMs and Vector DBs. Switch providers by changing one env var.",
+                        icon: "🔓"
+                    },
+                    {
+                        title: "Full RAG Pipeline",
+                        desc: "End-to-end ingestion, semantic chunking, embedding, and streaming generation out of the box.",
+                        icon: "⚡"
+                    },
+                    {
+                        title: "Production Ready",
+                        desc: "FastAPI async backend, Pydantic validation, Alembic migrations, and Docker Compose.",
+                        icon: "🏗️"
+                    }
+                ].map(feature => (
+                    <div className="glass-panel p-8 hover:border-primary-500/30 transition duration-300">
+                        <div className="text-4xl mb-4">{feature.icon}</div>
+                        <h3 className="text-xl font-bold mb-3 text-white">{feature.title}</h3>
+                        <p className="text-slate-400 leading-relaxed">
+                            {feature.desc}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        </section>
+
+        <footer className="border-t border-slate-800 bg-slate-950 py-12 text-center text-slate-500">
+            <p>© 2024 AI Stack. Open Source MIT License.</p>
+        </footer>
+	</main>
+</Layout>

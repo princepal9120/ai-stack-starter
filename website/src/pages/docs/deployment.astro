@@ -1,0 +1,51 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="Deployment">
+  <h1>Deployment</h1>
+
+  <p>Deploy your AI Stack to production using Docker or Kubernetes.</p>
+
+  <div class="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 mb-8">
+    <p class="text-yellow-200 m-0">
+      <strong>Warning:</strong> Never commit <code>.env</code> files to git. Use environment
+      variables in your deployment platform.
+    </p>
+  </div>
+
+  <h2>Option 1: Docker Compose (VPS)</h2>
+  <p>
+    The simplest way to deploy is using Docker Compose on a single server (e.g.,
+    EC2, DigitalOcean Droplet).
+  </p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># 1. Clone repo
+git clone https://github.com/your/repo.git
+cd repo
+
+# 2. Set env vars
+cp .env.example .env
+
+# 3. Build & Run
+docker-compose -f docker-compose.prod.yml up -d --build</code></pre>
+
+  <h2>Option 2: Cloud PaaS (Railway/Render)</h2>
+  <p>Deploy services individually:</p>
+  <ol>
+    <li>
+      <strong>Backend</strong>: Deploy <code>apps/backend/Dockerfile</code>.
+    </li>
+    <li>
+      <strong>Frontend</strong>: Deploy <code>apps/frontend</code> (Next.js presets).
+    </li>
+    <li><strong>Database</strong>: Provision Managed Postgres & Redis.</li>
+    <li><strong>Vector DB</strong>: Use Qdrant Cloud or Weaviate Cloud.</li>
+  </ol>
+
+  <h2>Option 3: Kubernetes</h2>
+  <p>
+    See the <a href="/docs/kubernetes">Kubernetes Deployment Guide</a> for detailed
+    manifests.
+  </p>
+</DocsLayout>

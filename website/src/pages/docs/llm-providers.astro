@@ -1,0 +1,59 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="LLM Providers">
+  <h1>LLM Providers</h1>
+
+  <p>
+    Switch between OpenAI, Anthropic, Gemini, or Local models with a single
+    variable.
+  </p>
+
+  <h2>Configuration</h2>
+  <p>
+    Add the corresponding API keys to your <code>apps/backend/.env</code> file.
+  </p>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># 1. Choose Provider
+LLM_PROVIDER=openai # or anthropic, gemini, ollama
+
+# 2. Add Keys
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AIza...</code></pre>
+
+  <h2>Supported Providers</h2>
+
+  <h3>OpenAI (<code>openai</code>)</h3>
+  <ul>
+    <li><strong>Models</strong>: GPT-4o, GPT-4-turbo, GPT-3.5-turbo</li>
+    <li><strong>Pros</strong>: Best general reasoning, reliable JSON mode.</li>
+    <li><strong>Cons</strong>: Cost.</li>
+  </ul>
+
+  <h3>Anthropic (<code>anthropic</code>)</h3>
+  <ul>
+    <li><strong>Models</strong>: Claude 3.5 Sonnet, Claude 3 Opus</li>
+    <li>
+      <strong>Pros</strong>: Massive context window (200k), great for coding.
+    </li>
+    <li><strong>Cons</strong>: Slightly higher latency for Opus.</li>
+  </ul>
+
+  <h3>Gemini (<code>gemini</code>)</h3>
+  <ul>
+    <li><strong>Models</strong>: Gemini 1.5 Pro</li>
+    <li>
+      <strong>Pros</strong>: Massive context (2M tokens), multimodal, cheaper.
+    </li>
+    <li><strong>Cons</strong>: Rate limits on free tier.</li>
+  </ul>
+
+  <h3>Ollama (<code>ollama</code>)</h3>
+  <ul>
+    <li><strong>Models</strong>: Llama 3, Mistral, Gemma (run locally)</li>
+    <li><strong>Pros</strong>: Free, privacy-first, offline.</li>
+    <li><strong>Cons</strong>: Requires good hardware (GPU recommended).</li>
+  </ul>
+</DocsLayout>

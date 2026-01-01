@@ -1,0 +1,85 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="Architecture">
+  <h1>Architecture</h1>
+
+  <p>
+    Understanding how AI Stack integrates retrieval, generation, and streaming.
+  </p>
+
+  <h2>The RAG Loop</h2>
+  <p>
+    The core of AI Stack is the <strong
+      >Retrieval-Augmented Generation (RAG)</strong
+    > pipeline. It connects your data to LLMs in a production-ready loop.
+  </p>
+
+  <div
+    class="my-8 p-8 bg-slate-900 rounded-xl border border-slate-800 text-center font-mono text-sm"
+  >
+    USER QUERY → EMBED → VECTOR SEARCH → LLM GENERATION → STREAM RESPONSE
+  </div>
+
+  <h2>1. Document Ingestion</h2>
+  <p>Files uploaded via the API (<code>/api/v1/documents</code>) go through:</p>
+  <ol>
+    <li><strong>Validation</strong>: File type and size checks.</li>
+    <li>
+      <strong>Chunking</strong>: Text is split into semantic chunks (defaults:
+      1000 tokens with 200 overlap).
+    </li>
+    <li>
+      <strong>Embedding</strong>: Each chunk is converted to a vector using the
+      configured provider.
+    </li>
+    <li>
+      <strong>Storage</strong>: Vectors and metadata are stored in the Vector
+      DB.
+    </li>
+  </ol>
+
+  <h2>2. Retrieval & Generation</h2>
+  <p>When a user asks a question:</p>
+  <ol>
+    <li>The question is embedded into a vector.</li>
+    <li>
+      We perform a similarity search in the Vector DB to find the most relevant
+      chunks.
+    </li>
+    <li>(Optional) Results are re-ranked for better accuracy.</li>
+    <li>
+      A prompt is constructed with the retrieved context and the user's
+      question.
+    </li>
+    <li>
+      The LLM streams the response back token-by-token using <strong
+        >Server-Sent Events (SSE)</strong
+      >.
+    </li>
+  </ol>
+
+  <h2>3. Zero Lock-in Abstractions</h2>
+  <p>
+    We use abstract base classes (<code>ABC</code>) to ensure you can swap
+    providers without changing business logic.
+  </p>
+  <ul>
+    <li>
+      <code>LLMClient</code> (Abstract) → <code>OpenAIClient</code>, <code
+        >AnthropicClient</code
+      >...
+    </li>
+    <li>
+      <code>VectorStore</code> (Abstract) → <code>QdrantStore</code>, <code
+        >WeaviateStore</code
+      >...
+    </li>
+  </ul>
+  <p>
+    This means you can switch from OpenAI to Ollama just by changing <code
+      >LLM_PROVIDER=ollama</code
+    >.
+  </p>
+</DocsLayout>

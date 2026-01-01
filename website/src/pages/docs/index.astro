@@ -1,0 +1,78 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout title="Introduction">
+  <h1>Introduction</h1>
+
+  <p>
+    <strong>AI Stack FastAPI</strong> is a production-ready boilerplate for building
+    RAG (Retrieval-Augmented Generation) applications with complete vendor flexibility.
+    It combines the speed of <strong>FastAPI</strong> with the modern frontend experience
+    of <strong>Next.js 16</strong>.
+  </p>
+
+  <div class="grid md:grid-cols-2 gap-4 not-prose my-8">
+    <div class="glass-panel p-6">
+      <h3 class="text-lg font-bold text-white mb-2">🔓 Zero Lock-in</h3>
+      <p class="text-slate-400 text-sm">
+        Swap LLM or Vector DB with 1 environment variable. Abstract interfaces
+        ensure portability.
+      </p>
+    </div>
+    <div class="glass-panel p-6">
+      <h3 class="text-lg font-bold text-white mb-2">⚡ Production-First</h3>
+      <p class="text-slate-400 text-sm">
+        Structured logging, async operations, cost tracking, and observability
+        built-in.
+      </p>
+    </div>
+  </div>
+
+  <h2>Features</h2>
+  <ul>
+    <li>
+      <strong>FastAPI Backend</strong>: Async/await, SQLAlchemy 2.0, Alembic
+      migrations.
+    </li>
+    <li>
+      <strong>Next.js 16 Frontend</strong>: App Router, Tailwind CSS,
+      TypeScript.
+    </li>
+    <li>
+      <strong>RAG Pipeline</strong>: Document chunking, embeddings, vector
+      search, and reranking.
+    </li>
+    <li>
+      <strong>4 LLM Providers</strong>: OpenAI, Anthropic, Gemini, Ollama.
+    </li>
+    <li><strong>3 Vector Databases</strong>: Qdrant, Weaviate, pgvector.</li>
+    <li>
+      <strong>Dual Auth</strong>: Clerk (primary) + JWT (service-to-service).
+    </li>
+  </ul>
+
+  <h2>Quick Example</h2>
+  <pre
+    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># Create project
+npx create-ai-stack@latest my-ai-app
+
+# Start infrastructure
+cd my-ai-app
+docker-compose up -d
+
+# Run migrations
+cd apps/backend && uv run alembic upgrade head
+
+# Start development
+uv run uvicorn app.main:app --reload</code></pre>
+
+  <h2>Philosophy</h2>
+  <p>
+    We follow the <strong>T3 Stack</strong> philosophy: opinionated but modular, typesafe,
+    and production-ready from day one. You shouldn't have to rewrite your entire stack
+    just to switch from OpenAI to Anthropic, or from Qdrant to pgvector.
+  </p>
+
+  <p>Ready to build? <a href="/docs/quickstart">Get Started →</a></p>
+</DocsLayout>
