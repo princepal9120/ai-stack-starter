@@ -1,92 +1,157 @@
-# AI Stack - Production-Ready AI Boilerplate
+# AI Stack FastAPI - Quick Start Guide
 
-**A high-performance, vendor-agnostic boilerplate for building production-grade AI applications with FastAPI, Next.js, and RAG.**
+Complete AI Stack boilerplate with RAG capabilities, authentication, and vendor-agnostic LLM/Vector DB.
 
----
+## Prerequisites
 
-## 🚀 Overview
+- Python 3.12+
+- Node.js 18+ with pnpm
+- Docker & Docker Compose
+- `uv` (Python package manager)
 
-AI Stack is a modular, scalable boilerplate designed to accelerate the development of AI-powered applications. It provides a robust foundation with a focus on developer experience, observability, and zero vendor lock-in. Whether you're building a simple chatbot or a complex multi-tenant AI studio, AI Stack has you covered.
+## Local Setup
 
-## ✨ Core Features
+### 1. Clone & Install Dependencies
 
-- 🔐 **Dual Authentication:** Seamless integration with **Clerk** for modern auth, with a custom **JWT fallback** to ensure no vendor lock-in.
-- 🧠 **RAG Pipeline:** Built-in Retrieval-Augmented Generation pipeline supporting document chunking, embeddings, and vector search.
-- 🔄 **Vendor-Agnostic:** Easily swap between LLM providers (OpenAI, Anthropic, Gemini, Ollama) and Vector Databases (Qdrant, Weaviate, Milvus, pgvector) with simple configuration changes.
-- 🎨 **AI Studio:** A premium, interactive UI for AI exploration, including features like Mermaid diagrams, documentation generation, and more.
-- 🛠 **Monorepo Architecture:** Powered by Turborepo for efficient management of backend, frontend, and shared packages.
-- 📈 **Observability:** Integrated with **Langfuse** for LLM tracing and **Prometheus** for system metrics.
-- 🐳 **Docker Ready:** Production-ready containerization for easy deployment.
+```bash
+cd ai-stack
 
-## 🏗 Project Structure
+# Install backend dependencies
+cd apps/backend
+uv sync
+cd ../..
 
-```text
-ai-stack/
-├── apps/
-│   ├── backend/          # FastAPI application (logic, API, services)
-│   └── frontend/         # Next.js application (App Router, Tailwind CSS)
-├── packages/
-│   ├── ai-core/          # Shared AI logic, LLM clients, RAG pipeline
-│   ├── vector-db/        # Vector database adapters and factory
-│   ├── auth/             # Authentication abstractions and providers
-│   └── shared-types/     # Shared Pydantic models and schemas
-├── docs/                 # Detailed documentation and architecture
-├── infra/                # Infrastructure-as-Code (Terraform, K8s)
-└── docker-compose.yml    # Local development environment
+# Install root dependencies (for Turborepo)
+pnpm install
 ```
 
-## 🛠 Tech Stack
+### 2. Start Infrastructure
 
-### Backend
-- **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Async Python)
-- **ORM:** [SQLAlchemy](https://www.sqlalchemy.org/) 2.0 + [Alembic](https://alembic.sqlalchemy.org/)
-- **Database:** PostgreSQL
-- **Task Queue:** Celery + Redis
-- **Validation:** Pydantic V2
+```bash
+# Start PostgreSQL, Redis, Qdrant
+docker-compose up -d
 
-### Frontend
-- **Framework:** [Next.js](https://nextjs.org/) 15 (App Router)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **Components:** shadcn/ui + Radix UI
-- **Auth:** [Clerk](https://clerk.com/)
+# Verify services
+docker-compose ps
+```
 
-### AI & Infrastructure
-- **Vector DB:** Qdrant (default), Weaviate, pgvector
-- **LLM:** OpenAI, Anthropic, Gemini, Ollama
-- **Observability:** Langfuse, Prometheus
-- **Deployment:** Docker, Kubernetes, Terraform
+### 3. Configure Environment
 
-## 🏁 Quick Start
+```bash
+cp .env.example .env
+```
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-repo/ai-stack.git
-   cd ai-stack
-   ```
+Edit `.env` with your API keys:
 
-2. **Setup environment variables:**
-   ```bash
-   cp .env.example .env
-   # Update .env with your API keys (OpenAI, Clerk, etc.)
-   ```
+```bash
+# Choose your LLM provider
+LLM_PROVIDER=openai          # or: anthropic, gemini, ollama
+OPENAI_API_KEY=sk-...        # Your OpenAI API key
 
-3. **Start local environment:**
-   ```bash
-   docker-compose up -d
-   ```
+# Choose your vector DB
+VECTOR_DB_PROVIDER=qdrant    # or: weaviate, pgvector
 
-4. **Install dependencies and run:**
-   ```bash
-   npm install
-   npm run dev
-   ```
+# Auth (choose one)
+AUTH_PROVIDER=clerk          # or: jwt
+CLERK_SECRET_KEY=sk_test_... # If using Clerk
+```
 
-Visit `http://localhost:3000` to see the frontend and `http://localhost:8000/docs` for the API documentation.
+### 4. Run Backend
 
-## 📚 Documentation
+```bash
+cd apps/backend
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-For more in-depth information, please refer to the [docs](file:///Users/prince/Desktop/coding/ai-stack/docs) directory:
+### 5. Access API
 
-- [**Architecture**](file:///Users/prince/Desktop/coding/ai-stack/docs/ARCHITECTURE.md) - Deep dive into system design.
-- [**Quick Start Guide**](file:///Users/prince/Desktop/coding/ai-stack/docs/ai-stack-fastapi-quick.md) - Detailed setup instructions.
-- [**Full Specification**](file:///Users/prince/Desktop/coding/ai-stack/docs/ai-stack-fastapi-spec.md) - Comprehensive technical details.
+- **API Docs**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
+
+## Quick Test: RAG Pipeline
+
+### Upload a Document
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/documents" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "file=@document.txt"
+```
+
+### Query with RAG
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/chat" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What is this document about?"}'
+```
+
+### Stream Response
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/chat/stream" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Summarize the key points"}' \
+  --no-buffer
+```
+
+## Project Structure
+
+```
+ai-stack/
+├── apps/backend/        # FastAPI backend with RAG
+├── packages/
+│   ├── ai-core/        # LLM abstractions (OpenAI, Anthropic, Gemini, Ollama)
+│   └── vector-db/      # Vector DB abstractions (Qdrant, Weaviate, pgvector)
+├── docker-compose.yml  # Local dev services
+└── .env               # Configuration
+```
+
+## Switch Providers
+
+Change providers with ONE environment variable:
+
+```bash
+# Switch LLM
+LLM_PROVIDER=anthropic     # Use Claude instead of GPT-4
+
+# Switch Vector DB
+VECTOR_DB_PROVIDER=pgvector  # Use PostgreSQL instead of Qdrant
+```
+
+No code changes needed! 🎉
+
+## Common Commands
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Run backend
+cd apps/backend && uv run uvicorn app.main:app --reload
+
+# Run tests
+cd apps/backend && uv run pytest
+
+# Format code
+uv run ruff format .
+uv run ruff check --fix .
+```
+
+## Next Steps
+
+- [ ] Set up Clerk authentication (see docs/auth.md)
+- [ ] Deploy to production (see docs/deployment.md)
+- [ ] Build frontend with Next.js
+- [ ] Add more document types (PDF, DOCX)
+
+## Support
+
+- Docs: `docs/` directory
+- Issues: GitHub Issues
+- Spec: `ai-stack-fastapi-spec.md`

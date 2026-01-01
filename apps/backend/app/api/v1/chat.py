@@ -65,22 +65,43 @@ async def chat(
     
     Returns the response along with source citations.
     """
-    # TODO: Implement RAG pipeline integration
+    from app.rag import get_rag_pipeline
+    
     logger.info(
         "Chat request received",
         user_id=user.id,
         message_length=len(request.message),
-        stream=request.stream,
     )
     
-    # Placeholder response
-    return ChatResponse(
-        response="RAG pipeline not yet implemented. This is a placeholder response.",
-        sources=[],
-        conversation_id=request.conversation_id or "new-conversation",
-        tokens_used=0,
-        latency_ms=0.0,
-    )
+    try:
+        # Get RAG pipeline
+        rag = get_rag_pipeline()
+        
+        # Execute RAG query
+        result = await rag.query(
+            question=request.message,
+            user_id=user.id,
+            filters=None,  # TODO: Add user-specific filters
+        )
+        
+        return ChatResponse(
+            response=result.answer,
+            sources=result.sources,
+            conversation_id=request.conversation_id or "new-conversation",
+            tokens_used=result.tokens_used,
+            latency_ms=result.latency_ms,
+        )
+        
+    except Exception as e:
+        logger.error(
+            "Chat request failed",
+            user_id=user.id,
+            error=str(e),
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate response: {str(e)}",
+        )
 
 
 @router.post("/stream")
@@ -96,15 +117,31 @@ async def chat_stream(
     - Source citations at the end
     - Metadata (tokens, latency)
     """
+    import json
+    from app.rag import get_rag_pipeline
+    
     async def generate():
         """Generate SSE events."""
-        # TODO: Implement streaming RAG pipeline
-        yield "data: {\"type\": \"start\"}\n\n"
-        yield "data: {\"type\": \"token\", \"content\": \"Streaming \"}\n\n"
-        yield "data: {\"type\": \"token\", \"content\": \"not yet \"}\n\n"
-        yield "data: {\"type\": \"token\", \"content\": \"implemented.\"}\n\n"
-        yield "data: {\"type\": \"sources\", \"sources\": []}\n\n"
-        yield "data: {\"type\": \"end\", \"tokens_used\": 0}\n\n"
+        try:
+            rag = get_rag_pipeline()
+            
+            # Stream RAG response
+            async for event in rag.query_stream(
+                question=request.message,
+                user_id=user.id,
+                filters=None,
+            ):
+                # Convert event to SSE format
+                yield f"data: {json.dumps(event)}\n\n"
+                
+        except Exception as e:
+            logger.error(
+                "Chat stream failed",
+                user_id=user.id,
+                error=str(e),
+            )
+            error_event = {"type": "error", "error": str(e)}
+            yield f"data: {json.dumps(error_event)}\n\n"
     
     logger.info(
         "Chat stream request",

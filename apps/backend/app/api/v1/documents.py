@@ -17,11 +17,6 @@ logger = structlog.get_logger(__name__)
 
 router = APIRouter()
 
-
-# =============================================================================
-# Request/Response Models
-# =============================================================================
-
 class DocumentResponse(BaseModel):
     """Document response model."""
     id: str
@@ -55,11 +50,15 @@ async def upload_document(
     
     The document will be:
     1. Validated (size, type)
-    2. Stored
-    3. Queued for processing (chunking, embedding)
+    2. Chunked into semantic segments
+    3. Embedded using configured LLM
+    4. Stored in vector database
     
     Supported formats: PDF, TXT, MD, DOCX, and code files.
     """
+    from datetime import datetime, UTC
+    from app.rag import DocumentProcessor, create_document_id, get_rag_pipeline
+    
     # Validate file extension
     if file.filename:
         ext = file.filename.split(".")[-1].lower()
@@ -77,24 +76,90 @@ async def upload_document(
             detail=f"File exceeds maximum size of {settings.MAX_UPLOAD_SIZE_MB}MB",
         )
     
-    # TODO: Store file and queue for processing
     logger.info(
-        "Document uploaded",
+        "Document upload started",
         user_id=user.id,
         filename=file.filename,
         size=len(content),
-        content_type=file.content_type,
     )
     
-    # Placeholder response
-    return DocumentResponse(
-        id="doc-placeholder",
-        filename=file.filename or "unknown",
-        content_type=file.content_type or "application/octet-stream",
-        size_bytes=len(content),
-        status="pending",
-        created_at="2024-01-01T00:00:00Z",
-    )
+    try:
+        # Decode content (basic text for now)
+        try:
+            text_content = content.decode('utf-8')
+        except UnicodeDecodeError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only UTF-8 text files are currently supported",
+            )
+        
+        # Create document ID
+        doc_id = create_document_id(file.filename or "unknown", text_content)
+        
+        # Process document into chunks
+        processor = DocumentProcessor(
+            chunk_size=settings.RAG_CHUNK_SIZE,
+            chunk_overlap=settings.RAG_CHUNK_OVERLAP,
+        )
+        
+        chunks = processor.process_text(
+            text=text_content,
+            source=file.filename or "unknown",
+            metadata={"user_id": user.id, "content_type": file.content_type},
+        )
+        
+        # Convert to vector metadata
+        metadata_list = processor.chunks_to_metadata(
+            chunks=chunks,
+            category="user_upload",
+            tags=[ext],
+        )
+        
+        # Generate chunk IDs
+        chunk_ids = processor.generate_chunk_ids(chunks, doc_id)
+        
+        # Get RAG pipeline
+        rag = get_rag_pipeline()
+        
+        # Generate embeddings for all chunks
+        all_texts = [meta.text for meta in metadata_list]
+        embeddings = await rag.llm.embed(all_texts)
+        
+        # Store in vector database
+        await rag.vector_store.upsert(
+            vectors=embeddings,
+            metadata=metadata_list,
+            ids=chunk_ids,
+        )
+        
+        logger.info(
+            "Document indexed successfully",
+            user_id=user.id,
+            document_id=doc_id,
+            chunks=len(chunks),
+        )
+        
+        return DocumentResponse(
+            id=doc_id,
+            filename=file.filename or "unknown",
+            content_type=file.content_type or "text/plain",
+            size_bytes=len(content),
+            status="indexed",
+            created_at=datetime.now(UTC).isoformat(),
+            chunk_count=len(chunks),
+        )
+        
+    except Exception as e:
+        logger.error(
+            "Document indexing failed",
+            user_id=user.id,
+            error=str(e),
+            error_type=type(e).__name__,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to index document: {str(e)}",
+        )
 
 
 @router.get("", response_model=DocumentList)
