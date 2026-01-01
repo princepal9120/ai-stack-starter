@@ -1,0 +1,166 @@
+services:
+  # ==========================================================================
+  # PostgreSQL Database
+  # ==========================================================================
+  postgres:
+    image: postgres:18-alpine
+    container_name: ai-stack-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ai_stack
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # Redis Cache & Message Broker
+  # ==========================================================================
+  redis:
+    image: redis:8-alpine
+    container_name: ai-stack-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # Qdrant Vector Database
+  # ==========================================================================
+  qdrant:
+    image: qdrant/qdrant:v1.9.3
+    container_name: ai-stack-qdrant
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+    ports:
+      - "6333:6333"  # REST API
+      - "6334:6334"  # gRPC
+    environment:
+      QDRANT__LOG_LEVEL: INFO
+
+  # ==========================================================================
+  # FastAPI Backend (Optional - for production-like local dev)
+  # ==========================================================================
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: ai-stack-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/ai_stack
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_URL: http://qdrant:6333
+      CELERY_BROKER_URL: redis://redis:6379/1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps/backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    profiles:
+      - full
+
+  # ==========================================================================
+  # Celery Worker (Optional)
+  # ==========================================================================
+  celery-worker:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: ai-stack-celery-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/ai_stack
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_URL: http://qdrant:6333
+      CELERY_BROKER_URL: redis://redis:6379/1
+    volumes:
+      - ./apps/backend:/app
+    command: celery -A app.tasks.celery_app worker --loglevel=info
+    profiles:
+      - full
+
+  # ==========================================================================
+  # Celery Beat Scheduler (Optional)
+  # ==========================================================================
+  celery-beat:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: ai-stack-celery-beat
+    restart: unless-stopped
+    depends_on:
+      - celery-worker
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/ai_stack
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+    volumes:
+      - ./apps/backend:/app
+    command: celery -A app.tasks.celery_app beat --loglevel=info
+    profiles:
+      - full
+
+  # ==========================================================================
+  # Langfuse (Optional - LLM Observability)
+  # ==========================================================================
+  langfuse:
+    image: ghcr.io/langfuse/langfuse:latest
+    container_name: ai-stack-langfuse
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/langfuse
+      NEXTAUTH_SECRET: langfuse-secret-change-me
+      NEXTAUTH_URL: http://localhost:3001
+      SALT: langfuse-salt-change-me
+    ports:
+      - "3001:3000"
+    profiles:
+      - observability
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+
+networks:
+  default:
+    name: ai-stack-network

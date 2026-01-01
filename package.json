@@ -1,0 +1,52 @@
+{
+  "name": "ai-stack-fastapi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Production-grade FastAPI boilerplate for AI applications with RAG, vector databases, and zero vendor lock-in",
+  "author": "AI Stack Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ai-stack-team/ai-stack-fastapi.git"
+  },
+  "keywords": [
+    "fastapi",
+    "rag",
+    "llm",
+    "vector-database",
+    "ai",
+    "nextjs",
+    "boilerplate"
+  ],
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "cli"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "backend:dev": "cd apps/backend && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "frontend:dev": "cd apps/frontend && pnpm dev",
+    "db:migrate": "cd apps/backend && uv run alembic upgrade head",
+    "db:revision": "cd apps/backend && uv run alembic revision --autogenerate -m",
+    "db:downgrade": "cd apps/backend && uv run alembic downgrade -1"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
