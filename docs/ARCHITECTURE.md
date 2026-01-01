@@ -110,16 +110,6 @@ sequenceDiagram
     BE-->>FE: Protected Response
 ```
 
-### Reference Diagrams
-
-For visual reference, here are the detailed architecture diagrams:
-
-#### Architecture Overview
-![Architecture Overview](../docs/architecture-overview.png)
-
-#### Auth Flow
-![Auth Flow](../docs/auth-flow.png)
-
 
 ## 📂 Project Structure
 
