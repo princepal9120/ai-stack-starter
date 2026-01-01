@@ -1,57 +1,92 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero';
-import StackBuilder from '../components/StackBuilder';
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero";
+import TypesafeSection from "../components/TypesafeSection";
+import Features from "../components/Features";
+import Community from "../components/Community";
 ---
 
-<Layout title="AI Stack - Production RAG Boilerplate">
-	<main>
-		<Hero client:load />
-        
-        <div id="builder" className="bg-slate-900/30 border-y border-slate-800/50">
-            <StackBuilder client:visible />
+<Layout title="AI Stack - The best way to start a full-stack AI app">
+  <!-- Header -->
+  <header
+    class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800"
+  >
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-8">
+        <a href="/" class="text-xl font-bold text-white">AI</a>
+        <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+          <a href="/docs" class="text-slate-300 hover:text-white transition"
+            >Docs</a
+          >
+          <a href="/showcase" class="text-slate-300 hover:text-white transition"
+            >FAQ</a
+          >
+        </nav>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-2 text-slate-300 text-sm">
+          <a
+            href="https://github.com/princpal9120/ai-stack"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"
+              ><path
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+              ></path></svg
+            >
+          </a>
+          <span>★ 28K</span>
         </div>
 
-        {/* Feature Grid */}
-        <section className="py-24 px-4 max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-5xl font-bold mb-6">Why AI Stack?</h2>
-                <p className="text-slate-400 max-w-2xl mx-auto">
-                    Built for engineers who want control, speed, and production readiness without the vendor lock-in capability.
-                </p>
-            </div>
+        <div
+          class="hidden md:flex items-center gap-3 pl-3 border-l border-slate-700"
+        >
+          <button
+            class="p-2 hover:bg-slate-800 rounded-lg transition text-slate-400"
+            >☀️</button
+          >
+        </div>
+        <div
+          class="hidden lg:flex items-center gap-2 px-3 py-2 bg-slate-800 rounded-lg text-slate-400 text-sm"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg
+          >
+          <span>Search</span>
+          <span class="ml-8 text-xs border border-slate-600 rounded px-1"
+            >/</span
+          >
+        </div>
+      </div>
+    </div>
+  </header>
 
-            <div className="grid md:grid-cols-3 gap-8">
-                {[
-                    {
-                        title: "Zero Vendor Lock-in",
-                        desc: "Abstract interfaces for LLMs and Vector DBs. Switch providers by changing one env var.",
-                        icon: "🔓"
-                    },
-                    {
-                        title: "Full RAG Pipeline",
-                        desc: "End-to-end ingestion, semantic chunking, embedding, and streaming generation out of the box.",
-                        icon: "⚡"
-                    },
-                    {
-                        title: "Production Ready",
-                        desc: "FastAPI async backend, Pydantic validation, Alembic migrations, and Docker Compose.",
-                        icon: "🏗️"
-                    }
-                ].map(feature => (
-                    <div className="glass-panel p-8 hover:border-primary-500/30 transition duration-300">
-                        <div className="text-4xl mb-4">{feature.icon}</div>
-                        <h3 className="text-xl font-bold mb-3 text-white">{feature.title}</h3>
-                        <p className="text-slate-400 leading-relaxed">
-                            {feature.desc}
-                        </p>
-                    </div>
-                ))}
-            </div>
-        </section>
+  <main class="pt-16">
+    <Hero client:load />
+    <TypesafeSection client:load />
+    <Features client:load />
+    <Community client:load />
+  </main>
 
-        <footer className="border-t border-slate-800 bg-slate-950 py-12 text-center text-slate-500">
-            <p>© 2024 AI Stack. Open Source MIT License.</p>
-        </footer>
-	</main>
+  <!-- Footer -->
+  <footer class="py-8 border-t border-slate-800 text-center">
+    <div class="flex items-center justify-center gap-2 text-slate-500 text-sm">
+      <span>▲</span>
+      <span
+        >Powered by <a
+          href="https://vercel.com"
+          class="hover:text-white transition">Vercel</a
+        ></span
+      >
+    </div>
+  </footer>
 </Layout>
