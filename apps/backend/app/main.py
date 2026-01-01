@@ -18,6 +18,7 @@ from app.core.database import init_db, close_db
 from app.core.logging import setup_logging
 from app.middleware.logging import LoggingMiddleware
 from app.middleware.error_handler import error_handler_middleware
+from app.middleware.auth import AuthMiddleware
 
 # Initialize structured logging
 setup_logging()
@@ -71,6 +72,7 @@ def create_application() -> FastAPI:
     )
     
     # Custom Middleware
+    app.add_middleware(AuthMiddleware)
     app.add_middleware(LoggingMiddleware)
     app.middleware("http")(error_handler_middleware)
     

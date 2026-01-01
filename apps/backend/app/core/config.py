@@ -104,9 +104,17 @@ class Settings(BaseSettings):
     MILVUS_PORT: int = 19530
     
     # -------------------------------------------------------------------------
-    # Authentication
+    # Authentication (Dual Strategy: Clerk + Custom JWT)
     # -------------------------------------------------------------------------
-    JWT_SECRET_KEY: str = Field(default="jwt-secret-change-me", min_length=32)
+    AUTH_PROVIDER: Literal["clerk", "jwt"] = "clerk"
+    
+    # Clerk Configuration
+    CLERK_SECRET_KEY: str = ""
+    CLERK_DOMAIN: str = ""  # e.g., "your-app.clerk.accounts.dev"
+    CLERK_JWT_ISSUER: str = ""  # Optional: For JWT issuer validation
+    
+    # Custom JWT Configuration (fallback)
+    JWT_SECRET_KEY: str = Field(default="jwt-secret-change-me-in-production", min_length=32)
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
