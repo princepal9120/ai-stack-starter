@@ -1,51 +1,158 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+import CardGrid from "../../components/docs/CardGrid.astro";
+import Card from "../../components/docs/Card.astro";
+import Steps from "../../components/docs/Steps.astro";
+import Step from "../../components/docs/Step.astro";
 ---
 
 <DocsLayout title="Deployment">
   <h1>Deployment</h1>
 
-  <p>Deploy your AI Stack to production using Docker or Kubernetes.</p>
+  <p>
+    Deploy your AI Stack to production using Docker, cloud PaaS, or Kubernetes.
+  </p>
 
-  <div class="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 mb-8">
-    <p class="text-yellow-200 m-0">
-      <strong>Warning:</strong> Never commit <code>.env</code> files to git. Use environment
+  <Callout type="warning">
+    <p>
+      <strong>Never commit <code>.env</code> files to git.</strong> Use environment
       variables in your deployment platform.
     </p>
-  </div>
+  </Callout>
 
-  <h2>Option 1: Docker Compose (VPS)</h2>
+  <h2>Deployment Options</h2>
+
+  <CardGrid cols={3}>
+    <Card title="Docker Compose" icon="🐳" href="#docker-compose">
+      <p>Simple deployment on a single VPS</p>
+    </Card>
+    <Card title="Cloud PaaS" icon="☁️" href="#cloud-paas">
+      <p>Railway, Render, Vercel</p>
+    </Card>
+    <Card title="Kubernetes" icon="⎈" href="/docs/kubernetes">
+      <p>Production-grade orchestration</p>
+    </Card>
+  </CardGrid>
+
+  <h2 id="docker-compose">Option 1: Docker Compose (VPS)</h2>
+
   <p>
     The simplest way to deploy is using Docker Compose on a single server (e.g.,
-    EC2, DigitalOcean Droplet).
+    EC2, DigitalOcean Droplet, Hetzner).
   </p>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># 1. Clone repo
-git clone https://github.com/your/repo.git
-cd repo
 
-# 2. Set env vars
-cp .env.example .env
+  <Steps>
+    <Step title="Clone Repository">
+      <CodeBlock
+        code={`git clone https://github.com/princepal9120/ai-stack.git
+cd ai-stack`}
+        lang="bash"
+      />
+    </Step>
 
-# 3. Build & Run
-docker-compose -f docker-compose.prod.yml up -d --build</code></pre>
+    <Step title="Configure Environment">
+      <CodeBlock
+        code={`cp .env.example .env
+# Edit .env with production values`}
+        lang="bash"
+      />
+    </Step>
 
-  <h2>Option 2: Cloud PaaS (Railway/Render)</h2>
-  <p>Deploy services individually:</p>
-  <ol>
-    <li>
-      <strong>Backend</strong>: Deploy <code>apps/backend/Dockerfile</code>.
-    </li>
-    <li>
-      <strong>Frontend</strong>: Deploy <code>apps/frontend</code> (Next.js presets).
-    </li>
-    <li><strong>Database</strong>: Provision Managed Postgres & Redis.</li>
-    <li><strong>Vector DB</strong>: Use Qdrant Cloud or Weaviate Cloud.</li>
-  </ol>
+    <Step title="Build and Run">
+      <CodeBlock
+        code="docker-compose -f docker-compose.prod.yml up -d --build"
+        lang="bash"
+      />
+    </Step>
+  </Steps>
 
-  <h2>Option 3: Kubernetes</h2>
-  <p>
-    See the <a href="/docs/kubernetes">Kubernetes Deployment Guide</a> for detailed
-    manifests.
-  </p>
+  <Callout type="tip">
+    <p>
+      Use a reverse proxy like Caddy or NGINX for SSL termination and domain
+      routing.
+    </p>
+  </Callout>
+
+  <h2 id="cloud-paas">Option 2: Cloud PaaS (Railway/Render)</h2>
+
+  <p>Deploy services individually to your preferred platform:</p>
+
+  <div class="space-y-4 my-6">
+    <div
+      class="flex items-start gap-4 p-4 bg-slate-800/50 border border-slate-700 rounded-lg"
+    >
+      <span class="text-2xl">🔙</span>
+      <div>
+        <h4 class="font-semibold text-white mb-1">Backend</h4>
+        <p class="text-slate-400 text-sm">
+          Deploy <code>apps/backend/Dockerfile</code> to Railway, Render, or Fly.io
+        </p>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-4 p-4 bg-slate-800/50 border border-slate-700 rounded-lg"
+    >
+      <span class="text-2xl">🖥️</span>
+      <div>
+        <h4 class="font-semibold text-white mb-1">Frontend</h4>
+        <p class="text-slate-400 text-sm">
+          Deploy <code>apps/frontend</code> to Vercel (recommended) or Netlify
+        </p>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-4 p-4 bg-slate-800/50 border border-slate-700 rounded-lg"
+    >
+      <span class="text-2xl">🗄️</span>
+      <div>
+        <h4 class="font-semibold text-white mb-1">Database</h4>
+        <p class="text-slate-400 text-sm">
+          Provision managed PostgreSQL (Supabase, Neon, or Railway Postgres)
+        </p>
+      </div>
+    </div>
+    <div
+      class="flex items-start gap-4 p-4 bg-slate-800/50 border border-slate-700 rounded-lg"
+    >
+      <span class="text-2xl">🚀</span>
+      <div>
+        <h4 class="font-semibold text-white mb-1">Vector DB</h4>
+        <p class="text-slate-400 text-sm">
+          Use <a href="https://cloud.qdrant.io" target="_blank">Qdrant Cloud</a> or
+          <a href="https://weaviate.io/cloud" target="_blank">Weaviate Cloud</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Environment Variables</h2>
+
+  <p>Required environment variables for production:</p>
+
+  <CodeBlock
+    code={`# Backend
+DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/db
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+VECTOR_DB_PROVIDER=qdrant
+QDRANT_URL=https://your-cluster.qdrant.io
+QDRANT_API_KEY=your-api-key
+
+# Frontend
+NEXT_PUBLIC_API_URL=https://api.yourapp.com
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...
+CLERK_SECRET_KEY=sk_live_...`}
+    lang="bash"
+    filename="Production .env"
+  />
+
+  <Callout type="important">
+    <p>
+      For Kubernetes deployment, see the <a href="/docs/kubernetes"
+        >Kubernetes Deployment Guide</a
+      >.
+    </p>
+  </Callout>
 </DocsLayout>

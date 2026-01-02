@@ -1,70 +1,166 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+import Steps from "../../components/docs/Steps.astro";
+import Step from "../../components/docs/Step.astro";
 ---
 
 <DocsLayout title="RAG Pipeline">
   <h1>RAG Pipeline</h1>
 
-  <p>Deep dive into the Retrieval-Augmented Generation pipeline.</p>
-
-  <h2>Overview</h2>
   <p>
-    The <code>RAGPipeline</code> class (<code
-      >apps/backend/app/rag/pipeline.py</code
-    >) orchestrates the flow of data from user query to LLM response.
+    Deep dive into the Retrieval-Augmented Generation pipeline architecture.
   </p>
 
-  <h2>Stages</h2>
+  <Callout type="note">
+    <p>
+      The <code>RAGPipeline</code> class is located at <code
+        >apps/backend/app/rag/pipeline.py</code>
+    </p>
+  </Callout>
 
-  <h3>1. Query Embedding</h3>
+  <h2>Architecture Overview</h2>
+
+  <div class="my-8 p-6 bg-slate-900 rounded-xl border border-slate-800">
+    <pre
+      class="!bg-transparent !border-0 !p-0 text-sm text-slate-300">
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Query     │────▶│  Embedding  │────▶│   Vector    │
+│   Input     │     │   Model     │     │   Search    │
+└─────────────┘     └─────────────┘     └──────┬──────┘
+                                               │
+                                               ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Stream    │◀────│     LLM     │◀────│   Context   │
+│  Response   │     │  Generation │     │  Assembly   │
+└─────────────┘     └─────────────┘     └─────────────┘
+    </pre>
+  </div>
+
+  <h2>Pipeline Stages</h2>
+
+  <Steps>
+    <Step title="Query Embedding">
+      <p>
+        The user's query is converted into a vector representation using the
+        configured embedding model (e.g., <code>text-embedding-3-small</code>).
+      </p>
+      <CodeBlock
+        code={`# Generate query embedding
+query_embedding = await llm.embed(question)
+# Returns: [[0.123, -0.456, 0.789, ...]]`}
+        lang="python"
+      />
+    </Step>
+
+    <Step title="Vector Search (Retrieval)">
+      <p>Search the vector store for nearest neighbors to the query vector:</p>
+      <CodeBlock
+        code={`results = await vector_store.search(
+    query_vector=query_embedding[0],
+    limit=5,  # Top K results
+    filter={"user_id": user_id}  # Optional metadata filter
+)`}
+        lang="python"
+      />
+      <ul>
+        <li><strong>Top K:</strong> Number of results (default: 5)</li>
+        <li>
+          <strong>Filtering:</strong> Filter by metadata (user_id, document_type,
+          etc.)
+        </li>
+      </ul>
+    </Step>
+
+    <Step title="Reranking (Optional)">
+      <p>
+        If a reranker is configured (e.g., Cohere Rerank), retrieved results are
+        re-scored for semantic relevance:
+      </p>
+      <CodeBlock
+        code={`if reranker:
+    results = await reranker.rerank(
+        query=question,
+        documents=results,
+        top_n=3
+    )`}
+        lang="python"
+      />
+    </Step>
+
+    <Step title="Context Assembly">
+      <p>
+        Retrieved text chunks are assembled into a context window, ensuring we
+        don't exceed the LLM's token limit:
+      </p>
+      <CodeBlock
+        code={`context_parts = []
+for result in results:
+    context_parts.append(f"[Source {i}]\\n{result.text}")
+
+context = "\\n\\n---\\n\\n".join(context_parts)`}
+        lang="python"
+      />
+    </Step>
+
+    <Step title="LLM Generation">
+      <p>The context and query are sent to the LLM with a system prompt:</p>
+      <CodeBlock
+        code={`messages = [
+    LLMMessage(role=SYSTEM, content=SYSTEM_PROMPT),
+    LLMMessage(role=USER, content=f"Context:\\n{context}\\n\\nQuestion: {question}")
+]
+
+response = await llm.complete(messages)`}
+        lang="python"
+      />
+    </Step>
+  </Steps>
+
+  <h2>Streaming Responses</h2>
+
   <p>
-    The user's query is converted into a vector representation using the
-    configured Embedding Model (e.g., <code>text-embedding-3-small</code>).
+    The pipeline supports full streaming via Server-Sent Events (SSE), reducing
+    perceived latency:
   </p>
 
-  <h3>2. Retrieval (Vector Search)</h3>
-  <p>
-    We search the <code>VectorStore</code> for the nearest neighbors to the query
-    vector.
-  </p>
-  <ul>
-    <li><strong>Top K</strong>: Defaults to 5.</li>
-    <li>
-      <strong>Filtering</strong>: Can filter by metadata (e.g., user_id,
-      document_type).
-    </li>
-  </ul>
+  <CodeBlock
+    code={`from app.rag import get_rag_pipeline
 
-  <h3>3. Reranking (Optional)</h3>
-  <p>
-    If a reranker is configured (e.g., Cohere), retrieved results are re-scored
-    for semantic relevance.
-  </p>
+pipeline = get_rag_pipeline()
 
-  <h3>4. Context Assembly</h3>
-  <p>
-    Retrieved text chunks are assembled into a context window, ensuring we don't
-    exceed the LLM's token limit.
-  </p>
+# Stream tokens as they're generated
+async for chunk in pipeline.query_stream(question):
+    if chunk["type"] == "token":
+        print(chunk["content"], end="")
+    elif chunk["type"] == "sources":
+        print("Sources:", chunk["sources"])
+    elif chunk["type"] == "done":
+        print("\\n[Complete]")`}
+    lang="python"
+    filename="example.py"
+  />
 
-  <h3>5. Generation</h3>
-  <p>The context and query are sent to the <code>LLMClient</code>.</p>
-  <ul>
-    <li>
-      <strong>System Prompt</strong>: Instructions for the AI (persona, rules).
-    </li>
-    <li>
-      <strong>User Prompt</strong>: The actual question with injected context.
-    </li>
-  </ul>
+  <Callout type="tip">
+    <p>
+      The frontend uses the streaming API to display tokens as they arrive,
+      creating a responsive chat experience.
+    </p>
+  </Callout>
 
-  <h2>Streaming</h2>
-  <p>
-    The pipeline supports full streaming via Server-Sent Events (SSE). This
-    allows the frontend to display tokens as they are generated, reducing
-    perceived latency.
-  </p>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">async for chunk in rag.chat_stream(message, context):
-    yield chunk</code></pre>
+  <h2>Configuration</h2>
+
+  <p>Configure RAG behavior via environment variables:</p>
+
+  <CodeBlock
+    code={`# RAG Settings
+CHUNK_SIZE=1000
+CHUNK_OVERLAP=200
+TOP_K_RESULTS=5
+EMBEDDING_MODEL=text-embedding-3-small
+EMBEDDING_DIMENSION=1536`}
+    lang="bash"
+    filename=".env"
+  />
 </DocsLayout>

@@ -1,0 +1,88 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+
+// Filter to only h2 and h3
+const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{
+  tocHeadings.length > 0 && (
+    <nav class="toc" aria-label="Table of contents">
+      <h4 class="text-sm font-semibold text-slate-200 mb-4">On this page</h4>
+      <ul class="space-y-2 text-sm">
+        {tocHeadings.map((heading) => (
+          <li>
+            <a
+              href={`#${heading.slug}`}
+              class:list={[
+                "toc-link block py-1 transition-colors",
+                heading.depth === 2
+                  ? "text-slate-400 hover:text-white"
+                  : "pl-4 text-slate-500 hover:text-slate-300",
+              ]}
+              data-toc-link
+              data-heading-slug={heading.slug}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script>
+  // Scroll spy for table of contents
+  function initScrollSpy() {
+    const tocLinks = document.querySelectorAll("[data-toc-link]");
+    const headings = Array.from(tocLinks).map((link) => {
+      const slug = link.getAttribute("data-heading-slug");
+      return {
+        link,
+        heading: document.getElementById(slug || ""),
+      };
+    });
+
+    function updateActiveLink() {
+      const scrollPos = window.scrollY + 100;
+
+      let activeHeading = headings[0];
+      for (const { link, heading } of headings) {
+        if (heading && heading.offsetTop <= scrollPos) {
+          activeHeading = { link, heading };
+        }
+      }
+
+      tocLinks.forEach((l) => {
+        l.classList.remove("text-purple-400", "font-medium");
+        l.classList.add("text-slate-400");
+      });
+
+      if (activeHeading) {
+        activeHeading.link.classList.remove("text-slate-400");
+        activeHeading.link.classList.add("text-purple-400", "font-medium");
+      }
+    }
+
+    window.addEventListener("scroll", updateActiveLink, { passive: true });
+    updateActiveLink();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initScrollSpy);
+  } else {
+    initScrollSpy();
+  }
+</script>
+
+<style>
+  .toc-link.active {
+    color: #a78bfa;
+    font-weight: 500;
+  }
+</style>

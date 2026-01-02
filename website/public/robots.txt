@@ -1,0 +1,5 @@
+# AI Stack Documentation
+User-agent: *
+Allow: /
+
+Sitemap: https://ai-stack.dev/sitemap-index.xml

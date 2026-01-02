@@ -1,5 +1,9 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+import CardGrid from "../../components/docs/CardGrid.astro";
+import Card from "../../components/docs/Card.astro";
 ---
 
 <DocsLayout title="Introduction">
@@ -9,34 +13,45 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
     <strong>AI Stack FastAPI</strong> is a production-ready boilerplate for building
     RAG (Retrieval-Augmented Generation) applications with complete vendor flexibility.
     It combines the speed of <strong>FastAPI</strong> with the modern frontend experience
-    of <strong>Next.js 16</strong>.
+    of <strong>Next.js 15</strong>.
   </p>
 
-  <div class="grid md:grid-cols-2 gap-4 not-prose my-8">
-    <div class="glass-panel p-6">
-      <h3 class="text-lg font-bold text-white mb-2">🔓 Zero Lock-in</h3>
-      <p class="text-slate-400 text-sm">
+  <CardGrid cols={2}>
+    <Card title="Zero Lock-in" icon="🔓">
+      <p>
         Swap LLM or Vector DB with 1 environment variable. Abstract interfaces
         ensure portability.
       </p>
-    </div>
-    <div class="glass-panel p-6">
-      <h3 class="text-lg font-bold text-white mb-2">⚡ Production-First</h3>
-      <p class="text-slate-400 text-sm">
+    </Card>
+    <Card title="Production-First" icon="⚡">
+      <p>
         Structured logging, async operations, cost tracking, and observability
         built-in.
       </p>
-    </div>
-  </div>
+    </Card>
+    <Card title="Type Safe" icon="🛡️">
+      <p>
+        Full TypeScript frontend with Pydantic models and SQLAlchemy 2.0 on the
+        backend.
+      </p>
+    </Card>
+    <Card title="Modern Stack" icon="🚀">
+      <p>
+        Next.js 15, FastAPI, Tailwind CSS, and your choice of LLM and vector
+        database.
+      </p>
+    </Card>
+  </CardGrid>
 
   <h2>Features</h2>
+
   <ul>
     <li>
       <strong>FastAPI Backend</strong>: Async/await, SQLAlchemy 2.0, Alembic
       migrations.
     </li>
     <li>
-      <strong>Next.js 16 Frontend</strong>: App Router, Tailwind CSS,
+      <strong>Next.js 15 Frontend</strong>: App Router, Tailwind CSS,
       TypeScript.
     </li>
     <li>
@@ -53,8 +68,9 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
   </ul>
 
   <h2>Quick Example</h2>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># Create project
+
+  <CodeBlock
+    code={`# Create project
 npx create-ai-stack@latest my-ai-app
 
 # Start infrastructure
@@ -65,14 +81,19 @@ docker-compose up -d
 cd apps/backend && uv run alembic upgrade head
 
 # Start development
-uv run uvicorn app.main:app --reload</code></pre>
+uv run uvicorn app.main:app --reload`}
+    lang="bash"
+  />
 
   <h2>Philosophy</h2>
+
   <p>
-    We follow the <strong>ai-stack</strong> philosophy: opinionated but modular, typesafe,
+    We follow the <strong>AI Stack</strong> philosophy: opinionated but modular, typesafe,
     and production-ready from day one. You shouldn't have to rewrite your entire stack
     just to switch from OpenAI to Anthropic, or from Qdrant to pgvector.
   </p>
 
-  <p>Ready to build? <a href="/docs/quickstart">Get Started →</a></p>
+  <Callout type="tip">
+    <p>Ready to build? <a href="/docs/quickstart">Get Started →</a></p>
+  </Callout>
 </DocsLayout>

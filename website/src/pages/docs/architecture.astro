@@ -1,85 +1,151 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
 ---
 
 <DocsLayout title="Architecture">
   <h1>Architecture</h1>
 
   <p>
-    Understanding how AI Stack integrates retrieval, generation, and streaming.
+    AI Stack follows a modular, layered architecture designed for scalability
+    and maintainability.
   </p>
 
-  <h2>The RAG Loop</h2>
-  <p>
-    The core of AI Stack is the <strong
-      >Retrieval-Augmented Generation (RAG)</strong
-    > pipeline. It connects your data to LLMs in a production-ready loop.
-  </p>
+  <h2>System Overview</h2>
 
-  <div
-    class="my-8 p-8 bg-slate-900 rounded-xl border border-slate-800 text-center font-mono text-sm"
-  >
-    USER QUERY → EMBED → VECTOR SEARCH → LLM GENERATION → STREAM RESPONSE
+  <div class="my-8 p-6 bg-slate-900 rounded-xl border border-slate-800">
+    <pre
+      class="!bg-transparent !border-0 !p-0 text-sm text-slate-300">
+┌─────────────────────────────────────────────────────────────────┐
+│                         Frontend                                 │
+│                    (Next.js 15 + React)                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐       │
+│    │   Chat UI   │    │  Documents  │    │    Auth     │       │
+│    └─────────────┘    └─────────────┘    └─────────────┘       │
+│                                                                  │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │ REST/SSE
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      FastAPI Backend                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│    ┌──────────────────────────────────────────────────────┐     │
+│    │                    API Layer                          │     │
+│    │  /api/v1/chat  │  /api/v1/documents  │  /health      │     │
+│    └──────────────────────────────────────────────────────┘     │
+│                                                                  │
+│    ┌────────────────────────────────────────────────────────┐   │
+│    │                   RAG Pipeline                          │   │
+│    │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐  │   │
+│    │  │ Chunking │→ │ Embedder │→ │ Retriever│→ │  LLM   │  │   │
+│    │  └──────────┘  └──────────┘  └──────────┘  └────────┘  │   │
+│    └────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│    ┌────────────────┐  ┌────────────────┐  ┌────────────────┐   │
+│    │   LLM Client   │  │  Vector Store  │  │   Database     │   │
+│    │ (OpenAI/Claude)│  │ (Qdrant/etc)   │  │  (PostgreSQL)  │   │
+│    └────────────────┘  └────────────────┘  └────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+    </pre>
   </div>
 
-  <h2>1. Document Ingestion</h2>
-  <p>Files uploaded via the API (<code>/api/v1/documents</code>) go through:</p>
+  <h2>Project Structure</h2>
+
+  <CodeBlock
+    code={`my-ai-app/
+├── apps/
+│   ├── backend/              # FastAPI + RAG Pipeline
+│   │   ├── app/
+│   │   │   ├── api/          # API routes
+│   │   │   ├── core/         # Config, database
+│   │   │   ├── llm/          # LLM adapters (OpenAI, Claude, etc)
+│   │   │   ├── models/       # SQLAlchemy models
+│   │   │   ├── rag/          # RAG pipeline
+│   │   │   └── main.py       # FastAPI app
+│   │   └── pyproject.toml
+│   │
+│   └── frontend/             # Next.js 15
+│       ├── src/
+│       │   ├── app/          # App Router pages
+│       │   ├── components/   # React components
+│       │   └── utils/        # API client, utilities
+│       └── package.json
+│
+├── docker-compose.yml        # PostgreSQL, Redis, Qdrant
+└── .env.example`}
+    lang="text"
+    filename="Project Structure"
+  />
+
+  <h2>Key Components</h2>
+
+  <h3>LLM Adapters</h3>
+
+  <p>
+    Unified interface for multiple LLM providers. Switch by changing one
+    environment variable:
+  </p>
+
+  <CodeBlock
+    code={`from app.llm import get_llm_client
+
+# Factory pattern - auto-configured from LLM_PROVIDER env var
+llm = get_llm_client()
+
+# All providers have the same interface
+response = await llm.complete("Hello!")
+embeddings = await llm.embed(["text1", "text2"])`}
+    lang="python"
+  />
+
+  <h3>RAG Pipeline</h3>
+
+  <p>
+    The RAG pipeline handles document ingestion, retrieval, and answer
+    generation:
+  </p>
+
+  <CodeBlock
+    code={`from app.rag import get_rag_pipeline
+
+pipeline = get_rag_pipeline()
+
+# Query with streaming
+async for chunk in pipeline.query_stream("What is RAG?"):
+    if chunk["type"] == "token":
+        print(chunk["content"], end="")
+    elif chunk["type"] == "sources":
+        print("Sources:", chunk["sources"])`}
+    lang="python"
+  />
+
+  <h3>Vector Store</h3>
+
+  <p>Pluggable vector storage with Qdrant (default), Weaviate, or pgvector:</p>
+
+  <Callout type="note">
+    <p>
+      Qdrant is recommended for production due to its performance and feature
+      set.
+    </p>
+  </Callout>
+
+  <h2>Data Flow</h2>
+
   <ol>
-    <li><strong>Validation</strong>: File type and size checks.</li>
+    <li><strong>Ingestion</strong>: Documents are chunked and embedded</li>
+    <li><strong>Storage</strong>: Embeddings stored in vector database</li>
     <li>
-      <strong>Chunking</strong>: Text is split into semantic chunks (defaults:
-      1000 tokens with 200 overlap).
+      <strong>Query</strong>: User question is embedded and similar chunks
+      retrieved
     </li>
     <li>
-      <strong>Embedding</strong>: Each chunk is converted to a vector using the
-      configured provider.
-    </li>
-    <li>
-      <strong>Storage</strong>: Vectors and metadata are stored in the Vector
-      DB.
+      <strong>Generation</strong>: LLM generates answer using retrieved context
     </li>
   </ol>
-
-  <h2>2. Retrieval & Generation</h2>
-  <p>When a user asks a question:</p>
-  <ol>
-    <li>The question is embedded into a vector.</li>
-    <li>
-      We perform a similarity search in the Vector DB to find the most relevant
-      chunks.
-    </li>
-    <li>(Optional) Results are re-ranked for better accuracy.</li>
-    <li>
-      A prompt is constructed with the retrieved context and the user's
-      question.
-    </li>
-    <li>
-      The LLM streams the response back token-by-token using <strong
-        >Server-Sent Events (SSE)</strong
-      >.
-    </li>
-  </ol>
-
-  <h2>3. Zero Lock-in Abstractions</h2>
-  <p>
-    We use abstract base classes (<code>ABC</code>) to ensure you can swap
-    providers without changing business logic.
-  </p>
-  <ul>
-    <li>
-      <code>LLMClient</code> (Abstract) → <code>OpenAIClient</code>, <code
-        >AnthropicClient</code
-      >...
-    </li>
-    <li>
-      <code>VectorStore</code> (Abstract) → <code>QdrantStore</code>, <code
-        >WeaviateStore</code
-      >...
-    </li>
-  </ul>
-  <p>
-    This means you can switch from OpenAI to Ollama just by changing <code
-      >LLM_PROVIDER=ollama</code
-    >.
-  </p>
 </DocsLayout>

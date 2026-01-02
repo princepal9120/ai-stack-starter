@@ -1,0 +1,127 @@
+---
+interface Props {
+  tabs: string[];
+  syncKey?: string;
+}
+
+const { tabs, syncKey } = Astro.props;
+const tabId = `tabs-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div class="tabs-container my-6" data-tabs data-sync-key={syncKey}>
+  {/* Tab buttons */}
+  <div class="flex gap-1 border-b border-slate-800 -mb-px">
+    {
+      tabs.map((tab, index) => (
+        <button
+          class:list={[
+            "tab-button px-4 py-2 text-sm font-medium rounded-t-lg transition-colors",
+            index === 0
+              ? "bg-slate-800 text-white border-b-2 border-purple-500"
+              : "text-slate-400 hover:text-white hover:bg-slate-800/50",
+          ]}
+          data-tab-index={index}
+          data-tab-label={tab}
+        >
+          {tab}
+        </button>
+      ))
+    }
+  </div>
+
+  {/* Tab panels */}
+  <div
+    class="tab-panels bg-slate-900 rounded-b-lg border border-t-0 border-slate-800"
+  >
+    <slot />
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll("[data-tabs]").forEach((container) => {
+    const buttons = container.querySelectorAll(".tab-button");
+    const panels = container.querySelectorAll(".tab-panel");
+    const syncKey = container.getAttribute("data-sync-key");
+
+    function setActiveTab(index: number, label?: string) {
+      buttons.forEach((btn, i) => {
+        if (i === index) {
+          btn.classList.add(
+            "bg-slate-800",
+            "text-white",
+            "border-b-2",
+            "border-purple-500"
+          );
+          btn.classList.remove("text-slate-400");
+        } else {
+          btn.classList.remove(
+            "bg-slate-800",
+            "text-white",
+            "border-b-2",
+            "border-purple-500"
+          );
+          btn.classList.add("text-slate-400");
+        }
+      });
+
+      panels.forEach((panel, i) => {
+        if (i === index) {
+          panel.classList.remove("hidden");
+        } else {
+          panel.classList.add("hidden");
+        }
+      });
+
+      // Sync with other tab containers using same key
+      if (syncKey && label) {
+        document
+          .querySelectorAll(`[data-tabs][data-sync-key="${syncKey}"]`)
+          .forEach((other) => {
+            if (other !== container) {
+              const otherButtons = other.querySelectorAll(".tab-button");
+              otherButtons.forEach((btn, i) => {
+                if (btn.getAttribute("data-tab-label") === label) {
+                  const otherPanels = other.querySelectorAll(".tab-panel");
+                  otherButtons.forEach((b, j) => {
+                    if (j === i) {
+                      b.classList.add(
+                        "bg-slate-800",
+                        "text-white",
+                        "border-b-2",
+                        "border-purple-500"
+                      );
+                      b.classList.remove("text-slate-400");
+                    } else {
+                      b.classList.remove(
+                        "bg-slate-800",
+                        "text-white",
+                        "border-b-2",
+                        "border-purple-500"
+                      );
+                      b.classList.add("text-slate-400");
+                    }
+                  });
+                  otherPanels.forEach((p, j) => {
+                    if (j === i) p.classList.remove("hidden");
+                    else p.classList.add("hidden");
+                  });
+                }
+              });
+            }
+          });
+      }
+    }
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        const label = button.getAttribute("data-tab-label");
+        setActiveTab(index, label || undefined);
+      });
+    });
+
+    // Initialize - hide all but first panel
+    panels.forEach((panel, i) => {
+      if (i !== 0) panel.classList.add("hidden");
+    });
+  });
+</script>

@@ -1,59 +1,162 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+import CardGrid from "../../components/docs/CardGrid.astro";
+import Card from "../../components/docs/Card.astro";
+import Tabs from "../../components/docs/Tabs.astro";
+import TabPanel from "../../components/docs/TabPanel.astro";
 ---
 
 <DocsLayout title="Vector Databases">
   <h1>Vector Databases</h1>
 
-  <p>Production-grade vector storage with automatic Docker integration.</p>
+  <p>
+    Production-grade vector storage with automatic Docker integration. Switch
+    providers with a single environment variable.
+  </p>
 
   <h2>Supported Databases</h2>
 
-  <h3>1. Qdrant (Recommended)</h3>
-  <p>
-    High-performance, scalable, and easy to run locally. Recommended for most
-    production use cases.
-  </p>
-  <ul>
-    <li><strong>Type</strong>: Dedicated Vector DB</li>
-    <li><strong>Language</strong>: Rust</li>
-    <li>
-      <strong>Features</strong>: Filtering, distributed deployment,
-      quantization.
-    </li>
-  </ul>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">VECTOR_DB_PROVIDER=qdrant
-QDRANT_URL=http://localhost:6333</code></pre>
+  <CardGrid cols={3}>
+    <Card title="Qdrant" icon="🚀">
+      <p><strong>Type:</strong> Dedicated Vector DB</p>
+      <p><strong>Language:</strong> Rust</p>
+      <p><strong>Best for:</strong> Production workloads</p>
+    </Card>
+    <Card title="Weaviate" icon="🔮">
+      <p><strong>Type:</strong> AI Native Vector DB</p>
+      <p><strong>Language:</strong> Go</p>
+      <p><strong>Best for:</strong> Hybrid search</p>
+    </Card>
+    <Card title="pgvector" icon="🐘">
+      <p><strong>Type:</strong> PostgreSQL Extension</p>
+      <p><strong>Language:</strong> C</p>
+      <p><strong>Best for:</strong> Single database</p>
+    </Card>
+  </CardGrid>
 
-  <h3>2. Weaviate</h3>
-  <p>Great for hybrid search (keyword + vector) and GraphQL workflows.</p>
-  <ul>
-    <li><strong>Type</strong>: AI Native Vector DB</li>
-    <li><strong>Language</strong>: Go</li>
-    <li><strong>Features</strong>: Hybrid search, modules, GraphQL.</li>
-  </ul>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">VECTOR_DB_PROVIDER=weaviate
-WEAVIATE_URL=http://localhost:8080</code></pre>
+  <h2>Configuration</h2>
 
-  <h3>3. pgvector (PostgreSQL)</h3>
-  <p>
-    Perfect if you want a single database for everything. Uses your existing
-    Postgres instance.
-  </p>
-  <ul>
-    <li><strong>Type</strong>: Postgres Extension</li>
-    <li><strong>Features</strong>: ACID compliance, SQL interface.</li>
-  </ul>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">VECTOR_DB_PROVIDER=pgvector
-# Uses DATABASE_URL automatically</code></pre>
+  <Tabs tabs={["Qdrant", "Weaviate", "pgvector"]} syncKey="vectordb">
+    <TabPanel>
+      <Callout type="tip" title="Recommended">
+        <p>
+          Qdrant is our recommended choice for production. High-performance,
+          scalable, and easy to run locally.
+        </p>
+      </Callout>
+      <CodeBlock
+        code={`VECTOR_DB_PROVIDER=qdrant
+QDRANT_URL=http://localhost:6333
+QDRANT_COLLECTION_NAME=documents`}
+        lang="bash"
+        filename=".env"
+      />
+      <h4>Features</h4>
+      <ul>
+        <li>Advanced filtering by metadata</li>
+        <li>Distributed deployment support</li>
+        <li>Quantization for memory efficiency</li>
+        <li>Rich REST and gRPC APIs</li>
+      </ul>
+    </TabPanel>
+    <TabPanel>
+      <p>Great for hybrid search (keyword + vector) and GraphQL workflows.</p>
+      <CodeBlock
+        code={`VECTOR_DB_PROVIDER=weaviate
+WEAVIATE_URL=http://localhost:8080`}
+        lang="bash"
+        filename=".env"
+      />
+      <h4>Features</h4>
+      <ul>
+        <li>Hybrid search (BM25 + vector)</li>
+        <li>Built-in modules for vectorization</li>
+        <li>GraphQL query interface</li>
+        <li>Multi-tenancy support</li>
+      </ul>
+    </TabPanel>
+    <TabPanel>
+      <p>
+        Perfect if you want a single database for everything. Uses your existing
+        PostgreSQL instance.
+      </p>
+      <CodeBlock
+        code={`VECTOR_DB_PROVIDER=pgvector
+# Uses DATABASE_URL automatically`}
+        lang="bash"
+        filename=".env"
+      />
+      <h4>Features</h4>
+      <ul>
+        <li>ACID compliance</li>
+        <li>SQL interface for queries</li>
+        <li>No additional infrastructure</li>
+        <li>Joins with relational data</li>
+      </ul>
+    </TabPanel>
+  </Tabs>
 
   <h2>Switching Databases</h2>
+
   <p>
-    To switch databases, simply update the <code>VECTOR_DB_PROVIDER</code> environment
-    variable and restart your backend. The <code>VectorStore</code> factory will automatically
-    load the correct client.
+    To switch databases, update the <code>VECTOR_DB_PROVIDER</code> environment variable
+    and restart your backend. The <code>VectorStore</code> factory automatically loads
+    the correct client:
   </p>
+
+  <CodeBlock
+    code={`from app.vector import get_vector_store
+
+# Auto-configured from VECTOR_DB_PROVIDER env var
+store = get_vector_store()
+
+# Same interface regardless of provider
+await store.upsert(embeddings, metadata)
+results = await store.search(query_embedding, top_k=5)`}
+    lang="python"
+    filename="example.py"
+  />
+
+  <h2>Comparison</h2>
+
+  <div class="overflow-x-auto my-6">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-700">
+          <th class="text-left py-3 px-4 text-slate-300">Feature</th>
+          <th class="text-left py-3 px-4 text-slate-300">Qdrant</th>
+          <th class="text-left py-3 px-4 text-slate-300">Weaviate</th>
+          <th class="text-left py-3 px-4 text-slate-300">pgvector</th>
+        </tr>
+      </thead>
+      <tbody class="text-slate-400">
+        <tr class="border-b border-slate-800">
+          <td class="py-3 px-4">Performance</td>
+          <td class="py-3 px-4">⚡⚡⚡</td>
+          <td class="py-3 px-4">⚡⚡</td>
+          <td class="py-3 px-4">⚡</td>
+        </tr>
+        <tr class="border-b border-slate-800">
+          <td class="py-3 px-4">Hybrid Search</td>
+          <td class="py-3 px-4">✓</td>
+          <td class="py-3 px-4">✓✓</td>
+          <td class="py-3 px-4">—</td>
+        </tr>
+        <tr class="border-b border-slate-800">
+          <td class="py-3 px-4">Setup Complexity</td>
+          <td class="py-3 px-4">Low</td>
+          <td class="py-3 px-4">Medium</td>
+          <td class="py-3 px-4">Very Low</td>
+        </tr>
+        <tr>
+          <td class="py-3 px-4">Additional Infra</td>
+          <td class="py-3 px-4">Yes</td>
+          <td class="py-3 px-4">Yes</td>
+          <td class="py-3 px-4">No</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </DocsLayout>

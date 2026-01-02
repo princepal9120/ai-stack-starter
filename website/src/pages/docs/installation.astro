@@ -1,51 +1,116 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+import Steps from "../../components/docs/Steps.astro";
+import Step from "../../components/docs/Step.astro";
+import Tabs from "../../components/docs/Tabs.astro";
+import TabPanel from "../../components/docs/TabPanel.astro";
 ---
 
 <DocsLayout title="Installation Guide">
   <h1>Installation Guide</h1>
 
-  <p>Comprehensive guide to setting up AI Stack manually or via CLI.</p>
+  <p>
+    Comprehensive guide to setting up AI Stack using the CLI or manual
+    installation.
+  </p>
 
   <h2>Interactive CLI (Recommended)</h2>
-  <p>The easiest way to start is using our CLI tool:</p>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">npx create-ai-stack@latest my-app</code></pre>
+
+  <p>The easiest way to start is using our interactive CLI tool:</p>
+
+  <CodeBlock code="npx create-ai-stack@latest my-ai-app" lang="bash" />
+
+  <Callout type="tip">
+    <p>
+      The CLI will prompt you to select your preferred LLM provider, vector
+      database, and authentication method.
+    </p>
+  </Callout>
 
   <h2>Manual Setup</h2>
+
   <p>If you prefer to clone the repository manually:</p>
 
-  <h3>1. Clone Repository</h3>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">git clone https://github.com/yourusername/ai-stack.git
-cd ai-stack</code></pre>
+  <Callout type="note" title="Prerequisites">
+    <ul>
+      <li><strong>Node.js 18+</strong> & pnpm</li>
+      <li><strong>Python 3.12+</strong> & uv</li>
+      <li><strong>Docker</strong> & Docker Compose</li>
+    </ul>
+  </Callout>
 
-  <h3>2. Install Tools</h3>
-  <p>Ensure you have the following installed:</p>
-  <ul>
-    <li><strong>Node.js 18+</strong> & pnpm</li>
-    <li><strong>Python 3.12+</strong> & uv</li>
-    <li><strong>Docker</strong> & Docker Compose</li>
-  </ul>
+  <Steps>
+    <Step title="Clone Repository">
+      <CodeBlock
+        code={`git clone https://github.com/princepal9120/ai-stack.git
+cd ai-stack`}
+        lang="bash"
+      />
+    </Step>
 
-  <h3>3. Install Dependencies</h3>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># Frontend
+    <Step title="Install Global Tools">
+      <Tabs tabs={["npm", "homebrew"]} syncKey="install">
+        <TabPanel>
+          <CodeBlock code="npm install -g pnpm" lang="bash" />
+        </TabPanel>
+        <TabPanel>
+          <CodeBlock
+            code={`brew install pnpm
+brew install uv`}
+            lang="bash"
+          />
+        </TabPanel>
+      </Tabs>
+    </Step>
+
+    <Step title="Install Dependencies">
+      <CodeBlock
+        code={`# Frontend
 cd apps/frontend
 pnpm install
 
 # Backend
 cd ../backend
-uv sync</code></pre>
+uv sync`}
+        lang="bash"
+      />
+    </Step>
 
-  <h3>4. Start Infrastructure</h3>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">docker-compose up -d</code></pre>
+    <Step title="Configure Environment">
+      <CodeBlock
+        code={`# Backend
+cd apps/backend
+cp .env.example .env
+# Edit .env with your API keys
 
-  <h3>5. Run Migrations</h3>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">cd apps/backend
-uv run alembic upgrade head</code></pre>
+# Frontend
+cd ../frontend
+cp .env.example .env.local`}
+        lang="bash"
+      />
+    </Step>
 
-  <p>You are now ready to start development!</p>
+    <Step title="Start Infrastructure">
+      <p>Start PostgreSQL, Redis, and Qdrant:</p>
+      <CodeBlock code="docker-compose up -d" lang="bash" />
+    </Step>
+
+    <Step title="Run Migrations">
+      <CodeBlock
+        code={`cd apps/backend
+uv run alembic upgrade head`}
+        lang="bash"
+      />
+    </Step>
+  </Steps>
+
+  <Callout type="important">
+    <p>
+      You are now ready to start development! See the <a href="/docs/quickstart"
+        >Quick Start</a
+      > guide for next steps.
+    </p>
+  </Callout>
 </DocsLayout>

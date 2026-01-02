@@ -1,5 +1,11 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+import CardGrid from "../../components/docs/CardGrid.astro";
+import Card from "../../components/docs/Card.astro";
+import Tabs from "../../components/docs/Tabs.astro";
+import TabPanel from "../../components/docs/TabPanel.astro";
 ---
 
 <DocsLayout title="LLM Providers">
@@ -7,53 +13,141 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
   <p>
     Switch between OpenAI, Anthropic, Gemini, or Local models with a single
-    variable.
+    environment variable. Zero vendor lock-in.
   </p>
 
   <h2>Configuration</h2>
-  <p>
-    Add the corresponding API keys to your <code>apps/backend/.env</code> file.
-  </p>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># 1. Choose Provider
-LLM_PROVIDER=openai # or anthropic, gemini, ollama
 
-# 2. Add Keys
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-GOOGLE_API_KEY=AIza...</code></pre>
+  <p>
+    Set the <code>LLM_PROVIDER</code> environment variable and add the corresponding
+    API keys:
+  </p>
+
+  <Tabs tabs={["OpenAI", "Anthropic", "Gemini", "Ollama"]} syncKey="llm">
+    <TabPanel>
+      <CodeBlock
+        code={`LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-your-api-key`}
+        lang="bash"
+        filename=".env"
+      />
+    </TabPanel>
+    <TabPanel>
+      <CodeBlock
+        code={`LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-your-api-key`}
+        lang="bash"
+        filename=".env"
+      />
+    </TabPanel>
+    <TabPanel>
+      <CodeBlock
+        code={`LLM_PROVIDER=gemini
+GOOGLE_API_KEY=AIza-your-api-key`}
+        lang="bash"
+        filename=".env"
+      />
+    </TabPanel>
+    <TabPanel>
+      <CodeBlock
+        code={`LLM_PROVIDER=ollama
+OLLAMA_HOST=http://localhost:11434`}
+        lang="bash"
+        filename=".env"
+      />
+    </TabPanel>
+  </Tabs>
 
   <h2>Supported Providers</h2>
 
-  <h3>OpenAI (<code>openai</code>)</h3>
-  <ul>
-    <li><strong>Models</strong>: GPT-4o, GPT-4-turbo, GPT-3.5-turbo</li>
-    <li><strong>Pros</strong>: Best general reasoning, reliable JSON mode.</li>
-    <li><strong>Cons</strong>: Cost.</li>
-  </ul>
+  <CardGrid cols={2}>
+    <Card title="OpenAI" icon="🧠">
+      <p><strong>Models:</strong> GPT-4o, GPT-4-turbo, GPT-3.5-turbo</p>
+      <p><strong>Best for:</strong> General reasoning, reliable JSON mode</p>
+    </Card>
+    <Card title="Anthropic" icon="🎭">
+      <p><strong>Models:</strong> Claude 3.5 Sonnet, Claude 3 Opus</p>
+      <p><strong>Best for:</strong> Long documents (200k context), coding</p>
+    </Card>
+    <Card title="Google Gemini" icon="✨">
+      <p><strong>Models:</strong> Gemini 2.0 Flash, Gemini 1.5 Pro</p>
+      <p><strong>Best for:</strong> Massive context (2M tokens), multimodal</p>
+    </Card>
+    <Card title="Ollama (Local)" icon="🏠">
+      <p><strong>Models:</strong> Llama 3.2, Mistral, Gemma</p>
+      <p><strong>Best for:</strong> Privacy-first, zero cost, offline</p>
+    </Card>
+  </CardGrid>
 
-  <h3>Anthropic (<code>anthropic</code>)</h3>
-  <ul>
-    <li><strong>Models</strong>: Claude 3.5 Sonnet, Claude 3 Opus</li>
-    <li>
-      <strong>Pros</strong>: Massive context window (200k), great for coding.
-    </li>
-    <li><strong>Cons</strong>: Slightly higher latency for Opus.</li>
-  </ul>
+  <h2>Usage in Code</h2>
 
-  <h3>Gemini (<code>gemini</code>)</h3>
-  <ul>
-    <li><strong>Models</strong>: Gemini 1.5 Pro</li>
-    <li>
-      <strong>Pros</strong>: Massive context (2M tokens), multimodal, cheaper.
-    </li>
-    <li><strong>Cons</strong>: Rate limits on free tier.</li>
-  </ul>
+  <p>The LLM client is automatically configured based on your environment:</p>
 
-  <h3>Ollama (<code>ollama</code>)</h3>
-  <ul>
-    <li><strong>Models</strong>: Llama 3, Mistral, Gemma (run locally)</li>
-    <li><strong>Pros</strong>: Free, privacy-first, offline.</li>
-    <li><strong>Cons</strong>: Requires good hardware (GPU recommended).</li>
-  </ul>
+  <CodeBlock
+    code={`from app.llm import get_llm_client
+
+# Auto-configured based on LLM_PROVIDER env var
+llm = get_llm_client()
+
+# Generate completion
+response = await llm.complete("What is RAG?")
+print(response.content)
+
+# Stream response
+async for chunk in llm.stream("Explain embeddings"):
+    print(chunk.delta, end="")
+
+# Generate embeddings
+embeddings = await llm.embed(["Hello", "World"])`}
+    lang="python"
+    filename="example.py"
+  />
+
+  <Callout type="tip">
+    <p>
+      All providers implement the same interface, so you can switch without
+      changing your application code.
+    </p>
+  </Callout>
+
+  <h2>Model Comparison</h2>
+
+  <div class="overflow-x-auto my-6">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-700">
+          <th class="text-left py-3 px-4 text-slate-300">Provider</th>
+          <th class="text-left py-3 px-4 text-slate-300">Context</th>
+          <th class="text-left py-3 px-4 text-slate-300">Speed</th>
+          <th class="text-left py-3 px-4 text-slate-300">Cost</th>
+        </tr>
+      </thead>
+      <tbody class="text-slate-400">
+        <tr class="border-b border-slate-800">
+          <td class="py-3 px-4">OpenAI GPT-4o</td>
+          <td class="py-3 px-4">128k</td>
+          <td class="py-3 px-4">⚡ Fast</td>
+          <td class="py-3 px-4">$$$</td>
+        </tr>
+        <tr class="border-b border-slate-800">
+          <td class="py-3 px-4">Claude 3.5 Sonnet</td>
+          <td class="py-3 px-4">200k</td>
+          <td class="py-3 px-4">⚡ Fast</td>
+          <td class="py-3 px-4">$$</td>
+        </tr>
+        <tr class="border-b border-slate-800">
+          <td class="py-3 px-4">Gemini 2.0 Flash</td>
+          <td class="py-3 px-4">1M+</td>
+          <td class="py-3 px-4">⚡⚡ Very Fast</td>
+          <td class="py-3 px-4">$</td>
+        </tr>
+        <tr>
+          <td class="py-3 px-4">Ollama (Llama 3.2)</td>
+          <td class="py-3 px-4">128k</td>
+          <td class="py-3 px-4">Depends on HW</td>
+          <td class="py-3 px-4">Free</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </DocsLayout>

@@ -1,58 +1,73 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+import Steps from "../../components/docs/Steps.astro";
+import Step from "../../components/docs/Step.astro";
 ---
 
 <DocsLayout title="Kubernetes Deployment">
   <h1>Kubernetes Deployment</h1>
 
   <p>
-    This guide explains how to deploy AI Stack to a Kubernetes cluster using
-    standard manifests.
+    Deploy AI Stack to a Kubernetes cluster for production-grade scalability and
+    reliability.
   </p>
 
-  <h2>Prerequisites</h2>
-  <ul>
-    <li>A running Kubernetes cluster (EKS, GKE, AKS, or Minikube)</li>
-    <li><code>kubectl</code> installed and configured</li>
-    <li>Docker registry to push images (Docker Hub, ECR, GCR)</li>
-  </ul>
+  <Callout type="note" title="Prerequisites">
+    <ul>
+      <li>A running Kubernetes cluster (EKS, GKE, AKS, or Minikube)</li>
+      <li><code>kubectl</code> installed and configured</li>
+      <li>Docker registry access (Docker Hub, ECR, GCR)</li>
+    </ul>
+  </Callout>
 
-  <h2>1. Build and Push Images</h2>
-  <p>First, build and push the backend and frontend images to your registry.</p>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># Backend
+  <Steps>
+    <Step title="Build and Push Images">
+      <p>
+        Build and push the backend and frontend images to your container
+        registry:
+      </p>
+      <CodeBlock
+        code={`# Backend
 docker build -t your-registry/ai-stack-backend:latest ./apps/backend
 docker push your-registry/ai-stack-backend:latest
 
 # Frontend
 docker build -t your-registry/ai-stack-frontend:latest ./apps/frontend
-docker push your-registry/ai-stack-frontend:latest</code></pre>
+docker push your-registry/ai-stack-frontend:latest`}
+        lang="bash"
+      />
+    </Step>
 
-  <h2>2. Secrets Management</h2>
-  <p>Create a Kubernetes Secret for your sensitive environment variables.</p>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># secrets.yaml
-apiVersion: v1
+    <Step title="Create Secrets">
+      <p>
+        Create a Kubernetes Secret for your sensitive environment variables:
+      </p>
+      <CodeBlock
+        code={`apiVersion: v1
 kind: Secret
 metadata:
   name: ai-stack-secrets
+  namespace: default
 type: Opaque
-data:
-  # Base64 encoded values
-  OPENAI_API_KEY: c2stLi4u...
-  DATABASE_URL: cG9zdGdyZXNxbDovLy4uLi4=</code></pre>
+stringData:
+  OPENAI_API_KEY: "sk-your-api-key"
+  DATABASE_URL: "postgresql+asyncpg://user:pass@host:5432/db"
+  QDRANT_API_KEY: "your-qdrant-api-key"
+  CLERK_SECRET_KEY: "sk_live_your-clerk-secret"`}
+        lang="yaml"
+        filename="secrets.yaml"
+      />
+      <CodeBlock code="kubectl apply -f secrets.yaml" lang="bash" />
+    </Step>
 
-  <p>Apply it:</p>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">kubectl apply -f secrets.yaml</code></pre>
-
-  <h2>3. Deploy Backend</h2>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># backend-deployment.yaml
-apiVersion: apps/v1
+    <Step title="Deploy Backend">
+      <CodeBlock
+        code={`apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: ai-stack-backend
 spec:
   replicas: 2
   selector:
@@ -71,21 +86,46 @@ spec:
         envFrom:
         - secretRef:
             name: ai-stack-secrets
+        env:
+        - name: LLM_PROVIDER
+          value: "openai"
+        - name: VECTOR_DB_PROVIDER
+          value: "qdrant"
         resources:
           requests:
             cpu: "500m"
             memory: "512Mi"
           limits:
             cpu: "1000m"
-            memory: "1Gi"</code></pre>
+            memory: "1Gi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 80
+    targetPort: 8000`}
+        lang="yaml"
+        filename="backend-deployment.yaml"
+      />
+    </Step>
 
-  <h2>4. Deploy Frontend</h2>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300"># frontend-deployment.yaml
-apiVersion: apps/v1
+    <Step title="Deploy Frontend">
+      <CodeBlock
+        code={`apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: ai-stack-frontend
 spec:
   replicas: 2
   selector:
@@ -103,19 +143,47 @@ spec:
         - containerPort: 3000
         env:
         - name: NEXT_PUBLIC_API_URL
-          value: "http://backend"</code></pre>
+          value: "http://backend"
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+  - port: 80
+    targetPort: 3000`}
+        lang="yaml"
+        filename="frontend-deployment.yaml"
+      />
+    </Step>
 
-  <h2>5. Ingress (Optional)</h2>
-  <p>
-    Use NGINX Ingress Controller or your cloud provider's Load Balancer to
-    expose the services.
-  </p>
-  <pre
-    class="bg-slate-900 p-4 rounded-lg overflow-x-auto border border-slate-800"><code class="text-slate-300">apiVersion: networking.k8s.io/v1
+    <Step title="Configure Ingress">
+      <p>
+        Use NGINX Ingress Controller or your cloud provider's Load Balancer:
+      </p>
+      <CodeBlock
+        code={`apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ai-stack-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
+  tls:
+  - hosts:
+    - ai-stack.example.com
+    secretName: ai-stack-tls
   rules:
   - host: ai-stack.example.com
     http:
@@ -133,5 +201,33 @@ spec:
           service:
             name: frontend
             port:
-              number: 80</code></pre>
+              number: 80`}
+        lang="yaml"
+        filename="ingress.yaml"
+      />
+    </Step>
+  </Steps>
+
+  <h2>Scaling</h2>
+
+  <p>Scale your deployments based on load:</p>
+
+  <CodeBlock
+    code={`# Manual scaling
+kubectl scale deployment ai-stack-backend --replicas=4
+
+# Horizontal Pod Autoscaler
+kubectl autoscale deployment ai-stack-backend \\
+  --cpu-percent=50 \\
+  --min=2 \\
+  --max=10`}
+    lang="bash"
+  />
+
+  <Callout type="tip">
+    <p>
+      Consider using <strong>Helm charts</strong> for easier management and version
+      control of your Kubernetes deployments.
+    </p>
+  </Callout>
 </DocsLayout>
