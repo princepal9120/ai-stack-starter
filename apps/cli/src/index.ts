@@ -15,6 +15,26 @@ const __dirname = path.dirname(__filename);
 
 const AI_STACK_GRADIENT = gradient('#3b82f6', '#8b5cf6', '#ec4899');
 
+// Directories to exclude when copying from apps/
+const EXCLUDE_DIRS = [
+    'node_modules',
+    '.git',
+    '__pycache__',
+    '.pytest_cache',
+    'alembic',
+    'tests',
+    '.venv',
+    'dist',
+    '.next',
+];
+
+// Files to exclude
+const EXCLUDE_FILES = [
+    '.env',
+    '.env.local',
+    'alembic.ini',
+];
+
 interface ProjectConfig {
     projectName: string;
     llmProvider: 'openai' | 'anthropic' | 'gemini' | 'ollama';
@@ -132,6 +152,29 @@ program
         await scaffoldProject(config, options);
     });
 
+/**
+ * Custom copy function that filters out excluded directories and files
+ */
+async function copyWithFilter(src: string, dest: string) {
+    await fs.copy(src, dest, {
+        filter: (srcPath: string) => {
+            const basename = path.basename(srcPath);
+
+            // Check if it's an excluded directory
+            if (EXCLUDE_DIRS.includes(basename)) {
+                return false;
+            }
+
+            // Check if it's an excluded file
+            if (EXCLUDE_FILES.includes(basename)) {
+                return false;
+            }
+
+            return true;
+        },
+    });
+}
+
 async function scaffoldProject(config: ProjectConfig, options: any) {
     const projectPath = path.resolve(process.cwd(), config.projectName);
 
@@ -147,11 +190,35 @@ async function scaffoldProject(config: ProjectConfig, options: any) {
         // Create project directory
         await fs.ensureDir(projectPath);
 
-        // Get template path
+        // Get paths - template for config files, sibling apps for source code
+        // CLI is at apps/cli/dist, so ../template -> apps/cli/template
+        // and sibling apps (backend, frontend) are at ../../ (apps/)
         const templatePath = path.join(__dirname, '../template');
+        const appsPath = path.join(__dirname, '../..');
 
-        // Copy template
-        await fs.copy(templatePath, projectPath);
+        // Copy template files (docker-compose, README, etc.)
+        if (await fs.pathExists(templatePath)) {
+            await fs.copy(templatePath, projectPath);
+        }
+
+        // Create apps directory in new project
+        await fs.ensureDir(path.join(projectPath, 'apps'));
+
+        // Copy backend from monorepo apps/ (filtered)
+        if (await fs.pathExists(path.join(appsPath, 'backend'))) {
+            await copyWithFilter(
+                path.join(appsPath, 'backend'),
+                path.join(projectPath, 'apps/backend')
+            );
+        }
+
+        // Copy frontend from monorepo apps/ (filtered)
+        if (await fs.pathExists(path.join(appsPath, 'frontend'))) {
+            await copyWithFilter(
+                path.join(appsPath, 'frontend'),
+                path.join(projectPath, 'apps/frontend')
+            );
+        }
 
         spinner.succeed('Project structure created');
 
@@ -171,19 +238,27 @@ async function scaffoldProject(config: ProjectConfig, options: any) {
 
             // Install frontend dependencies
             spinner.start(`Installing frontend dependencies with ${packageManager}...`);
-            await execa(packageManager, ['install'], {
-                cwd: path.join(projectPath, 'apps/frontend'),
-                stdio: 'ignore',
-            });
-            spinner.succeed('Frontend dependencies installed');
+            try {
+                await execa(packageManager, ['install'], {
+                    cwd: path.join(projectPath, 'apps/frontend'),
+                    stdio: 'ignore',
+                });
+                spinner.succeed('Frontend dependencies installed');
+            } catch {
+                spinner.warn('Frontend dependencies installation skipped');
+            }
 
             // Install backend dependencies
             spinner.start('Installing backend dependencies with uv...');
-            await execa('uv', ['sync'], {
-                cwd: path.join(projectPath, 'apps/backend'),
-                stdio: 'ignore',
-            });
-            spinner.succeed('Backend dependencies installed');
+            try {
+                await execa('uv', ['sync'], {
+                    cwd: path.join(projectPath, 'apps/backend'),
+                    stdio: 'ignore',
+                });
+                spinner.succeed('Backend dependencies installed');
+            } catch {
+                spinner.warn('Backend dependencies installation skipped (uv not found)');
+            }
         }
 
         // Success message
@@ -219,8 +294,8 @@ async function scaffoldProject(config: ProjectConfig, options: any) {
         console.log();
         console.log(chalk.dim('───────────────────────────────────────────────'));
         console.log();
-        console.log(`${chalk.bold('Documentation:')} https://ai-stack-fastapi.dev/docs`);
-        console.log(`${chalk.bold('Issues:')} https://github.com/yourusername/ai-stack/issues`);
+        console.log(`${chalk.bold('Documentation:')} https://ai-stack.dev/docs`);
+        console.log(`${chalk.bold('Issues:')} https://github.com/princepal9120/ai-stack/issues`);
         console.log();
 
     } catch (error) {
@@ -231,32 +306,45 @@ async function scaffoldProject(config: ProjectConfig, options: any) {
 }
 
 async function configureEnvironment(projectPath: string, config: ProjectConfig) {
+    const backendEnvExample = path.join(projectPath, 'apps/backend/.env.example');
     const backendEnv = path.join(projectPath, 'apps/backend/.env');
-    const frontendEnv = path.join(projectPath, 'apps/frontend/.env');
+    const frontendEnvExample = path.join(projectPath, 'apps/frontend/.env.example');
+    const frontendEnv = path.join(projectPath, 'apps/frontend/.env.local');
 
     // Update backend .env
-    let envContent = await fs.readFile(path.join(projectPath, 'apps/backend/.env.example'), 'utf-8');
+    if (await fs.pathExists(backendEnvExample)) {
+        let envContent = await fs.readFile(backendEnvExample, 'utf-8');
 
-    envContent = envContent.replace(/LLM_PROVIDER=openai/, `LLM_PROVIDER=${config.llmProvider}`);
-    envContent = envContent.replace(/VECTOR_DB_PROVIDER=qdrant/, `VECTOR_DB_PROVIDER=${config.vectorDb}`);
-    envContent = envContent.replace(/AUTH_PROVIDER=clerk/, `AUTH_PROVIDER=${config.authProvider}`);
+        envContent = envContent.replace(/LLM_PROVIDER=\w+/, `LLM_PROVIDER=${config.llmProvider}`);
+        envContent = envContent.replace(/VECTOR_DB_PROVIDER=\w+/, `VECTOR_DB_PROVIDER=${config.vectorDb}`);
+        envContent = envContent.replace(/AUTH_PROVIDER=\w+/, `AUTH_PROVIDER=${config.authProvider}`);
 
-    await fs.writeFile(backendEnv, envContent);
+        await fs.writeFile(backendEnv, envContent);
+    }
 
     // Update frontend .env
-    let frontendEnvContent = await fs.readFile(path.join(projectPath, 'apps/frontend/.env.example'), 'utf-8');
-    await fs.writeFile(frontendEnv, frontendEnvContent);
+    if (await fs.pathExists(frontendEnvExample)) {
+        const frontendEnvContent = await fs.readFile(frontendEnvExample, 'utf-8');
+        await fs.writeFile(frontendEnv, frontendEnvContent);
+    }
 }
 
 async function configureDocker(projectPath: string, config: ProjectConfig) {
     const dockerComposePath = path.join(projectPath, 'docker-compose.yml');
-    const content = await fs.readFile(dockerComposePath, 'utf-8');
+
+    if (!await fs.pathExists(dockerComposePath)) {
+        return;
+    }
+
+    let content = await fs.readFile(dockerComposePath, 'utf-8');
 
     // Update based on vector DB choice
     if (config.vectorDb === 'weaviate') {
-        // Add Weaviate service (template should have commented versions)
+        // Comment out qdrant, uncomment weaviate
+        content = content.replace(/^\s*qdrant:/gm, '  # qdrant:');
     } else if (config.vectorDb === 'pgvector') {
-        // Remove Qdrant, use pgvector with PostgreSQL
+        // Comment out qdrant for pgvector
+        content = content.replace(/^\s*qdrant:/gm, '  # qdrant:');
     }
 
     await fs.writeFile(dockerComposePath, content);

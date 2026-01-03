@@ -1,11 +1,15 @@
 {
-  "name": "create-ai-stack",
-  "version": "1.0.0",
+  "name": "create-ai-stack-starter",
+  "version": "1.0.2",
   "description": "Interactive CLI to scaffold AI Stack FastAPI projects",
   "type": "module",
   "bin": {
-    "create-ai-stack": "./dist/index.js"
+    "create-ai-stack-starter": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "template"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "dev": "tsup src/index.ts --format esm --watch",
@@ -19,10 +23,17 @@
     "cli",
     "scaffold",
     "boilerplate",
-    "typescript"
+    "typescript",
+    "openai",
+    "anthropic",
+    "qdrant"
   ],
   "author": "AI Stack Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/princepal9120/ai-stack"
+  },
   "dependencies": {
     "commander": "^12.1.0",
     "prompts": "^2.4.2",
