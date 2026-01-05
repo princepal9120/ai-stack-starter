@@ -1,0 +1,109 @@
+---
+title: CLI Prompts
+description: Details on interactive prompts during project creation
+---
+
+## Overview
+
+When you run `npx create-ai-stack-starter@latest` without flags, you'll be guided through interactive prompts to configure your project.
+
+## Prompt Flow
+
+### 1. Project Name
+
+```
+? What is your project name? › my-ai-app
+```
+
+Enter the name for your project directory. Must be a valid npm package name.
+
+### 2. Architecture Selection
+
+```
+? Select your architecture:
+❯ Next.js Fullstack - Rapid prototyping, Vercel deployment
+  FastAPI + Next.js - ML teams, complex AI pipelines
+  TypeScript Backend - TypeScript teams, edge deployment
+```
+
+Choose based on your team's expertise and deployment target.
+
+### 3. Database Provider
+
+```
+? Select your database:
+❯ Neon - Serverless Postgres, auto-scaling
+  Supabase - Postgres with realtime, auth, storage
+  Turso - Edge SQLite, globally distributed
+  SQLite - Local development only
+```
+
+### 4. Authentication
+
+```
+? Select authentication provider:
+❯ Better Auth - Modern, type-safe, self-hosted
+  NextAuth.js - Flexible OAuth, social logins
+  Clerk - Managed auth, great DX
+  None - No authentication
+```
+
+### 5. LLM Provider
+
+```
+? Select your LLM provider:
+❯ OpenAI - GPT-4o, GPT-4, GPT-3.5
+  Anthropic - Claude 3.5, Claude 3
+  Novita AI - Cost-effective inference
+  Ollama - Local models, privacy-first
+```
+
+### 6. Vector Database
+
+```
+? Select your vector database:
+❯ Qdrant - High-performance, open-source
+  Weaviate - AI-native, GraphQL
+  pgvector - PostgreSQL extension
+  Pinecone - Managed, serverless
+  None - No vector search
+```
+
+### 7. Add-ons
+
+```
+? Select add-ons (space to toggle):
+◉ Tailwind CSS
+◉ Biome (linter/formatter)
+◯ PWA support
+◯ Analytics
+◯ Docker Compose
+```
+
+Use space to toggle selections, enter to confirm.
+
+## Skipping Prompts
+
+### Skip All with `--yes`
+
+```bash
+npx create-ai-stack-starter@latest my-app --yes
+```
+
+Uses sensible defaults:
+- Architecture: `nextjs`
+- Database: `neon`
+- Auth: `better-auth`
+- LLM: `openai`
+- Add-ons: `tailwind`, `biome`
+
+### Skip Specific with Flags
+
+Any flag you provide skips that prompt:
+
+```bash
+npx create-ai-stack-starter@latest my-app \
+  --architecture fastapi \
+  --llm anthropic
+# Only prompts for database, auth, vector, add-ons
+```

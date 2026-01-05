@@ -1,0 +1,42 @@
+{
+  "name": "create-ai-stack",
+  "version": "1.0.0",
+  "description": "Create AI Stack applications with zero configuration",
+  "type": "module",
+  "exports": {
+    ".": "./index.js"
+  },
+  "bin": {
+    "create-ai-stack": "./cli.js"
+  },
+  "files": [
+    "cli.js",
+    "index.js",
+    "index.d.ts"
+  ],
+  "keywords": [
+    "ai",
+    "stack",
+    "rag",
+    "llm",
+    "vector-database",
+    "fastapi",
+    "nextjs",
+    "boilerplate",
+    "cli"
+  ],
+  "author": "AI Stack Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/princepal9120/ai-stack.git",
+    "directory": "packages/create-ai-stack"
+  },
+  "homepage": "https://ai-stack.dev",
+  "bugs": {
+    "url": "https://github.com/princepal9120/ai-stack/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

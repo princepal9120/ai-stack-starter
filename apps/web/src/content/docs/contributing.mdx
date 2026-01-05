@@ -1,0 +1,184 @@
+---
+title: Contributing
+description: How to set up your environment and contribute changes
+---
+
+## Overview
+
+We welcome contributions to AI Stack! This guide covers how to set up your development environment and contribute changes.
+
+> **Important:** Before starting work on major features, please open an issue first to discuss your proposal.
+
+## Repository Structure
+
+```
+ai-stack/
+├── apps/
+│   └── web/               # Next.js frontend template
+├── packages/
+│   └── cli/               # CLI tool
+├── website/               # Documentation site
+└── docs/                  # Additional documentation
+```
+
+## Setup
+
+### Prerequisites
+
+- Node.js 20+ (LTS)
+- pnpm (recommended)
+- Git
+
+### Install
+
+```bash
+git clone https://github.com/princepal9120/ai-stack.git
+cd ai-stack
+pnpm install
+```
+
+## Development
+
+### CLI Development
+
+```bash
+cd packages/cli
+
+# Link for local testing
+pnpm link --global
+
+# Run in watch mode
+pnpm dev
+```
+
+Test the CLI anywhere:
+
+```bash
+create-ai-stack-starter my-test-app
+```
+
+### Website Development
+
+```bash
+cd website
+pnpm dev
+```
+
+Open http://localhost:4321 to see the documentation site.
+
+### Template Development
+
+To modify the generated project templates:
+
+```bash
+cd apps/web
+pnpm dev
+```
+
+## Contribution Flow
+
+1. **Open an issue** - Discuss your proposal
+2. **Fork the repository**
+3. **Create a feature branch**
+
+```bash
+git checkout -b feat/my-feature
+```
+
+4. **Make changes** - Follow existing code style
+5. **Test your changes**
+
+```bash
+# Run tests
+pnpm test
+
+# Type check
+pnpm typecheck
+
+# Lint
+pnpm lint
+```
+
+6. **Commit following conventional commits**
+
+```bash
+git commit -m "feat(cli): add new provider option"
+```
+
+7. **Push and open a PR**
+
+```bash
+git push origin feat/my-feature
+```
+
+## Commit Conventions
+
+Use conventional commits with appropriate scopes:
+
+| Type | Scope | Example |
+|------|-------|---------|
+| `feat` | `cli` | `feat(cli): add ollama provider` |
+| `fix` | `cli` | `fix(cli): resolve path issue on Windows` |
+| `feat` | `web` | `feat(web): add new landing section` |
+| `docs` | - | `docs: update installation guide` |
+| `chore` | - | `chore: update dependencies` |
+
+## Code Style
+
+- Use **TypeScript** everywhere
+- Format with **Biome**
+- Follow existing patterns in the codebase
+
+```bash
+# Format code
+pnpm format
+
+# Check formatting
+pnpm format:check
+```
+
+## Testing
+
+### Unit Tests
+
+```bash
+pnpm test
+```
+
+### E2E Tests
+
+```bash
+pnpm test:e2e
+```
+
+### Manual Testing
+
+Create a test project with your local CLI:
+
+```bash
+# From packages/cli
+pnpm link --global
+
+# In a test directory
+create-ai-stack-starter test-app --yes
+cd test-app
+pnpm dev
+```
+
+## Documentation
+
+When adding features, update relevant documentation:
+
+1. **CLI options** - `website/src/content/docs/cli/options.mdx`
+2. **Guides** - `website/src/content/docs/guides/`
+3. **FAQ** - `website/src/content/docs/faq.mdx`
+
+## Getting Help
+
+- **GitHub Issues** - Bug reports and feature requests
+- **GitHub Discussions** - Questions and ideas
+- **Twitter** - [@princepal9120](https://twitter.com/princepal9120)
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the MIT License.

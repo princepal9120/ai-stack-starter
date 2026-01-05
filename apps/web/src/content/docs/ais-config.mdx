@@ -1,0 +1,135 @@
+---
+title: AI Stack Config
+description: Configuration file reference for AI Stack projects
+---
+
+## Overview
+
+AI Stack projects include a configuration file that tracks your stack choices and enables the CLI to enhance your project later.
+
+## Configuration File
+
+After creating a project, you'll find `ais.config.json` in your project root:
+
+```json
+{
+  "$schema": "https://ai-stack.dev/schema.json",
+  "version": "1.0.0",
+  "createdAt": "2024-01-01T00:00:00Z",
+  "architecture": "nextjs",
+  "database": "neon",
+  "orm": "drizzle",
+  "auth": "better-auth",
+  "llm": "openai",
+  "vector": "qdrant",
+  "addons": ["tailwind", "biome"]
+}
+```
+
+## Fields
+
+### Required Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `version` | string | CLI version used to create project |
+| `createdAt` | string | ISO 8601 timestamp |
+| `architecture` | string | Selected architecture |
+
+### Stack Options
+
+| Field | Type | Values |
+|-------|------|--------|
+| `database` | string | `neon`, `supabase`, `turso`, `sqlite` |
+| `orm` | string | `drizzle`, `prisma` |
+| `auth` | string | `better-auth`, `nextauth`, `clerk`, `none` |
+| `llm` | string | `openai`, `anthropic`, `novita`, `ollama` |
+| `vector` | string | `qdrant`, `weaviate`, `pgvector`, `pinecone`, `none` |
+| `addons` | array | `["tailwind", "biome", "pwa", "analytics"]` |
+
+## Usage
+
+### Adding Features
+
+The CLI uses this config to add compatible features:
+
+```bash
+# Add vector search to existing project
+npx create-ai-stack-starter add vector
+
+# The CLI reads ais.config.json to ensure compatibility
+```
+
+### Validation
+
+The config is validated against the schema:
+
+```bash
+# Validate your config
+npx create-ai-stack-starter validate
+```
+
+## Schema
+
+The full JSON schema is available at:
+
+```
+https://ai-stack.dev/schema.json
+```
+
+You can reference it in your config for editor autocompletion:
+
+```json
+{
+  "$schema": "https://ai-stack.dev/schema.json"
+}
+```
+
+## Keep or Delete?
+
+- **Keep it** if you plan to use `npx create-ai-stack-starter add` to extend your project
+- **Safe to delete** if you won't use the CLI after initial creation
+
+The config has no effect on your running application—it's only used by the CLI.
+
+## Example Configs
+
+### Minimal Next.js
+
+```json
+{
+  "version": "1.0.0",
+  "architecture": "nextjs",
+  "database": "sqlite",
+  "auth": "none",
+  "llm": "ollama"
+}
+```
+
+### Full Production Stack
+
+```json
+{
+  "version": "1.0.0",
+  "architecture": "nextjs",
+  "database": "neon",
+  "orm": "drizzle",
+  "auth": "better-auth",
+  "llm": "openai",
+  "vector": "qdrant",
+  "addons": ["tailwind", "biome", "analytics", "docker"]
+}
+```
+
+### FastAPI ML Team
+
+```json
+{
+  "version": "1.0.0",
+  "architecture": "fastapi",
+  "database": "supabase",
+  "auth": "clerk",
+  "llm": "anthropic",
+  "vector": "weaviate"
+}
+```

@@ -1,0 +1,205 @@
+---
+title: Analytics & Observability
+description: Monitor your AI Stack application in production
+---
+
+## Overview
+
+AI Stack includes built-in support for tracking key metrics in your AI application: token usage, costs, latency, and error rates.
+
+## Quick Setup
+
+If you selected the `analytics` addon during project creation, analytics is pre-configured. Otherwise, add it:
+
+```bash
+npm install @ai-stack/analytics
+```
+
+## Token Usage Tracking
+
+### Automatic Tracking
+
+The AI client automatically tracks token usage:
+
+```typescript
+import { createCompletion } from '@/lib/ai';
+
+const response = await createCompletion({
+  messages: [...],
+});
+
+// Access usage
+console.log(response.usage);
+// { promptTokens: 150, completionTokens: 50, totalTokens: 200 }
+```
+
+### Usage Events
+
+```typescript
+import { analytics } from '@/lib/analytics';
+
+analytics.on('completion', (event) => {
+  console.log({
+    provider: event.provider,
+    model: event.model,
+    tokens: event.usage.totalTokens,
+    cost: event.cost,
+    latency: event.latencyMs,
+  });
+});
+```
+
+## Cost Tracking
+
+### Automatic Cost Calculation
+
+Costs are calculated based on provider pricing:
+
+```typescript
+import { getCostEstimate } from '@/lib/analytics';
+
+const cost = getCostEstimate({
+  provider: 'openai',
+  model: 'gpt-4o',
+  promptTokens: 1000,
+  completionTokens: 500,
+});
+// $0.0175
+```
+
+### Cost Alerts
+
+```typescript
+import { analytics } from '@/lib/analytics';
+
+analytics.setCostAlert({
+  daily: 100,  // $100/day
+  monthly: 2000,
+  onAlert: (alert) => {
+    console.warn(`Cost alert: ${alert.type} limit reached`);
+  },
+});
+```
+
+## Latency Monitoring
+
+### Track Response Times
+
+```typescript
+import { createCompletion } from '@/lib/ai';
+
+const start = Date.now();
+const response = await createCompletion({ ... });
+const latency = Date.now() - start;
+
+// Built-in tracking
+console.log(response.meta.latencyMs);
+```
+
+### Latency Percentiles
+
+```typescript
+import { analytics } from '@/lib/analytics';
+
+const stats = await analytics.getLatencyStats({
+  period: '24h',
+});
+// { p50: 450, p95: 1200, p99: 2500 }
+```
+
+## Error Tracking
+
+### Error Events
+
+```typescript
+import { analytics } from '@/lib/analytics';
+
+analytics.on('error', (event) => {
+  console.error({
+    provider: event.provider,
+    error: event.error.message,
+    code: event.error.code,
+  });
+});
+```
+
+### Error Rate Monitoring
+
+```typescript
+const errorStats = await analytics.getErrorStats({
+  period: '1h',
+});
+// { total: 10, rate: 0.02, byCode: { '429': 8, '500': 2 } }
+```
+
+## Dashboard Integration
+
+### PostHog
+
+```typescript
+// lib/analytics/posthog.ts
+import posthog from 'posthog-js';
+import { analytics } from '@/lib/analytics';
+
+analytics.on('completion', (event) => {
+  posthog.capture('ai_completion', {
+    provider: event.provider,
+    model: event.model,
+    tokens: event.usage.totalTokens,
+    cost: event.cost,
+    latency: event.latencyMs,
+  });
+});
+```
+
+### Grafana
+
+Export metrics for Prometheus/Grafana:
+
+```typescript
+import { collectMetrics } from '@/lib/analytics';
+
+// Prometheus-compatible metrics
+app.get('/metrics', (req, res) => {
+  res.set('Content-Type', 'text/plain');
+  res.send(collectMetrics());
+});
+```
+
+## Environment Variables
+
+```env
+# Analytics configuration
+ANALYTICS_ENABLED=true
+ANALYTICS_SAMPLE_RATE=1.0
+
+# PostHog
+NEXT_PUBLIC_POSTHOG_KEY=phc_...
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+
+# Sentry (error tracking)
+SENTRY_DSN=https://...@sentry.io/...
+```
+
+## Best Practices
+
+1. **Sample high-volume requests** - Use sampling for production traffic
+2. **Aggregate metrics** - Don't store every request detail
+3. **Set cost alerts** - Avoid surprise bills
+4. **Monitor latency percentiles** - p95/p99 matter more than average
+5. **Track by user/org** - Identify heavy users
+
+## Data Retention
+
+Configure how long to keep analytics data:
+
+```typescript
+// lib/analytics/config.ts
+export const analyticsConfig = {
+  retention: {
+    raw: '7d',      // Raw events
+    hourly: '30d',  // Hourly aggregates
+    daily: '1y',    // Daily aggregates
+  },
+};
+```

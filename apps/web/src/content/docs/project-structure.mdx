@@ -1,0 +1,222 @@
+---
+title: Project Structure
+description: Understanding the structure of projects created by AI Stack CLI
+---
+
+## Overview
+
+AI Stack CLI scaffolds a production-ready project with organized directories for frontend, backend, and AI components. The exact structure depends on your architecture choice.
+
+## Root Layout
+
+At the repository root you will see:
+
+```
+my-ai-app/
+├── app/                    # Next.js App Router
+├── components/             # React components
+├── lib/                    # Shared utilities
+├── types/                  # TypeScript types
+├── public/                 # Static assets
+├── .env.example           # Environment template
+├── package.json
+├── tsconfig.json
+├── next.config.ts
+└── README.md
+```
+
+## Architecture-Specific Structures
+
+### Next.js Fullstack
+
+```
+my-ai-app/
+├── app/
+│   ├── (auth)/            # Auth pages (if auth enabled)
+│   │   ├── login/
+│   │   └── register/
+│   ├── (dashboard)/       # Protected pages
+│   │   └── page.tsx
+│   ├── api/               # API routes
+│   │   ├── chat/
+│   │   ├── auth/
+│   │   └── health/
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── chat/              # Chat UI components
+│   │   ├── chat-input.tsx
+│   │   ├── chat-message.tsx
+│   │   └── chat-list.tsx
+│   └── ui/                # shadcn/ui components
+├── lib/
+│   ├── ai/                # LLM client abstraction
+│   │   ├── index.ts
+│   │   ├── providers/
+│   │   └── config.ts
+│   ├── auth/              # Auth configuration
+│   ├── db/                # Database schema & client
+│   └── search/            # Vector search client
+└── types/
+```
+
+### FastAPI + Next.js
+
+```
+my-ai-app/
+├── frontend/              # Next.js application
+│   ├── app/
+│   ├── components/
+│   └── lib/
+├── backend/               # FastAPI application
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── routes/
+│   │   │   └── deps.py
+│   │   ├── core/
+│   │   │   ├── config.py
+│   │   │   └── security.py
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   └── services/
+│   │       ├── ai.py
+│   │       └── rag.py
+│   ├── alembic/           # Database migrations
+│   ├── requirements.txt
+│   └── main.py
+└── docker-compose.yml
+```
+
+### TypeScript Backend
+
+```
+my-ai-app/
+├── apps/
+│   ├── web/               # Frontend
+│   │   ├── app/
+│   │   └── components/
+│   └── server/            # Backend
+│       ├── src/
+│       │   ├── routes/
+│       │   ├── services/
+│       │   ├── db/
+│       │   └── index.ts
+│       └── package.json
+├── packages/
+│   └── shared/            # Shared types/utils
+├── turbo.json
+└── package.json
+```
+
+## Key Directories
+
+### `lib/ai/`
+
+LLM provider abstraction:
+
+```
+lib/ai/
+├── index.ts               # Main exports
+├── config.ts              # Provider configuration
+├── providers/
+│   ├── openai.ts
+│   ├── anthropic.ts
+│   ├── novita.ts
+│   └── ollama.ts
+└── types.ts
+```
+
+### `lib/db/`
+
+Database configuration:
+
+```
+lib/db/
+├── index.ts               # Database client
+├── schema/                # Drizzle or Prisma schema
+│   ├── users.ts
+│   ├── conversations.ts
+│   └── documents.ts
+└── migrations/            # Migration files
+```
+
+### `lib/search/`
+
+Vector search abstraction:
+
+```
+lib/search/
+├── index.ts               # Main exports
+├── config.ts
+├── providers/
+│   ├── qdrant.ts
+│   ├── weaviate.ts
+│   └── pgvector.ts
+└── types.ts
+```
+
+### `lib/auth/`
+
+Authentication setup:
+
+```
+lib/auth/
+├── index.ts
+├── config.ts              # Auth provider config
+└── middleware.ts          # Auth middleware
+```
+
+## Configuration Files
+
+### `next.config.ts`
+
+```typescript
+import type { NextConfig } from 'next';
+
+const config: NextConfig = {
+  experimental: {
+    typedRoutes: true,
+  },
+};
+
+export default config;
+```
+
+### `drizzle.config.ts`
+
+```typescript
+import { defineConfig } from 'drizzle-kit';
+
+export default defineConfig({
+  schema: './lib/db/schema',
+  out: './lib/db/migrations',
+  dialect: 'postgresql',
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+});
+```
+
+## Development Scripts
+
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:generate": "drizzle-kit generate",
+    "lint": "biome check .",
+    "format": "biome format --write ."
+  }
+}
+```
+
+## Key Details
+
+- **Type-safe**: Full TypeScript across the stack
+- **Modular**: Each provider is a separate module
+- **Swappable**: Change providers via configuration
+- **Production-ready**: Includes error handling, logging

@@ -1,0 +1,158 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import CardGrid from "../../components/docs/CardGrid.astro";
+import Card from "../../components/docs/Card.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+---
+
+<DocsLayout title="Quick Start">
+  <h1>Quick Start</h1>
+  <p class="text-lg text-slate-400 mb-8 -mt-4">
+    Create your first AI Stack project in minutes
+  </p>
+
+  <h2>Philosophy</h2>
+  <CardGrid cols={2}>
+    <Card title="Zero Lock-in" icon="🔓">
+      <p>
+        Swap LLMs or Vector DBs with one environment variable. No code changes
+        required.
+      </p>
+    </Card>
+    <Card title="Production-Ready" icon="⚡">
+      <p>
+        Built-in auth, error handling, observability, and cost tracking from day
+        one.
+      </p>
+    </Card>
+    <Card title="Type Safe" icon="🛡️">
+      <p>
+        Full TypeScript + Pydantic across the entire stack with strict type
+        checking.
+      </p>
+    </Card>
+    <Card title="Open Source" icon="💚">
+      <p>Free and open source forever. MIT licensed for commercial use.</p>
+    </Card>
+  </CardGrid>
+
+  <h2>Get Started</h2>
+
+  <h3>Prerequisites</h3>
+  <ul>
+    <li>
+      <strong>Node.js LTS</strong> - <a href="https://nodejs.org/"
+        >Download from nodejs.org</a>
+    </li>
+    <li>
+      <strong>Git</strong> - <a href="https://git-scm.com/"
+        >Download from git-scm.com</a>
+    </li>
+    <li>
+      <strong>Docker</strong> (optional) - For running local vector databases
+    </li>
+  </ul>
+
+  <h3>CLI Installation</h3>
+  <CodeBlock
+    code={`# npm
+npx create-ai-stack-starter@latest
+
+# pnpm
+pnpm create ai-stack-starter@latest
+
+# bun
+bun create ai-stack-starter@latest`}
+    lang="bash"
+  />
+
+  <p>
+    Follow the interactive prompts to choose your architecture, database, auth,
+    LLM provider, and add-ons.
+  </p>
+
+  <h3>Skip Prompts (Default Stack)</h3>
+  <CodeBlock
+    code={`npx create-ai-stack-starter@latest my-app --yes`}
+    lang="bash"
+  />
+
+  <h2>Common Setups</h2>
+
+  <h3>Next.js Fullstack (Recommended)</h3>
+  <CodeBlock
+    code={`npx create-ai-stack-starter@latest my-app \\
+  --architecture nextjs \\
+  --database neon \\
+  --auth better-auth \\
+  --llm openai \\
+  --addons tailwind,biome`}
+    lang="bash"
+  />
+
+  <h3>FastAPI + Next.js (ML Teams)</h3>
+  <CodeBlock
+    code={`npx create-ai-stack-starter@latest my-app \\
+  --architecture fastapi \\
+  --database supabase \\
+  --auth clerk \\
+  --llm anthropic \\
+  --vector qdrant`}
+    lang="bash"
+  />
+
+  <h3>TypeScript Backend (Edge)</h3>
+  <CodeBlock
+    code={`npx create-ai-stack-starter@latest my-app \\
+  --architecture typescript \\
+  --backend hono \\
+  --database turso \\
+  --auth better-auth \\
+  --llm openai`}
+    lang="bash"
+  />
+
+  <h2>Flags Cheat Sheet</h2>
+  <p>
+    See the full list in the <a href="/docs/cli">CLI Reference</a>. Key flags:
+  </p>
+  <ul>
+    <li><code>--architecture</code>: nextjs, fastapi, typescript</li>
+    <li><code>--database</code>: neon, supabase, turso, sqlite</li>
+    <li><code>--auth</code>: better-auth, nextauth, clerk, none</li>
+    <li><code>--llm</code>: openai, anthropic, novita, ollama</li>
+    <li><code>--vector</code>: qdrant, weaviate, pgvector, pinecone</li>
+    <li><code>--addons</code>: tailwind, biome, pwa, analytics</li>
+  </ul>
+
+  <h2>Next Steps</h2>
+  <CardGrid cols={2}>
+    <Card title="CLI Reference" icon="📖">
+      <p>
+        <a href="/docs/cli">Flags, usage, and examples</a> for each command.
+      </p>
+    </Card>
+    <Card title="Project Structure" icon="📁">
+      <p>
+        <a href="/docs/project-structure">See how projects</a> are generated.
+      </p>
+    </Card>
+    <Card title="Guides" icon="🗺️">
+      <p>
+        <a href="/docs/guides">LLM providers, vector databases</a>, RAG
+        pipelines.
+      </p>
+    </Card>
+    <Card title="FAQ" icon="❓">
+      <p><a href="/docs/faq">Common questions</a> answered.</p>
+    </Card>
+  </CardGrid>
+
+  <Callout type="tip">
+    <p>
+      Ready to explore more? Check out the <a href="/docs/cli">CLI Reference</a> for
+      all available options.
+    </p>
+  </Callout>
+</DocsLayout>

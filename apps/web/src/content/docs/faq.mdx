@@ -1,0 +1,147 @@
+---
+title: Frequently Asked Questions
+description: Short answers to common questions
+---
+
+## General
+
+### What is AI Stack?
+
+AI Stack is an opinionated CLI that scaffolds production-ready AI applications with your choice of architecture, database, authentication, and AI providers. See the [Quick Start](/docs) to get started.
+
+### Do I need to install anything globally?
+
+No. Run the CLI directly with your package manager:
+
+```bash
+npx create-ai-stack-starter@latest
+```
+
+### Which package managers are supported?
+
+npm, pnpm, bun, and yarn are all supported.
+
+### What Node.js version is required?
+
+Node.js 20+ (LTS recommended).
+
+### Can I use this with an existing project?
+
+The CLI is designed for new projects. You can manually copy patterns from generated projects or wait for the `add` command to extend existing AI Stack projects.
+
+## Choosing Options
+
+### What architecture should I choose?
+
+- **Next.js Fullstack**: Best for rapid prototyping, Vercel deployment
+- **FastAPI + Next.js**: Best for ML teams, complex AI pipelines
+- **TypeScript Backend**: Best for TypeScript teams, edge deployment
+
+### Which database provider is best?
+
+- **Neon**: Serverless Postgres, great for Vercel
+- **Supabase**: Postgres with realtime, auth, storage
+- **Turso**: Edge SQLite, globally distributed
+- **SQLite**: Local development only
+
+### Drizzle or Prisma?
+
+Both are excellent. Choose:
+- **Drizzle**: Lighter, SQL-first, better TypeScript inference
+- **Prisma**: More features, better tooling, larger ecosystem
+
+### Which LLM provider should I start with?
+
+- **OpenAI**: Proven, extensive documentation
+- **Anthropic**: Long context, great for documents
+- **Ollama**: Free, local development, privacy
+
+## Common Issues
+
+### API key not working
+
+1. Check the key is set in `.env.local`:
+
+```bash
+cat .env.local | grep API_KEY
+```
+
+2. Verify the key format is correct
+3. Check the key has required permissions
+
+### Database connection failing
+
+1. Check `DATABASE_URL` is set correctly
+2. Ensure the database is running
+3. Check network connectivity/firewalls
+
+### Vector database not connecting
+
+1. Check `QDRANT_URL` or equivalent is set
+2. Start the vector database container:
+
+```bash
+docker run -p 6333:6333 qdrant/qdrant
+```
+
+### Rate limits
+
+Implement retry logic:
+
+```typescript
+try {
+  await createCompletion({ ... });
+} catch (error) {
+  if (error.status === 429) {
+    await sleep(1000);
+    // retry
+  }
+}
+```
+
+### Build errors
+
+1. Check all environment variables are set
+2. Run type check:
+
+```bash
+pnpm typecheck
+```
+
+3. Clear cache and rebuild:
+
+```bash
+rm -rf .next node_modules
+pnpm install
+pnpm build
+```
+
+## Project Structure
+
+### Where are generated files?
+
+See [Project Structure](/docs/project-structure) for detailed layouts by architecture.
+
+### Can I customize the generated code?
+
+Yes! The generated code is yours. Modify anything to fit your needs.
+
+### How do I add new pages?
+
+For Next.js, create files in `app/`:
+
+```
+app/
+├── about/
+│   └── page.tsx    # /about
+└── blog/
+    └── [slug]/
+        └── page.tsx # /blog/:slug
+```
+
+## Getting Help
+
+- **Documentation**: [Quick Start](/docs), [CLI Reference](/docs/cli)
+- **GitHub Issues**: Report bugs and request features
+- **GitHub Discussions**: Ask questions
+- **Twitter**: [@princepal9120](https://twitter.com/princepal9120)

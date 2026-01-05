@@ -1,0 +1,93 @@
+---
+title: CLI Reference
+description: Complete reference for the AI Stack CLI commands and options
+---
+
+## Overview
+
+The AI Stack CLI scaffolds production-ready AI applications with your choice of architecture, database, authentication, and AI providers.
+
+## Installation
+
+The CLI runs directly via your package manager—no global install required:
+
+```bash
+# npm
+npx create-ai-stack-starter@latest
+
+# pnpm  
+pnpm create ai-stack-starter@latest
+
+# bun
+bun create ai-stack-starter@latest
+```
+
+## Basic Usage
+
+### Interactive Mode
+
+```bash
+npx create-ai-stack-starter@latest my-app
+```
+
+This launches the interactive prompt where you select:
+1. **Architecture** - Next.js Fullstack, FastAPI + Next.js, or TypeScript Backend
+2. **Database** - Neon, Supabase, Turso, or SQLite
+3. **Authentication** - Better Auth, NextAuth, Clerk, or None
+4. **LLM Provider** - OpenAI, Anthropic, Novita AI, or Ollama
+5. **Vector Database** - Qdrant, Weaviate, pgvector, or Pinecone
+6. **Add-ons** - Tailwind, Biome, PWA, Analytics
+
+### Non-Interactive Mode
+
+Skip prompts with flags:
+
+```bash
+npx create-ai-stack-starter@latest my-app \
+  --architecture nextjs \
+  --database neon \
+  --auth better-auth \
+  --llm openai \
+  --yes
+```
+
+## Commands
+
+### `create` (default)
+
+Creates a new AI Stack project.
+
+```bash
+npx create-ai-stack-starter@latest [project-name] [options]
+```
+
+**Arguments:**
+- `project-name` - Name of the project directory (default: `my-ai-app`)
+
+**Options:**
+- See [Options](/docs/cli/options) for complete list
+
+### `builder`
+
+Opens the Stack Builder UI in your browser:
+
+```bash
+npx create-ai-stack-starter@latest builder
+```
+
+## Environment
+
+The CLI respects these environment variables:
+
+| Variable | Description |
+|----------|-------------|
+| `AIS_TELEMETRY_DISABLED` | Set to `1` to disable anonymous telemetry |
+| `NO_COLOR` | Disable colored output |
+| `DEBUG` | Enable verbose logging |
+
+## Next Steps
+
+- [Options](/docs/cli/options) - All available flags
+- [Prompts](/docs/cli/prompts) - Interactive prompt details
+- [Compatibility](/docs/cli/compatibility) - Valid option combinations
+- [Programmatic API](/docs/cli/programmatic-api) - Use as a library

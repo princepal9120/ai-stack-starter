@@ -1,0 +1,119 @@
+---
+title: Compatibility
+description: Valid combinations of architecture, database, and provider options
+---
+
+## Overview
+
+Not all options are compatible with each other. This page documents valid combinations to help you choose the right stack.
+
+## Architecture Compatibility
+
+### Next.js Fullstack
+
+| Option | Compatible Values |
+|--------|-------------------|
+| Database | neon, supabase, turso, sqlite |
+| ORM | drizzle, prisma |
+| Auth | better-auth, nextauth, clerk, none |
+| LLM | openai, anthropic, novita, ollama |
+| Vector | qdrant, weaviate, pgvector, pinecone, none |
+
+### FastAPI + Next.js
+
+| Option | Compatible Values |
+|--------|-------------------|
+| Database | neon, supabase, sqlite (via SQLAlchemy) |
+| ORM | sqlalchemy (default, no choice) |
+| Auth | clerk, none (JWT-based) |
+| LLM | openai, anthropic, novita, ollama |
+| Vector | qdrant, weaviate, pgvector, pinecone |
+
+> **Note:** FastAPI uses SQLAlchemy 2.0 with async support.
+
+### TypeScript Backend
+
+| Option | Compatible Values |
+|--------|-------------------|
+| Backend | hono, nestjs, fastify |
+| Database | neon, supabase, turso, sqlite |
+| ORM | drizzle, prisma |
+| Auth | better-auth, clerk, none |
+| LLM | openai, anthropic, novita, ollama |
+| Vector | qdrant, weaviate, pgvector, pinecone, none |
+
+## Database + ORM Compatibility
+
+| Database | Drizzle | Prisma | SQLAlchemy |
+|----------|---------|--------|------------|
+| Neon (Postgres) | ✅ | ✅ | ✅ |
+| Supabase (Postgres) | ✅ | ✅ | ✅ |
+| Turso (SQLite) | ✅ | ⚠️ | ❌ |
+| SQLite | ✅ | ✅ | ✅ |
+
+> ⚠️ Turso + Prisma requires `@prisma/adapter-libsql`
+
+## Vector DB + Database Compatibility
+
+### pgvector
+
+pgvector requires PostgreSQL, so it's only compatible with:
+- Neon
+- Supabase
+
+```bash
+npx create-ai-stack-starter@latest my-app \
+  --database supabase \
+  --vector pgvector
+```
+
+### Standalone Vector DBs
+
+Qdrant, Weaviate, and Pinecone work with any database:
+
+```bash
+npx create-ai-stack-starter@latest my-app \
+  --database turso \
+  --vector qdrant
+```
+
+## Auth Compatibility
+
+| Auth | Next.js | FastAPI | TypeScript Backend |
+|------|---------|---------|-------------------|
+| Better Auth | ✅ | ❌ | ✅ |
+| NextAuth | ✅ | ❌ | ❌ |
+| Clerk | ✅ | ✅ | ✅ |
+| None | ✅ | ✅ | ✅ |
+
+## Common Valid Stacks
+
+### Production Next.js
+
+```bash
+--architecture nextjs \
+--database neon \
+--auth better-auth \
+--llm openai \
+--vector qdrant
+```
+
+### ML/Python Team
+
+```bash
+--architecture fastapi \
+--database supabase \
+--auth clerk \
+--llm anthropic \
+--vector weaviate
+```
+
+### Edge-First
+
+```bash
+--architecture typescript \
+--backend hono \
+--database turso \
+--auth better-auth \
+--llm openai
+```

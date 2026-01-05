@@ -11,35 +11,42 @@ const { title, description = "" } = Astro.props;
 const sidebar = [
   {
     section: "Getting Started",
-    links: [
-      { text: "Introduction", href: "/docs" },
-      { text: "Quick Start", href: "/docs/quickstart" },
-      { text: "Installation", href: "/docs/installation" },
-    ],
+    links: [{ text: "Quick Start", href: "/docs" }],
   },
   {
-    section: "Core Concepts",
+    section: "CLI",
     links: [
-      { text: "Architecture", href: "/docs/architecture" },
-      { text: "RAG Pipeline", href: "/docs/rag-pipeline" },
-      { text: "LLM Providers", href: "/docs/llm-providers" },
-      { text: "Vector Databases", href: "/docs/vector-databases" },
+      { text: "Overview", href: "/docs/cli" },
+      { text: "Options", href: "/docs/cli/options" },
+      { text: "Prompts", href: "/docs/cli/prompts" },
+      { text: "Compatibility", href: "/docs/cli/compatibility" },
+      { text: "Programmatic API", href: "/docs/cli/programmatic-api" },
     ],
   },
   {
     section: "Guides",
-    links: [{ text: "Use Cases", href: "/docs/use-cases" }],
-  },
-  {
-    section: "Deployment",
     links: [
-      { text: "Docker", href: "/docs/deployment" },
-      { text: "Kubernetes", href: "/docs/kubernetes" },
+      { text: "Overview", href: "/docs/guides" },
+      { text: "LLM Providers", href: "/docs/guides/llm-providers" },
+      { text: "Vector Databases", href: "/docs/guides/vector-databases" },
+      { text: "RAG Pipeline", href: "/docs/guides/rag-pipeline" },
+      { text: "Deployment", href: "/docs/guides/deployment" },
     ],
   },
   {
-    section: "Resources",
-    links: [{ text: "Security", href: "/docs/security" }],
+    section: "Reference",
+    links: [
+      { text: "Project Structure", href: "/docs/project-structure" },
+      { text: "AI Stack Config", href: "/docs/ais-config" },
+      { text: "Analytics", href: "/docs/analytics" },
+    ],
+  },
+  {
+    section: "Community",
+    links: [
+      { text: "Contributing", href: "/docs/contributing" },
+      { text: "FAQ", href: "/docs/faq" },
+    ],
   },
 ];
 

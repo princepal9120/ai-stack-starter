@@ -1,0 +1,170 @@
+---
+title: LLM Providers
+description: Configure and switch between LLM providers in AI Stack
+---
+
+## Overview
+
+AI Stack provides a unified interface for multiple LLM providers. Switch providers with a single environment variable—no code changes required.
+
+## Supported Providers
+
+| Provider | Models | Best For |
+|----------|--------|----------|
+| OpenAI | GPT-4o, GPT-4, GPT-3.5 | General purpose, proven reliability |
+| Anthropic | Claude 3.5, Claude 3 | Long context, safety |
+| Novita AI | Various open-source | Cost optimization |
+| Ollama | Llama, Mistral, etc. | Privacy, local development |
+
+## Configuration
+
+### Environment Variables
+
+```env
+# Provider selection
+LLM_PROVIDER=openai
+
+# Provider API keys
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+NOVITA_API_KEY=...
+
+# For Ollama (local)
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+### OpenAI
+
+```typescript
+// lib/ai/config.ts
+export const llmConfig = {
+  provider: 'openai',
+  model: 'gpt-4o',
+  temperature: 0.7,
+  maxTokens: 4096,
+};
+```
+
+**Available Models:**
+- `gpt-4o` - Latest, multimodal
+- `gpt-4o-mini` - Fast, cost-effective
+- `gpt-4-turbo` - High capability
+- `gpt-3.5-turbo` - Budget option
+
+### Anthropic
+
+```typescript
+export const llmConfig = {
+  provider: 'anthropic',
+  model: 'claude-3-5-sonnet-20241022',
+  temperature: 0.7,
+  maxTokens: 8192,
+};
+```
+
+**Available Models:**
+- `claude-3-5-sonnet-20241022` - Best balance
+- `claude-3-opus-20240229` - Highest capability
+- `claude-3-haiku-20240307` - Fastest
+
+### Novita AI
+
+```typescript
+export const llmConfig = {
+  provider: 'novita',
+  model: 'meta-llama/llama-3.1-70b-instruct',
+  temperature: 0.7,
+};
+```
+
+### Ollama (Local)
+
+```typescript
+export const llmConfig = {
+  provider: 'ollama',
+  model: 'llama3.1',
+  baseUrl: 'http://localhost:11434',
+};
+```
+
+## Switching Providers
+
+Change providers without code modifications:
+
+```bash
+# Development with Ollama
+LLM_PROVIDER=ollama npm run dev
+
+# Production with OpenAI
+LLM_PROVIDER=openai npm run start
+```
+
+## Usage
+
+### Basic Completion
+
+```typescript
+import { createCompletion } from '@/lib/ai';
+
+const response = await createCompletion({
+  messages: [
+    { role: 'system', content: 'You are a helpful assistant.' },
+    { role: 'user', content: 'Hello!' },
+  ],
+});
+```
+
+### Streaming
+
+```typescript
+import { streamCompletion } from '@/lib/ai';
+
+const stream = await streamCompletion({
+  messages: [...],
+});
+
+for await (const chunk of stream) {
+  process.stdout.write(chunk.content);
+}
+```
+
+## Best Practices
+
+1. **Use environment variables** - Never hardcode API keys
+2. **Implement fallbacks** - Switch providers on rate limits
+3. **Monitor costs** - Track token usage per provider
+4. **Test locally** - Use Ollama for development
+
+## Troubleshooting
+
+### API Key Issues
+
+```bash
+# Verify key is set
+echo $OPENAI_API_KEY
+
+# Check in .env.local
+cat .env.local | grep API_KEY
+```
+
+### Rate Limits
+
+Implement exponential backoff:
+
+```typescript
+import { createCompletion } from '@/lib/ai';
+
+async function withRetry(fn, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (error.status === 429) {
+        await new Promise(r => setTimeout(r, 2 ** i * 1000));
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+```

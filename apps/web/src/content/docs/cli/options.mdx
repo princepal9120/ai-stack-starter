@@ -1,0 +1,139 @@
+---
+title: CLI Options
+description: Complete reference for all AI Stack CLI flags and options
+---
+
+## Project Options
+
+### `--architecture`
+
+Select the application architecture:
+
+| Value | Description |
+|-------|-------------|
+| `nextjs` | Next.js 15 fullstack with App Router |
+| `fastapi` | FastAPI backend + Next.js frontend |
+| `typescript` | TypeScript backend (Hono/NestJS/Fastify) |
+
+```bash
+npx create-ai-stack-starter@latest --architecture fastapi
+```
+
+### `--backend`
+
+Select the backend framework (for TypeScript architecture):
+
+| Value | Description |
+|-------|-------------|
+| `hono` | Lightweight, edge-ready |
+| `nestjs` | Enterprise-grade, modular |
+| `fastify` | High-performance |
+
+### `--database`
+
+Select the database provider:
+
+| Value | Description |
+|-------|-------------|
+| `neon` | Serverless Postgres |
+| `supabase` | Postgres with realtime |
+| `turso` | Edge SQLite (libSQL) |
+| `sqlite` | Local SQLite |
+
+### `--orm`
+
+Select the ORM:
+
+| Value | Description |
+|-------|-------------|
+| `drizzle` | TypeScript-first, lightweight |
+| `prisma` | Full-featured, great DX |
+
+## Authentication Options
+
+### `--auth`
+
+Select the authentication provider:
+
+| Value | Description |
+|-------|-------------|
+| `better-auth` | Modern, type-safe, self-hosted |
+| `nextauth` | Flexible OAuth, social logins |
+| `clerk` | Managed auth with great DX |
+| `none` | No authentication |
+
+```bash
+npx create-ai-stack-starter@latest --auth clerk
+```
+
+## AI Options
+
+### `--llm`
+
+Select the LLM provider:
+
+| Value | Description |
+|-------|-------------|
+| `openai` | GPT-4o, GPT-4, GPT-3.5 |
+| `anthropic` | Claude 3.5, Claude 3 |
+| `novita` | Cost-effective inference |
+| `ollama` | Local models |
+
+### `--vector`
+
+Select the vector database:
+
+| Value | Description |
+|-------|-------------|
+| `qdrant` | High-performance, open-source |
+| `weaviate` | AI-native, GraphQL API |
+| `pgvector` | PostgreSQL extension |
+| `pinecone` | Managed, serverless |
+
+```bash
+npx create-ai-stack-starter@latest --llm anthropic --vector qdrant
+```
+
+## Add-ons
+
+### `--addons`
+
+Comma-separated list of add-ons:
+
+| Value | Description |
+|-------|-------------|
+| `tailwind` | Tailwind CSS styling |
+| `biome` | Fast linter and formatter |
+| `pwa` | Progressive Web App support |
+| `analytics` | Usage analytics |
+| `docker` | Docker Compose setup |
+
+```bash
+npx create-ai-stack-starter@latest --addons tailwind,biome,docker
+```
+
+## Behavior Flags
+
+### `--yes` / `-y`
+
+Accept all defaults without prompting:
+
+```bash
+npx create-ai-stack-starter@latest my-app --yes
+```
+
+### `--git`
+
+Initialize a git repository (default: true):
+
+```bash
+npx create-ai-stack-starter@latest --no-git
+```
+
+### `--install`
+
+Install dependencies (default: true):
+
+```bash
+npx create-ai-stack-starter@latest --no-install
+```

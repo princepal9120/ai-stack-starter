@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "index",
+    "cli",
+    "guides",
+    "project-structure",
+    "ais-config",
+    "analytics",
+    "contributing",
+    "faq"
+  ]
+}

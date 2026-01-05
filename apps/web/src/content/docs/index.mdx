@@ -1,0 +1,97 @@
+---
+title: Quick Start
+description: Create your first AI Stack project in minutes
+---
+
+## Philosophy
+
+- **Zero vendor lock-in**: Swap LLMs or Vector DBs with one environment variable.
+- **Production-ready**: Built-in auth, error handling, observability, and cost tracking.
+- **Type-safe**: Full TypeScript + Pydantic across the entire stack.
+- **Free and open source**: Forever.
+
+## Get Started
+
+### Prerequisites
+
+- **Node.js LTS** - [Download from nodejs.org](https://nodejs.org/)
+- **Git** - [Download from git-scm.com](https://git-scm.com/)
+- **Docker** (optional) - For running local vector databases
+
+### CLI Installation
+
+```bash
+# npm
+npx create-ai-stack-starter@latest
+
+# pnpm
+pnpm create ai-stack-starter@latest
+
+# bun
+bun create ai-stack-starter@latest
+```
+
+Follow the interactive prompts to choose your architecture, database, auth, LLM provider, and add-ons.
+
+### Skip Prompts (Default Stack)
+
+```bash
+npx create-ai-stack-starter@latest my-app --yes
+```
+
+### Stack Builder (UI)
+
+Visit [/builder](/builder) to pick your stack visually and copy the generated command.
+
+## Common Setups
+
+### Next.js Fullstack (Recommended)
+
+```bash
+npx create-ai-stack-starter@latest my-app \
+  --architecture nextjs \
+  --database neon \
+  --auth better-auth \
+  --llm openai \
+  --addons tailwind,biome
+```
+
+### FastAPI + Next.js (ML Teams)
+
+```bash
+npx create-ai-stack-starter@latest my-app \
+  --architecture fastapi \
+  --database supabase \
+  --auth clerk \
+  --llm anthropic \
+  --vector qdrant
+```
+
+### TypeScript Backend (Edge)
+
+```bash
+npx create-ai-stack-starter@latest my-app \
+  --architecture typescript \
+  --backend hono \
+  --database turso \
+  --auth better-auth \
+  --llm openai
+```
+
+## Flags Cheat Sheet
+
+See the full list in the [CLI Reference](/docs/cli). Key flags:
+
+- `--architecture`: nextjs, fastapi, typescript
+- `--database`: neon, supabase, turso, sqlite
+- `--auth`: better-auth, nextauth, clerk, none
+- `--llm`: openai, anthropic, novita, ollama
+- `--vector`: qdrant, weaviate, pgvector, pinecone
+- `--addons`: tailwind, biome, pwa, analytics
+
+## Next Steps
+
+- [CLI Reference](/docs/cli) - Flags, usage, and examples
+- [Project Structure](/docs/project-structure) - See how projects are generated
+- [Guides](/docs/guides) - LLM providers, vector databases, RAG pipelines
+- [FAQ](/docs/faq) - Common questions answered

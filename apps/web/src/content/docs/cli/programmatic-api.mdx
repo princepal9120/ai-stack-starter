@@ -1,0 +1,143 @@
+---
+title: Programmatic API
+description: Use AI Stack CLI as a library in your Node.js projects
+---
+
+## Overview
+
+You can use the AI Stack CLI programmatically in your Node.js or build scripts.
+
+## Installation
+
+```bash
+npm install create-ai-stack-starter
+```
+
+## Basic Usage
+
+```typescript
+import { createProject } from 'create-ai-stack-starter';
+
+await createProject({
+  name: 'my-ai-app',
+  architecture: 'nextjs',
+  database: 'neon',
+  auth: 'better-auth',
+  llm: 'openai',
+  vector: 'qdrant',
+  addons: ['tailwind', 'biome'],
+});
+```
+
+## Options Interface
+
+```typescript
+interface CreateProjectOptions {
+  // Required
+  name: string;
+  
+  // Architecture
+  architecture: 'nextjs' | 'fastapi' | 'typescript';
+  backend?: 'hono' | 'nestjs' | 'fastify';
+  
+  // Database
+  database: 'neon' | 'supabase' | 'turso' | 'sqlite';
+  orm?: 'drizzle' | 'prisma';
+  
+  // Auth
+  auth: 'better-auth' | 'nextauth' | 'clerk' | 'none';
+  
+  // AI
+  llm: 'openai' | 'anthropic' | 'novita' | 'ollama';
+  vector?: 'qdrant' | 'weaviate' | 'pgvector' | 'pinecone' | 'none';
+  
+  // Add-ons
+  addons?: Array<'tailwind' | 'biome' | 'pwa' | 'analytics' | 'docker'>;
+  
+  // Behavior
+  git?: boolean;      // Initialize git repo (default: true)
+  install?: boolean;  // Install dependencies (default: true)
+  cwd?: string;       // Working directory
+}
+```
+
+## Advanced Usage
+
+### Custom Output Directory
+
+```typescript
+await createProject({
+  name: 'my-app',
+  architecture: 'nextjs',
+  database: 'neon',
+  auth: 'better-auth',
+  llm: 'openai',
+  cwd: '/custom/path',
+});
+```
+
+### Skip Git and Install
+
+```typescript
+await createProject({
+  name: 'my-app',
+  architecture: 'nextjs',
+  database: 'neon',
+  auth: 'better-auth',
+  llm: 'openai',
+  git: false,
+  install: false,
+});
+```
+
+### With Callback
+
+```typescript
+import { createProject, type Progress } from 'create-ai-stack-starter';
+
+await createProject(
+  {
+    name: 'my-app',
+    architecture: 'nextjs',
+    database: 'neon',
+    auth: 'better-auth',
+    llm: 'openai',
+  },
+  {
+    onProgress: (progress: Progress) => {
+      console.log(`${progress.step}: ${progress.message}`);
+    },
+  }
+);
+```
+
+## Return Value
+
+```typescript
+interface CreateResult {
+  projectPath: string;
+  config: ResolvedConfig;
+}
+
+const result = await createProject({ ... });
+console.log(`Created at: ${result.projectPath}`);
+```
+
+## Error Handling
+
+```typescript
+import { createProject, IncompatibleOptionsError } from 'create-ai-stack-starter';
+
+try {
+  await createProject({
+    name: 'my-app',
+    architecture: 'fastapi',
+    auth: 'better-auth', // Not compatible with FastAPI
+    // ...
+  });
+} catch (error) {
+  if (error instanceof IncompatibleOptionsError) {
+    console.error('Invalid combination:', error.message);
+  }
+}
+```

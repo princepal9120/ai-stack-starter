@@ -1,0 +1,196 @@
+---
+title: Vector Databases
+description: Configure vector storage for semantic search and RAG
+---
+
+## Overview
+
+Vector databases enable semantic search by storing and querying high-dimensional embeddings. AI Stack provides a unified interface for multiple vector database providers.
+
+## Supported Providers
+
+| Provider | Type | Best For |
+|----------|------|----------|
+| Qdrant | Standalone | High performance, open-source |
+| Weaviate | Standalone | AI-native, GraphQL API |
+| pgvector | Extension | Existing Postgres users |
+| Pinecone | Managed | Serverless, no ops |
+
+## Configuration
+
+### Environment Variables
+
+```env
+# Provider selection
+VECTOR_DB=qdrant
+
+# Qdrant
+QDRANT_URL=http://localhost:6333
+QDRANT_API_KEY=...
+
+# Weaviate
+WEAVIATE_URL=http://localhost:8080
+WEAVIATE_API_KEY=...
+
+# Pinecone
+PINECONE_API_KEY=...
+PINECONE_INDEX=ai-stack
+```
+
+## Qdrant
+
+### Local Setup (Docker)
+
+```bash
+docker run -p 6333:6333 qdrant/qdrant
+```
+
+### Configuration
+
+```typescript
+// lib/search/config.ts
+export const vectorConfig = {
+  provider: 'qdrant',
+  url: process.env.QDRANT_URL,
+  collectionName: 'documents',
+  vectorSize: 1536, // OpenAI embeddings
+};
+```
+
+### Usage
+
+```typescript
+import { vectorStore } from '@/lib/search';
+
+// Index documents
+await vectorStore.upsert([
+  { id: '1', vector: embeddings, metadata: { title: 'Doc 1' } },
+]);
+
+// Search
+const results = await vectorStore.search({
+  vector: queryEmbedding,
+  topK: 5,
+});
+```
+
+## Weaviate
+
+### Local Setup (Docker)
+
+```bash
+docker run -p 8080:8080 semitechnologies/weaviate
+```
+
+### Configuration
+
+```typescript
+export const vectorConfig = {
+  provider: 'weaviate',
+  url: process.env.WEAVIATE_URL,
+  className: 'Document',
+};
+```
+
+## pgvector
+
+### Setup
+
+Enable the extension in your Postgres database:
+
+```sql
+CREATE EXTENSION vector;
+
+CREATE TABLE documents (
+  id SERIAL PRIMARY KEY,
+  content TEXT,
+  embedding vector(1536)
+);
+
+CREATE INDEX ON documents 
+  USING ivfflat (embedding vector_cosine_ops);
+```
+
+### Configuration
+
+```typescript
+export const vectorConfig = {
+  provider: 'pgvector',
+  connectionString: process.env.DATABASE_URL,
+  tableName: 'documents',
+};
+```
+
+## Pinecone
+
+### Configuration
+
+```typescript
+export const vectorConfig = {
+  provider: 'pinecone',
+  apiKey: process.env.PINECONE_API_KEY,
+  index: 'ai-stack',
+  namespace: 'production',
+};
+```
+
+## Unified Interface
+
+AI Stack provides a consistent API regardless of provider:
+
+```typescript
+import { createVectorStore } from '@/lib/search';
+
+const store = createVectorStore();
+
+// Works with any configured provider
+await store.upsert(documents);
+const results = await store.search(query, { topK: 10 });
+await store.delete(ids);
+```
+
+## Embedding Models
+
+### OpenAI Embeddings
+
+```typescript
+import { createEmbedding } from '@/lib/ai';
+
+const embedding = await createEmbedding('Hello world');
+// Returns: number[1536]
+```
+
+### Local Embeddings (Ollama)
+
+```typescript
+export const embeddingConfig = {
+  provider: 'ollama',
+  model: 'nomic-embed-text',
+};
+```
+
+## Best Practices
+
+1. **Choose the right distance metric** - Cosine for normalized, Euclidean for absolute
+2. **Batch operations** - Upsert in batches of 100-1000
+3. **Index appropriately** - Use IVF for large datasets
+4. **Monitor performance** - Track query latency
+
+## Troubleshooting
+
+### Connection Issues
+
+```bash
+# Test Qdrant connection
+curl http://localhost:6333/health
+
+# Test Weaviate connection
+curl http://localhost:8080/v1/.well-known/ready
+```
+
+### Dimension Mismatch
+
+Ensure embedding dimensions match vector index:
+- OpenAI `text-embedding-3-small`: 1536
+- OpenAI `text-embedding-3-large`: 3072
+- Ollama `nomic-embed-text`: 768

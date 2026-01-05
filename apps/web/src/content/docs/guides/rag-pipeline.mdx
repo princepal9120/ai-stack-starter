@@ -1,0 +1,240 @@
+---
+title: RAG Pipeline
+description: Build production-ready retrieval-augmented generation
+---
+
+## Overview
+
+Retrieval-Augmented Generation (RAG) enhances LLM responses with relevant context from your documents. AI Stack provides a complete pipeline for document ingestion, chunking, embedding, and retrieval.
+
+## Architecture
+
+```
+Documents → Chunking → Embedding → Vector Store
+                                        ↓
+Query → Embedding → Search → Context → LLM → Response
+```
+
+## Quick Start
+
+```typescript
+import { rag } from '@/lib/rag';
+
+// Ingest documents
+await rag.ingest([
+  { content: 'Your document text...' },
+]);
+
+// Query with retrieval
+const response = await rag.query('What is the refund policy?');
+```
+
+## Document Ingestion
+
+### Supported Formats
+
+| Format | Extension | Library |
+|--------|-----------|---------|
+| PDF | `.pdf` | pdf-parse |
+| Markdown | `.md` | marked |
+| Text | `.txt` | native |
+| HTML | `.html` | cheerio |
+| Word | `.docx` | mammoth |
+
+### Ingestion API
+
+```typescript
+import { ingestDocuments } from '@/lib/rag';
+
+await ingestDocuments({
+  source: './docs',
+  patterns: ['**/*.md', '**/*.pdf'],
+  metadata: {
+    source: 'documentation',
+    version: '1.0',
+  },
+});
+```
+
+## Chunking Strategies
+
+### Fixed Size
+
+```typescript
+const chunks = await chunk(document, {
+  strategy: 'fixed',
+  chunkSize: 512,
+  overlap: 50,
+});
+```
+
+### Semantic
+
+```typescript
+const chunks = await chunk(document, {
+  strategy: 'semantic',
+  maxChunkSize: 1000,
+  minChunkSize: 100,
+});
+```
+
+### By Heading
+
+```typescript
+const chunks = await chunk(document, {
+  strategy: 'heading',
+  levels: ['h1', 'h2'],
+});
+```
+
+## Retrieval
+
+### Basic Search
+
+```typescript
+const results = await rag.search(query, {
+  topK: 5,
+});
+```
+
+### With Filters
+
+```typescript
+const results = await rag.search(query, {
+  topK: 5,
+  filter: {
+    source: 'documentation',
+    version: { $gte: '1.0' },
+  },
+});
+```
+
+### Hybrid Search
+
+Combine semantic and keyword search:
+
+```typescript
+const results = await rag.search(query, {
+  mode: 'hybrid',
+  alpha: 0.7, // 70% semantic, 30% keyword
+  topK: 10,
+});
+```
+
+## Reranking
+
+Improve relevance with cross-encoder reranking:
+
+```typescript
+const results = await rag.search(query, {
+  topK: 20,        // Retrieve more
+  rerank: true,
+  rerankTopK: 5,   // Return top 5 after reranking
+});
+```
+
+## Query Pipeline
+
+### Basic RAG
+
+```typescript
+import { rag } from '@/lib/rag';
+
+const response = await rag.query(question, {
+  topK: 5,
+  systemPrompt: 'Answer based only on the provided context.',
+});
+```
+
+### With Citations
+
+```typescript
+const response = await rag.query(question, {
+  topK: 5,
+  includeCitations: true,
+});
+
+// response.answer: "The refund policy states... [1]"
+// response.citations: [{ id: '1', source: 'policy.md', chunk: '...' }]
+```
+
+### Streaming
+
+```typescript
+const stream = await rag.queryStream(question);
+
+for await (const chunk of stream) {
+  process.stdout.write(chunk.content);
+}
+```
+
+## Configuration
+
+```typescript
+// lib/rag/config.ts
+export const ragConfig = {
+  // Chunking
+  chunkSize: 512,
+  chunkOverlap: 50,
+  
+  // Retrieval
+  topK: 5,
+  scoreThreshold: 0.7,
+  
+  // Reranking
+  rerank: true,
+  rerankModel: 'cross-encoder/ms-marco-MiniLM-L-6-v2',
+  
+  // Generation
+  maxTokens: 1024,
+  temperature: 0.3,
+};
+```
+
+## Best Practices
+
+1. **Chunk size matters** - 256-512 tokens for most use cases
+2. **Use overlap** - 10-20% overlap prevents context loss
+3. **Filter aggressively** - Narrow search space with metadata
+4. **Rerank for quality** - Worth the latency for important queries
+5. **Monitor retrieval** - Log and review what's being retrieved
+
+## Evaluation
+
+### Metrics
+
+```typescript
+import { evaluate } from '@/lib/rag/eval';
+
+const metrics = await evaluate({
+  queries: testQueries,
+  groundTruth: expectedAnswers,
+});
+
+// metrics.precision, metrics.recall, metrics.mrr
+```
+
+### A/B Testing
+
+```typescript
+const resultA = await rag.query(q, { topK: 5 });
+const resultB = await rag.query(q, { topK: 10, rerank: true });
+
+// Log and compare
+```
+
+## Troubleshooting
+
+### Poor Retrieval Quality
+
+1. Check chunk boundaries aren't cutting context
+2. Try different embedding models
+3. Increase topK and use reranking
+4. Add metadata filters
+
+### Slow Queries
+
+1. Add vector index (IVF, HNSW)
+2. Pre-filter with metadata
+3. Reduce topK for initial retrieval
+4. Cache common queries
