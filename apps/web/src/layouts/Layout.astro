@@ -1,28 +1,36 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
+import { SearchModal } from "../components/common/SearchModal";
 
 interface Props {
-	title: string;
-    description?: string;
+  title: string;
+  description?: string;
 }
 
-const { title, description = "Production-ready AI Stack boilerplate with FastAPI & Next.js" } = Astro.props;
+const {
+  title,
+  description = "Production-ready AI Stack boilerplate with FastAPI & Next.js",
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en" class="dark">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-		<title>{title}</title>
-	</head>
-	<body class="bg-background text-foreground selection:bg-primary-500/30">
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body class="bg-background text-foreground selection:bg-primary-500/30">
+    <slot />
+    <SearchModal client:idle />
+  </body>
 </html>

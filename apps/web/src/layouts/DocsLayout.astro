@@ -1,5 +1,7 @@
 ---
 import Layout from "./Layout.astro";
+import { Icon } from "astro-icon/components";
+import Header from "../components/common/Header.astro";
 
 interface Props {
   title: string;
@@ -11,48 +13,96 @@ const { title, description = "" } = Astro.props;
 const sidebar = [
   {
     section: "Getting Started",
-    links: [{ text: "Quick Start", href: "/docs" }],
+    links: [{ text: "Quick Start", href: "/docs", icon: "lucide:rocket" }],
   },
   {
     section: "CLI",
     links: [
-      { text: "Overview", href: "/docs/cli" },
-      { text: "Options", href: "/docs/cli/options" },
-      { text: "Prompts", href: "/docs/cli/prompts" },
-      { text: "Compatibility", href: "/docs/cli/compatibility" },
-      { text: "Programmatic API", href: "/docs/cli/programmatic-api" },
+      { text: "Overview", href: "/docs/cli", icon: "lucide:terminal" },
+      {
+        text: "Options",
+        href: "/docs/cli/options",
+        icon: "lucide:sliders-horizontal",
+      },
+      {
+        text: "Prompts",
+        href: "/docs/cli/prompts",
+        icon: "lucide:message-square",
+      },
+      {
+        text: "Compatibility",
+        href: "/docs/cli/compatibility",
+        icon: "lucide:shield-check",
+      },
+      {
+        text: "Programmatic API",
+        href: "/docs/cli/programmatic-api",
+        icon: "lucide:code-2",
+      },
     ],
   },
   {
     section: "Guides",
     links: [
-      { text: "Overview", href: "/docs/guides" },
-      { text: "LLM Providers", href: "/docs/guides/llm-providers" },
-      { text: "Vector Databases", href: "/docs/guides/vector-databases" },
-      { text: "RAG Pipeline", href: "/docs/guides/rag-pipeline" },
-      { text: "Deployment", href: "/docs/guides/deployment" },
+      { text: "Overview", href: "/docs/guides", icon: "lucide:book" },
+      {
+        text: "LLM Providers",
+        href: "/docs/guides/llm-providers",
+        icon: "lucide:brain-circuit",
+      },
+      {
+        text: "Vector Databases",
+        href: "/docs/guides/vector-databases",
+        icon: "lucide:database",
+      },
+      {
+        text: "RAG Pipeline",
+        href: "/docs/guides/rag-pipeline",
+        icon: "lucide:workflow",
+      },
+      {
+        text: "Deployment",
+        href: "/docs/guides/deployment",
+        icon: "lucide:cloud",
+      },
     ],
   },
   {
     section: "Reference",
     links: [
-      { text: "Project Structure", href: "/docs/project-structure" },
-      { text: "AI Stack Config", href: "/docs/ais-config" },
-      { text: "Analytics", href: "/docs/analytics" },
+      {
+        text: "Project Structure",
+        href: "/docs/project-structure",
+        icon: "lucide:folder-tree",
+      },
+      {
+        text: "AI Stack Config",
+        href: "/docs/ais-config",
+        icon: "lucide:settings",
+      },
+      {
+        text: "Analytics",
+        href: "/docs/analytics",
+        icon: "lucide:bar-chart-3",
+      },
     ],
   },
   {
     section: "Community",
     links: [
-      { text: "Contributing", href: "/docs/contributing" },
-      { text: "FAQ", href: "/docs/faq" },
+      {
+        text: "Contributing",
+        href: "/docs/contributing",
+        icon: "lucide:heart",
+      },
+      { text: "FAQ", href: "/docs/faq", icon: "lucide:help-circle" },
     ],
   },
 ];
 
 const currentPath = Astro.url.pathname;
 
-// Flatten links for prev/next navigation
+// ... (existing flattened links logic) ...
 const allLinks = sidebar.flatMap((group) => group.links);
 const currentIndex = allLinks.findIndex(
   (link) => currentPath === link.href || currentPath === link.href + "/"
@@ -75,125 +125,7 @@ for (const group of sidebar) {
 ---
 
 <Layout title={`${title} - AI Stack Docs`}>
-  {/* Header */}
-  <header
-    class="fixed inset-x-0 top-0 z-50 h-16 border-b border-slate-800 bg-slate-950/90 backdrop-blur-xl"
-  >
-    <div
-      class="mx-auto flex h-full max-w-screen-2xl items-center justify-between px-4 lg:px-8"
-    >
-      <div class="flex items-center gap-6">
-        {/* Mobile menu button */}
-        <button
-          id="mobile-menu-btn"
-          class="lg:hidden p-2 -ml-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
-          aria-label="Toggle menu"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-
-        {/* Logo */}
-        <a
-          href="/"
-          class="flex items-center gap-2 text-xl font-bold text-white"
-        >
-          <span
-            class="text-2xl bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent"
-            >AI Stack</span
-          >
-        </a>
-
-        {/* Nav links */}
-        <nav class="hidden md:flex items-center gap-1">
-          <a
-            href="/docs"
-            class="px-3 py-1.5 text-sm font-medium text-white bg-slate-800 rounded-lg"
-            >Docs</a
-          >
-          <a
-            href="/showcase"
-            class="px-3 py-1.5 text-sm font-medium text-slate-400 hover:text-white transition"
-            >Showcase</a
-          >
-          <a
-            href="https://github.com/princepal9120/ai-stack"
-            class="px-3 py-1.5 text-sm font-medium text-slate-400 hover:text-white transition"
-            target="_blank">GitHub</a
-          >
-        </nav>
-      </div>
-
-      <div class="flex items-center gap-3">
-        {/* Search button */}
-        <button
-          class="hidden md:flex items-center gap-2 px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-400 text-sm hover:border-slate-600 transition"
-        >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          <span>Search docs...</span>
-          <kbd
-            class="ml-2 text-xs border border-slate-600 rounded px-1.5 py-0.5"
-            >/</kbd
-          >
-        </button>
-
-        {/* GitHub link */}
-        <a
-          href="https://github.com/princepal9120/ai-stack"
-          class="p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white"
-          target="_blank"
-          aria-label="GitHub"
-        >
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path
-              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
-            ></path>
-          </svg>
-        </a>
-
-        {/* Theme toggle */}
-        <button
-          class="p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white"
-          aria-label="Toggle theme"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-            ></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </header>
+  <Header activePath="/docs" showSidebarToggle={true} />
 
   {/* Mobile Sidebar Overlay */}
   <div
@@ -202,20 +134,20 @@ for (const group of sidebar) {
   >
   </div>
 
-  <div class="flex pt-16">
+  <div class="flex pt-16 h-full min-h-screen">
     {/* Left Sidebar */}
     <aside
       id="sidebar"
-      class="fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] w-72 -translate-x-full lg:translate-x-0 overflow-y-auto border-r border-slate-800 bg-slate-950 transition-transform duration-300 ease-in-out"
+      class="fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] w-72 -translate-x-full lg:translate-x-0 overflow-y-auto border-r border-slate-800 bg-slate-950/50 backdrop-blur-sm transition-transform duration-300 ease-in-out scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
     >
-      <nav class="px-4 pt-6 pb-10 space-y-6">
+      <nav class="px-3 pt-6 pb-10 space-y-8">
         {
           sidebar.map((group) => (
             <div>
-              <h3 class="font-semibold text-slate-300 text-xs uppercase tracking-wider mb-3 px-2">
+              <h3 class="font-semibold text-slate-400 text-xs uppercase tracking-wider mb-2 px-3">
                 {group.section}
               </h3>
-              <ul class="space-y-1">
+              <ul class="space-y-0.5">
                 {group.links.map((link) => {
                   const isActive =
                     currentPath === link.href ||
@@ -225,12 +157,21 @@ for (const group of sidebar) {
                       <a
                         href={link.href}
                         class:list={[
-                          "block py-2 px-3 text-sm rounded-lg transition-colors",
+                          "group flex items-center gap-2 py-1.5 px-3 text-sm rounded-md transition-all duration-200",
                           isActive
-                            ? "text-white bg-purple-500/20 border-l-2 border-purple-500"
-                            : "text-slate-400 hover:text-white hover:bg-slate-800/50",
+                            ? "text-purple-400 bg-purple-500/10 font-medium"
+                            : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50",
                         ]}
                       >
+                        <Icon
+                          name={link.icon}
+                          class:list={[
+                            "w-4 h-4 transition-colors",
+                            isActive
+                              ? "text-purple-400"
+                              : "text-slate-500 group-hover:text-slate-400",
+                          ]}
+                        />
                         {link.text}
                       </a>
                     </li>

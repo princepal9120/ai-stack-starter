@@ -1,0 +1,123 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  activePath?: string;
+  showSidebarToggle?: boolean;
+}
+
+const { activePath = "", showSidebarToggle = false } = Astro.props;
+---
+
+<header
+  class="fixed inset-x-0 top-0 z-50 h-16 border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/60"
+>
+  <div
+    class="mx-auto flex h-full max-w-screen-2xl items-center justify-between px-4 lg:px-8"
+  >
+    <div class="flex items-center gap-6">
+      {/* Mobile menu button (Optional) */}
+      {
+        showSidebarToggle && (
+          <button
+            id="mobile-menu-btn"
+            class="lg:hidden p-2 -ml-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition"
+            aria-label="Toggle menu"
+          >
+            <Icon name="lucide:menu" class="w-6 h-6" />
+          </button>
+        )
+      }
+
+      {/* Logo */}
+      <a
+        href="/"
+        class="flex items-center gap-2 text-xl font-bold text-white group"
+      >
+        <div
+          class="rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 p-1.5 transition-transform group-hover:scale-105"
+        >
+          <Icon name="lucide:codesandbox" class="w-5 h-5 text-white" />
+        </div>
+        <span
+          class="hidden sm:inline-block bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent"
+          >AI Stack</span
+        >
+      </a>
+
+      {/* Nav links */}
+      <nav class="hidden md:flex items-center gap-1">
+        <a
+          href="/docs"
+          class:list={[
+            "px-3 py-1.5 text-sm font-medium rounded-full transition-all border",
+            activePath.startsWith("/docs")
+              ? "text-purple-400 bg-purple-500/10 border-purple-500/20"
+              : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/50",
+          ]}>Docs</a
+        >
+        <a
+          href="/builder"
+          class:list={[
+            "px-3 py-1.5 text-sm font-medium rounded-full transition-all border",
+            activePath.startsWith("/builder")
+              ? "text-purple-400 bg-purple-500/10 border-purple-500/20"
+              : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/50",
+          ]}>Builder</a
+        >
+        <a
+          href="/showcase"
+          class:list={[
+            "px-3 py-1.5 text-sm font-medium rounded-full transition-all border",
+            activePath.startsWith("/showcase")
+              ? "text-purple-400 bg-purple-500/10 border-purple-500/20"
+              : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/50",
+          ]}>Showcase</a
+        >
+      </nav>
+    </div>
+
+    <div class="flex items-center gap-3">
+      {/* Search button (Common) */}
+      <button
+        id="header-search-btn"
+        class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 text-sm hover:border-slate-700 hover:text-slate-300 transition w-64 justify-between"
+      >
+        <div class="flex items-center gap-2">
+          <Icon name="lucide:search" class="w-3.5 h-3.5" />
+          <span>Search docs...</span>
+        </div>
+        <kbd
+          class="text-[10px] font-mono bg-slate-800 border border-slate-700 rounded px-1.5 py-0.5 text-slate-500"
+          >⌘K</kbd
+        >
+      </button>
+
+      {/* Socials */}
+      <div class="flex items-center gap-1 border-l border-slate-800 pl-3">
+        <a
+          href="https://github.com/princepal9120/ai-stack"
+          class="p-2 hover:bg-slate-800/50 rounded-lg transition text-slate-400 hover:text-white"
+          target="_blank"
+          aria-label="GitHub"
+        >
+          <Icon name="lucide:github" class="w-5 h-5" />
+        </a>
+        <button
+          class="p-2 hover:bg-slate-800/50 rounded-lg transition text-slate-400 hover:text-white"
+          aria-label="Toggle theme"
+        >
+          <Icon name="lucide:moon" class="w-5 h-5" />
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  document
+    .getElementById("header-search-btn")
+    ?.addEventListener("click", () => {
+      window.dispatchEvent(new Event("open-search"));
+    });
+</script>
