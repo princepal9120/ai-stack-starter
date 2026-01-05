@@ -57,15 +57,30 @@ export function PreviewPanel({ stack, selectedFile, onSelectFile }: PreviewPanel
                     body: JSON.stringify(stack),
                 });
 
-                const data = await res.json();
+                const text = await res.text();
+
+                if (!res.ok) {
+                    throw new Error(`Server error (${res.status}): ${text.slice(0, 100)}`);
+                }
+
+                if (!text) {
+                    throw new Error("Empty response from server");
+                }
+
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error("Failed to parse JSON:", text);
+                    throw new Error(`Invalid JSON response: ${text.slice(0, 50)}...`);
+                }
 
                 if (mounted) {
                     if (data.success && data.tree) {
                         setTree(data.tree);
-                        // Expand root children by default
+                        // ... (keep existing expanion logic)
                         if (data.tree.children) {
                             const paths = new Set<string>(["/"]);
-                            // Auto expand top level dirs
                             data.tree.children.forEach((c: any) => {
                                 if (c.type === "directory") paths.add(c.path);
                             });
@@ -76,7 +91,10 @@ export function PreviewPanel({ stack, selectedFile, onSelectFile }: PreviewPanel
                     }
                 }
             } catch (e) {
-                if (mounted) setError("Network error generating preview");
+                if (mounted) {
+                    console.error("Preview generation error:", e);
+                    setError(e instanceof Error ? e.message : "Network error generating preview");
+                }
             } finally {
                 if (mounted) setLoading(false);
             }

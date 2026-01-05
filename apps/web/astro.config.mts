@@ -5,10 +5,15 @@ import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
+import node from '@astrojs/node';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ai-stack.dev',
+  adapter: node({
+    mode: 'standalone',
+  }),
+  output: 'static', // Default to static, opt-in to server with prerender=false
   integrations: [
     tailwind({
       applyBaseStyles: false,
