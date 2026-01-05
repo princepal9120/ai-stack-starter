@@ -1,7 +1,7 @@
 {
   "name": "create-ai-stack-starter",
-  "version": "1.0.2",
-  "description": "Interactive CLI to scaffold AI Stack FastAPI projects",
+  "version": "1.1.0",
+  "description": "Interactive CLI to scaffold AI Stack projects with Next.js, FastAPI, or TypeScript",
   "type": "module",
   "bin": {
     "create-ai-stack-starter": "./dist/index.js"
@@ -11,13 +11,16 @@
     "template"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts",
+    "prebuild": "node scripts/prepare-template.js",
+    "build": "tsup src/index.ts --format esm --dts --clean",
     "dev": "tsup src/index.ts --format esm --watch",
     "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "ai",
+    "nextjs",
     "fastapi",
     "rag",
     "cli",
@@ -26,14 +29,18 @@
     "typescript",
     "openai",
     "anthropic",
-    "qdrant"
+    "vercel-ai-sdk",
+    "drizzle",
+    "better-auth",
+    "create-app"
   ],
   "author": "AI Stack Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/princepal9120/ai-stack"
+    "url": "git+https://github.com/princepal9120/ai-stack.git"
   },
+  "homepage": "https://ai-stack.dev",
   "dependencies": {
     "commander": "^12.1.0",
     "prompts": "^2.4.2",
@@ -45,6 +52,7 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
+    "@types/gradient-string": "^1.1.6",
     "@types/node": "^22.10.2",
     "@types/prompts": "^2.4.9",
     "tsup": "^8.3.5",

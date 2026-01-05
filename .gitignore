@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+
 lib64/
 parts/
 sdist/
@@ -111,3 +111,4 @@ media/
 # Coverage
 coverage/
 *.lcov
+apps/cli/template/apps/
