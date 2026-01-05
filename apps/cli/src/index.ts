@@ -38,10 +38,10 @@ interface ProjectConfig {
     projectName: string;
     backendType: 'nextjs' | 'fastapi' | 'typescript';
     tsFramework?: 'hono' | 'fastify' | 'nestjs';
+    database: 'neon' | 'supabase' | 'turso' | 'sqlite';
+    auth: 'better-auth' | 'nextauth' | 'clerk' | 'none';
     llmProvider: 'openai' | 'anthropic' | 'novita';
-    vectorDb: 'qdrant' | 'weaviate' | 'pgvector';
-    authProvider: 'clerk' | 'nextauth' | 'jwt';
-    orm?: 'drizzle' | 'prisma';
+    addons: string[];
 }
 
 /**
@@ -63,7 +63,7 @@ const program = new Command();
 program
     .name('create-ai-stack-starter')
     .description('Create a new AI Stack project with Next.js, FastAPI, or TypeScript backend')
-    .version('1.1.0');
+    .version('1.2.0');
 
 program
     .argument('[project-directory]', 'Project directory name')
@@ -93,9 +93,10 @@ program
             config = {
                 projectName: projName,
                 backendType: 'nextjs',
+                database: 'neon',
+                auth: 'better-auth',
                 llmProvider: 'openai',
-                vectorDb: 'qdrant',
-                authProvider: 'clerk',
+                addons: ['tailwind'],
             };
             console.log(chalk.cyan(`Creating Next.js Fullstack project: ${projName}`));
         }
@@ -105,9 +106,10 @@ program
             config = {
                 projectName: projName,
                 backendType: 'fastapi',
+                database: 'neon',
+                auth: 'better-auth',
                 llmProvider: 'openai',
-                vectorDb: 'qdrant',
-                authProvider: 'clerk',
+                addons: ['tailwind'],
             };
             console.log(chalk.cyan(`Creating FastAPI + Next.js project: ${projName}`));
         }
@@ -131,9 +133,9 @@ program
                         name: 'backendType',
                         message: 'Which architecture would you like to use?',
                         choices: [
-                            { title: '🌐 Next.js Fullstack', value: 'nextjs', description: 'Unified App Router, Vercel AI SDK, Drizzle, Better Auth' },
-                            { title: '🐍 FastAPI (Python)', value: 'fastapi', description: 'Async Python Backend + Next.js Frontend' },
-                            { title: '📦 TypeScript Backend', value: 'typescript', description: 'Node.js Backend (Hono/NestJS) + Next.js Frontend' },
+                            { title: '🌐 Next.js Fullstack', value: 'nextjs', description: 'App Router, Vercel AI SDK, Drizzle ORM' },
+                            { title: '🐍 FastAPI (Python)', value: 'fastapi', description: 'Async Python + Next.js Frontend' },
+                            { title: '📦 TypeScript Backend', value: 'typescript', description: 'Node.js (Hono/NestJS) + Next.js' },
                         ],
                         initial: 0,
                     },
@@ -142,9 +144,33 @@ program
                         name: 'tsFramework',
                         message: 'Which TypeScript framework?',
                         choices: [
-                            { title: 'Hono', value: 'hono', description: 'Edge-first, Cloudflare Workers' },
-                            { title: 'Fastify', value: 'fastify', description: 'High performance, 50K req/s' },
-                            { title: 'NestJS', value: 'nestjs', description: 'Enterprise, dependency injection' },
+                            { title: '⚡ Hono', value: 'hono', description: 'Edge-first, Cloudflare Workers' },
+                            { title: '🚀 Fastify', value: 'fastify', description: 'High performance, 50K req/s' },
+                            { title: '🏢 NestJS', value: 'nestjs', description: 'Enterprise, dependency injection' },
+                        ],
+                        initial: 0,
+                    },
+                    {
+                        type: (prev: string, values: any) => values.backendType === 'nextjs' ? 'select' : null,
+                        name: 'database',
+                        message: 'Which database?',
+                        choices: [
+                            { title: '🐘 Neon (PostgreSQL)', value: 'neon', description: 'Serverless Postgres, branching' },
+                            { title: '🔥 Supabase', value: 'supabase', description: 'Postgres + Auth + Realtime' },
+                            { title: '🪶 Turso (SQLite)', value: 'turso', description: 'Edge SQLite, ultra-fast' },
+                            { title: '📦 Local SQLite', value: 'sqlite', description: 'Development only' },
+                        ],
+                        initial: 0,
+                    },
+                    {
+                        type: (prev: string, values: any) => values.backendType === 'nextjs' ? 'select' : null,
+                        name: 'auth',
+                        message: 'Which authentication?',
+                        choices: [
+                            { title: '🔐 Better Auth', value: 'better-auth', description: 'Modern, type-safe, self-hosted' },
+                            { title: '🔑 NextAuth.js', value: 'nextauth', description: 'Popular, flexible, OAuth' },
+                            { title: '🎫 Clerk', value: 'clerk', description: 'Managed auth, great DX' },
+                            { title: '🚫 None', value: 'none', description: 'Skip auth setup' },
                         ],
                         initial: 0,
                     },
@@ -153,11 +179,23 @@ program
                         name: 'llmProvider',
                         message: 'Which LLM provider?',
                         choices: [
-                            { title: 'OpenAI', value: 'openai', description: 'GPT-4 Turbo' },
-                            { title: 'Anthropic', value: 'anthropic', description: 'Claude 3.5 Sonnet' },
-                            { title: 'Novita AI', value: 'novita', description: 'Cheaper, uncensored' },
+                            { title: '🤖 OpenAI', value: 'openai', description: 'GPT-4 Turbo, best quality' },
+                            { title: '🧠 Anthropic', value: 'anthropic', description: 'Claude 3.5 Sonnet' },
+                            { title: '💰 Novita AI', value: 'novita', description: 'Cheaper, uncensored' },
                         ],
                         initial: 0,
+                    },
+                    {
+                        type: 'multiselect',
+                        name: 'addons',
+                        message: 'Select add-ons (space to toggle):',
+                        choices: [
+                            { title: '🎨 Tailwind CSS', value: 'tailwind', selected: true },
+                            { title: '🧹 Biome (Linting)', value: 'biome' },
+                            { title: '📱 PWA Support', value: 'pwa' },
+                            { title: '📊 Vercel Analytics', value: 'analytics' },
+                        ],
+                        hint: '- Space to select, Enter to confirm',
                     },
                     {
                         type: 'confirm',
@@ -176,9 +214,10 @@ program
                     projectName: projectDirectory || responses.projectName,
                     backendType: responses.backendType,
                     tsFramework: responses.tsFramework,
+                    database: responses.database || 'neon',
+                    auth: responses.auth || 'better-auth',
                     llmProvider: responses.llmProvider,
-                    vectorDb: 'qdrant',
-                    authProvider: 'clerk',
+                    addons: responses.addons || ['tailwind'],
                 };
                 initGit = responses.initGit;
 
@@ -304,6 +343,20 @@ async function scaffoldProject(config: ProjectConfig, options: any, initGit: boo
 
         console.log(chalk.bold('Your AI app is ready!'));
         console.log();
+
+        // Configuration summary
+        console.log(chalk.cyan('Configuration:'));
+        console.log(`  ${chalk.dim('Architecture:')}  ${config.backendType}`);
+        if (config.backendType === 'nextjs') {
+            console.log(`  ${chalk.dim('Database:')}     ${config.database}`);
+            console.log(`  ${chalk.dim('Auth:')}         ${config.auth}`);
+        }
+        console.log(`  ${chalk.dim('LLM:')}          ${config.llmProvider}`);
+        if (config.addons.length > 0) {
+            console.log(`  ${chalk.dim('Add-ons:')}      ${config.addons.join(', ')}`);
+        }
+        console.log();
+
         console.log(chalk.cyan('Next steps:'));
         console.log();
         console.log(`  ${chalk.bold('cd')} ${config.projectName}`);

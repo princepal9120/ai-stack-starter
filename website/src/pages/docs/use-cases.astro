@@ -1,0 +1,199 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CardGrid from "../../components/docs/CardGrid.astro";
+import Card from "../../components/docs/Card.astro";
+import CodeBlock from "../../components/docs/CodeBlock.astro";
+---
+
+<DocsLayout title="Use Cases">
+  <h1>Use Cases</h1>
+
+  <p>
+    AI Stack is designed for <strong>production AI applications</strong>. Here
+    are real-world scenarios where teams use AI Stack to build and ship faster.
+  </p>
+
+  <CardGrid cols={2}>
+    <Card title="AI Customer Support" icon="💬">
+      <p>
+        Build intelligent chatbots that understand your product documentation
+        and provide accurate, cited answers 24/7.
+      </p>
+    </Card>
+    <Card title="Document Q&A" icon="📚">
+      <p>
+        Create internal knowledge bases that let employees query company
+        documents in natural language.
+      </p>
+    </Card>
+    <Card title="Semantic Search" icon="🔍">
+      <p>
+        Replace basic keyword search with AI-powered semantic understanding
+        across your entire content library.
+      </p>
+    </Card>
+    <Card title="AI Assistants" icon="🤖">
+      <p>
+        Build domain-specific assistants with memory, tool use, and multi-turn
+        conversations.
+      </p>
+    </Card>
+  </CardGrid>
+
+  <hr />
+
+  <h2>💬 AI Customer Support</h2>
+
+  <p>
+    Traditional chatbots fail when customers ask questions outside predefined
+    flows. AI Stack enables intelligent support that actually understands your
+    product.
+  </p>
+
+  <h3>How It Works</h3>
+  <ol>
+    <li>
+      <strong>Ingest</strong> your documentation, FAQs, and support articles
+    </li>
+    <li><strong>Embed</strong> content into your vector database</li>
+    <li>
+      <strong>Query</strong> with semantic search to find relevant context
+    </li>
+    <li><strong>Generate</strong> accurate answers with citations</li>
+  </ol>
+
+  <CodeBlock
+    code={`// Example: Support chatbot query
+const response = await ai.chat({
+  messages: [{ role: "user", content: "How do I reset my password?" }],
+  context: await rag.search("password reset", { topK: 5 }),
+  system: "You are a helpful support agent. Cite sources when answering."
+});
+
+// Response includes source citations
+console.log(response.text);
+console.log(response.sources); // ["docs/auth/password-reset.md"]`}
+    lang="typescript"
+  />
+
+  <Callout type="tip">
+    <p>
+      <strong>Pro Tip:</strong> Use the reranking feature to improve answer quality
+      by 30-40% for complex queries.
+    </p>
+  </Callout>
+
+  <hr />
+
+  <h2>📚 Internal Knowledge Base</h2>
+
+  <p>
+    Large organizations lose productivity when employees can't find information.
+    AI Stack powers searchable knowledge bases that understand natural language.
+  </p>
+
+  <h3>Ideal For</h3>
+  <ul>
+    <li>HR policy questions</li>
+    <li>Engineering documentation</li>
+    <li>Sales enablement materials</li>
+    <li>Onboarding resources</li>
+  </ul>
+
+  <CodeBlock
+    code={`// Ingest company documents
+await rag.ingest({
+  source: "confluence",
+  spaces: ["Engineering", "HR", "Sales"],
+  chunkSize: 512,
+  overlap: 50,
+});
+
+// Natural language query
+const result = await rag.query(
+  "What's our policy on remote work?",
+  { filters: { space: "HR" } }
+);`}
+    lang="typescript"
+  />
+
+  <hr />
+
+  <h2>🔍 Semantic Search</h2>
+
+  <p>
+    Move beyond keyword matching. AI Stack enables semantic search that
+    understands intent, synonyms, and context.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Keyword Search</th>
+        <th>Semantic Search</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>❌ "refund" misses "return policy"</td>
+        <td>✅ Finds related concepts</td>
+      </tr>
+      <tr>
+        <td>❌ Requires exact word matches</td>
+        <td>✅ Understands intent</td>
+      </tr>
+      <tr>
+        <td>❌ No context awareness</td>
+        <td>✅ Considers surrounding meaning</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>🤖 AI Assistants</h2>
+
+  <p>
+    Build specialized AI assistants that remember context, use tools, and
+    maintain conversations across sessions.
+  </p>
+
+  <h3>Features</h3>
+  <ul>
+    <li>
+      <strong>Memory:</strong> Remember user preferences and past interactions
+    </li>
+    <li><strong>Tool Use:</strong> Execute code, call APIs, search the web</li>
+    <li>
+      <strong>Multi-turn:</strong> Maintain context across conversation turns
+    </li>
+    <li>
+      <strong>Guardrails:</strong> Stay on-topic and avoid harmful outputs
+    </li>
+  </ul>
+
+  <CodeBlock
+    code={`// AI Assistant with tools
+const assistant = ai.createAssistant({
+  name: "Data Analyst",
+  systemPrompt: "You help users analyze their data.",
+  tools: [
+    { name: "runSQL", fn: executeQuery },
+    { name: "createChart", fn: generateChart },
+  ],
+  memory: true, // Enable conversation memory
+});
+
+await assistant.chat("Show me sales by region last quarter");`}
+    lang="typescript"
+  />
+
+  <Callout type="note">
+    <p>
+      Ready to build? Start with our <a href="/docs/quickstart"
+        >Quick Start Guide</a
+      >.
+    </p>
+  </Callout>
+</DocsLayout>

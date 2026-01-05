@@ -1,0 +1,219 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/docs/Callout.astro";
+import CardGrid from "../../components/docs/CardGrid.astro";
+import Card from "../../components/docs/Card.astro";
+---
+
+<DocsLayout title="Security">
+  <h1>Security</h1>
+
+  <p>
+    AI Stack is built with <strong>security as a first-class concern</strong>.
+    We follow industry best practices to protect your data and your users.
+  </p>
+
+  <Callout type="important">
+    <p>
+      <strong>Your data stays yours.</strong> AI Stack is self-hosted — your documents,
+      embeddings, and conversations never leave your infrastructure.
+    </p>
+  </Callout>
+
+  <hr />
+
+  <h2>Security Features</h2>
+
+  <CardGrid cols={2}>
+    <Card title="Authentication" icon="🔐">
+      <p>
+        Multiple battle-tested providers: Better Auth, NextAuth, Clerk. Session
+        management, MFA support, OAuth flows.
+      </p>
+    </Card>
+    <Card title="Authorization" icon="🛡️">
+      <p>
+        Role-based access control (RBAC) ready. Protect routes, APIs, and
+        resources by user roles and permissions.
+      </p>
+    </Card>
+    <Card title="Data Encryption" icon="🔒">
+      <p>
+        TLS 1.3 for data in transit. Database-level encryption at rest. Secure
+        secrets management via environment variables.
+      </p>
+    </Card>
+    <Card title="API Security" icon="🚧">
+      <p>
+        Rate limiting, CORS configuration, input validation with Zod/Pydantic,
+        and protection against common attacks.
+      </p>
+    </Card>
+  </CardGrid>
+
+  <hr />
+
+  <h2>Authentication</h2>
+
+  <p>
+    AI Stack supports multiple authentication providers, each with different
+    trade-offs for security and convenience:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Provider</th>
+        <th>Best For</th>
+        <th>Security Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Better Auth</strong></td>
+        <td>Self-hosted, type-safe</td>
+        <td>Full control, audit logs, no third-party data sharing</td>
+      </tr>
+      <tr>
+        <td><strong>NextAuth.js</strong></td>
+        <td>Flexibility, many providers</td>
+        <td>Session JWT or database, configurable security</td>
+      </tr>
+      <tr>
+        <td><strong>Clerk</strong></td>
+        <td>Managed, great DX</td>
+        <td>SOC 2 Type 2 certified, enterprise security</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>Data Handling</h2>
+
+  <h3>Document Ingestion</h3>
+  <ul>
+    <li>Documents are processed locally in your infrastructure</li>
+    <li>Embeddings are stored in your chosen vector database</li>
+    <li>Original documents can be stored or discarded after processing</li>
+    <li>Chunk metadata includes source tracking for auditing</li>
+  </ul>
+
+  <h3>LLM Interactions</h3>
+  <ul>
+    <li>API keys are stored as environment variables, never in code</li>
+    <li>Requests to LLM providers use TLS encryption</li>
+    <li>Conversation history can be stored locally or discarded</li>
+    <li>Consider using Ollama for fully local, air-gapped deployments</li>
+  </ul>
+
+  <Callout type="tip">
+    <p>
+      <strong>Air-gapped Deployments:</strong> For maximum security, use Ollama for
+      local LLM inference and self-hosted Qdrant for vectors. No external API calls
+      required.
+    </p>
+  </Callout>
+
+  <hr />
+
+  <h2>API Security</h2>
+
+  <h3>Built-in Protections</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Protection</th>
+        <th>Implementation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Rate Limiting</td>
+        <td>Configurable per-endpoint limits</td>
+      </tr>
+      <tr>
+        <td>CORS</td>
+        <td>Strict origin validation</td>
+      </tr>
+      <tr>
+        <td>Input Validation</td>
+        <td>Zod (TypeScript) / Pydantic (Python)</td>
+      </tr>
+      <tr>
+        <td>SQL Injection</td>
+        <td>Parameterized queries via ORM</td>
+      </tr>
+      <tr>
+        <td>XSS</td>
+        <td>React auto-escaping, CSP headers</td>
+      </tr>
+      <tr>
+        <td>CSRF</td>
+        <td>Token-based protection on mutations</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>Deployment Security</h2>
+
+  <h3>Recommendations</h3>
+
+  <ol>
+    <li>
+      <strong>Use HTTPS everywhere</strong> — Set up TLS certificates for all endpoints
+    </li>
+    <li>
+      <strong>Rotate secrets regularly</strong> — API keys, database passwords, JWT
+      secrets
+    </li>
+    <li>
+      <strong>Enable audit logging</strong> — Track who accessed what and when
+    </li>
+    <li>
+      <strong>Use network isolation</strong> — Keep databases in private subnets
+    </li>
+    <li>
+      <strong>Implement backup strategy</strong> — Regular encrypted backups of data
+    </li>
+  </ol>
+
+  <hr />
+
+  <h2>Compliance Considerations</h2>
+
+  <p>AI Stack's self-hosted architecture helps with compliance requirements:</p>
+
+  <ul>
+    <li>
+      <strong>GDPR:</strong> Data stays in your infrastructure, you control retention
+    </li>
+    <li>
+      <strong>HIPAA:</strong> Possible with proper deployment (BAA with cloud provider)
+    </li>
+    <li><strong>SOC 2:</strong> Self-hosted model = you own the controls</li>
+  </ul>
+
+  <Callout type="note">
+    <p>
+      For enterprise compliance requirements, consider our <a
+        href="mailto:support@ai-stack.dev">enterprise support</a
+      > options.
+    </p>
+  </Callout>
+
+  <hr />
+
+  <h2>Reporting Vulnerabilities</h2>
+
+  <p>If you discover a security vulnerability, please report it responsibly:</p>
+
+  <ul>
+    <li>Email: <strong>security@ai-stack.dev</strong></li>
+    <li>Do not disclose publicly until we've addressed the issue</li>
+    <li>We'll acknowledge receipt within 48 hours</li>
+  </ul>
+</DocsLayout>
