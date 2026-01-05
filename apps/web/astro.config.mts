@@ -6,6 +6,8 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
 import node from '@astrojs/node';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 // https://astro.build/config
 export default defineConfig({
@@ -28,5 +30,9 @@ export default defineConfig({
       theme: 'github-dark',
       wrap: true,
     },
+    rehypePlugins: [
+      rehypeSlug, // Automatically add IDs to headings
+      [rehypeAutolinkHeadings, { behavior: 'wrap' }], // Make headings linkable
+    ],
   },
 });

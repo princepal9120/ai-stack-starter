@@ -1,77 +1,70 @@
-const features = [
-    {
-        name: 'Zero Vendor Lock-in',
-        icon: '🔓',
-        color: 'text-purple-400',
-        description: 'Swap LLMs (OpenAI, Anthropic, Gemini, Ollama) and Vector DBs (Qdrant, Weaviate, pgvector) with a single environment variable.'
-    },
-    {
-        name: 'Production RAG Pipeline',
-        icon: '🔗',
-        color: 'text-blue-400',
-        description: 'End-to-end ingestion, semantic chunking, embeddings, vector search, and streaming generation. Production-ready from day one.'
-    },
-    {
-        name: 'Dual Authentication',
-        icon: '🔐',
-        color: 'text-green-400',
-        description: 'Modern Clerk auth for frontend users + custom JWT for secure API access. Both work seamlessly together.'
-    },
-    {
-        name: 'Full-Stack Typesafety',
-        icon: '🛡️',
-        color: 'text-yellow-400',
-        description: 'Pydantic V2 models on FastAPI backend, TypeScript throughout the Next.js frontend. Catch errors before runtime.'
-    },
-    {
-        name: 'Infrastructure Ready',
-        icon: '🐳',
-        color: 'text-cyan-400',
-        description: 'Docker Compose for local development with PostgreSQL, Redis, and Qdrant. Ready for cloud deployment.'
-    },
-    {
-        name: 'Modern Stack',
-        icon: '⚡',
-        color: 'text-red-400',
-        description: 'FastAPI async backend, Next.js 15 with App Router, Tailwind CSS, and SQLAlchemy 2.0 with Alembic migrations.'
-    }
-];
+"use client";
 
-export default function Features() {
+import { FiLock, FiZap, FiShield, FiHeart, FiTrendingUp, FiCode } from "react-icons/fi";
+import { FeatureCard } from "./ui/feature-card";
+
+
+export default function FeaturesSection() {
+    const features = [
+        {
+            icon: <FiLock className="w-6 h-6" />,
+            title: "Zero Lock-in",
+            description:
+                "Swap LLMs or Vector DBs with one environment variable. No code changes required.",
+            variant: "blue" as const,
+        },
+        {
+            icon: <FiZap className="w-6 h-6" />,
+            title: "Production-Ready",
+            description:
+                "Built-in auth, error handling, observability, and cost tracking from day one.",
+            variant: "purple" as const,
+        },
+        {
+            icon: <FiShield className="w-6 h-6" />,
+            title: "Type Safe",
+            description:
+                "Full TypeScript + Pydantic across the entire stack with strict type checking.",
+            variant: "default" as const,
+        },
+        {
+            icon: <FiHeart className="w-6 h-6" />,
+            title: "Open Source",
+            description:
+                "Free and open source forever. MIT licensed for commercial use.",
+            variant: "green" as const,
+        },
+        {
+            icon: <FiTrendingUp className="w-6 h-6" />,
+            title: "Scalable",
+            description:
+                "From MVP to enterprise. Horizontal scaling built into the architecture.",
+            variant: "purple" as const,
+        },
+        {
+            icon: <FiCode className="w-6 h-6" />,
+            title: "Developer First",
+            description:
+                "Exceptional DX with hot reload, type hints, and comprehensive documentation.",
+            variant: "blue" as const,
+        },
+    ];
+
     return (
-        <section className="py-24 px-4">
-            <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-16">
-                    <p className="text-purple-400 text-sm font-medium mb-2">⚡ FEATURES</p>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                        Everything you need for{' '}
-                        <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                            production AI
-                        </span>
-                    </h2>
-                    <p className="text-slate-400 max-w-xl mx-auto">
-                        Stop wiring together AI infrastructure. Start building your product.
-                    </p>
-                </div>
+        <section className="py-32 px-4 max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+                <h2 className="text-3xl lg:text-5xl font-bold mb-6 bg-gradient-to-br from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                    Everything you need to ship
+                </h2>
+                <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+                    Stop wasting weeks on boilerplate. We've handled the hard parts of building production AI applications.
+                </p>
+            </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {features.map((feature) => (
-                        <div
-                            key={feature.name}
-                            className="group bg-slate-900/50 border border-slate-800 rounded-xl p-6 hover:border-purple-500/50 hover:bg-slate-800/30 transition-all duration-300"
-                        >
-                            <div className="flex items-center gap-3 mb-4">
-                                <span className={`text-2xl`}>{feature.icon}</span>
-                                <h3 className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">
-                                    {feature.name}
-                                </h3>
-                            </div>
-                            <p className="text-slate-400 text-sm leading-relaxed">
-                                {feature.description}
-                            </p>
-                        </div>
-                    ))}
-                </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {features.map((feature) => (
+                    <FeatureCard key={feature.title} {...feature} />
+                ))}
             </div>
         </section>
     );

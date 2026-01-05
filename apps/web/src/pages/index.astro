@@ -1,12 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/common/Header.astro";
-import { Icon } from "astro-icon/components";
+import FeaturesSection from "../components/Features";
+import TechStackSection from "../components/TechStackSection";
+import StatsSection from "../components/StatsSection";
 ---
 
-<Layout
-  title="AI Stack - Production-ready RAG boilerplate with zero vendor lock-in"
->
+<Layout title="AI Stack - Production-ready AI apps in minutes">
   <Header activePath="/" variant="landing" />
 
   <main class="relative bg-slate-950 text-white overflow-hidden">
@@ -26,336 +26,285 @@ import { Icon } from "astro-icon/components";
     <section
       class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 max-w-7xl mx-auto text-center"
     >
+      {/* Badge */}
       <div
-        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-sm text-slate-400 mb-8 animate-fade-in-up"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/50 border border-slate-800/50 backdrop-blur-sm text-sm text-slate-300 mb-8 animate-fade-in-up"
       >
         <span class="relative flex h-2 w-2">
           <span
-            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"
           ></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"
           ></span>
         </span>
-        v1.0 is now available
+        <span class="font-medium">v1.0 is now available</span>
       </div>
 
+      {/* Headline */}
       <h1
-        class="text-5xl lg:text-7xl font-bold tracking-tight mb-8 bg-gradient-to-br from-white via-slate-200 to-slate-500 bg-clip-text text-transparent"
+        class="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight"
       >
-        Build Production AI Apps<br class="hidden lg:block" /> in Minutes, Not Months
+        <span
+          class="bg-gradient-to-br from-white via-slate-100 to-slate-400 bg-clip-text text-transparent"
+        >
+          Build Production AI Apps
+        </span>
+        <br />
+        <span
+          class="bg-gradient-to-r from-purple-400 via-purple-300 to-blue-400 bg-clip-text text-transparent"
+        >
+          in Minutes, Not Months
+        </span>
       </h1>
 
-      <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+      {/* Subheadline */}
+      <p
+        class="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed"
+      >
         The full-stack boilerplate for AI Engineering. <span
-          class="text-slate-300">Next.js or FastAPI</span
-        >, zero vendor lock-in, and fully typed from database to frontend.
+          class="text-slate-300 font-medium">Zero vendor lock-in</span
+        >, fully typed, and production-ready from day one.
       </p>
 
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      {/* CTAs */}
+      <div
+        class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
+      >
         <a
           href="/builder"
-          class="w-full sm:w-auto px-8 py-4 bg-white text-slate-950 rounded-xl font-bold text-lg hover:bg-slate-200 transition-all flex items-center justify-center gap-2 group"
+          class="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 flex items-center justify-center gap-2"
         >
-          <Icon
-            name="lucide:hammer"
+          <svg
             class="w-5 h-5 group-hover:rotate-12 transition-transform"
-          />
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+            ></path>
+          </svg>
           Start Building
         </a>
         <a
           href="/docs"
-          class="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-xl font-medium text-lg border border-slate-800 hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+          class="w-full sm:w-auto px-8 py-4 bg-slate-900/80 hover:bg-slate-800 backdrop-blur-sm text-white rounded-xl font-semibold text-lg border border-slate-800 hover:border-slate-700 transition-all flex items-center justify-center gap-2"
         >
           Read Documentation
-          <Icon name="lucide:arrow-right" class="w-4 h-4" />
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path>
+          </svg>
         </a>
       </div>
 
-      {/* Code Preview / Visual */}
-      <div class="mt-20 relative mx-auto max-w-4xl">
+      {/* Terminal Preview */}
+      <div class="relative mx-auto max-w-4xl">
         <div
-          class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10"
+          class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10 pointer-events-none"
         >
         </div>
         <div
-          class="rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur shadow-2xl overflow-hidden text-left"
+          class="rounded-2xl border border-slate-800/50 bg-slate-900/30 backdrop-blur-xl shadow-2xl overflow-hidden text-left"
         >
+          {/* Terminal Header */}
           <div
-            class="flex items-center gap-2 px-4 py-3 border-b border-slate-800 bg-slate-900"
+            class="flex items-center gap-2 px-4 py-3 border-b border-slate-800/50 bg-slate-900/50"
           >
             <div
-              class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"
+              class="w-3 h-3 rounded-full bg-red-500/30 border border-red-500/50"
             >
             </div>
             <div
-              class="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"
+              class="w-3 h-3 rounded-full bg-yellow-500/30 border border-yellow-500/50"
             >
             </div>
             <div
-              class="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"
+              class="w-3 h-3 rounded-full bg-green-500/30 border border-green-500/50"
             >
             </div>
             <div class="ml-2 text-xs text-slate-500 font-mono">terminal</div>
           </div>
-          <div class="p-6 font-mono text-sm text-slate-300 leading-7">
-            <div class="flex gap-2">
-              <span class="text-green-400">➜</span>
+
+          {/* Terminal Content */}
+          <div class="p-8 font-mono text-sm leading-7">
+            <div class="flex gap-2 text-slate-300">
+              <span class="text-purple-400">➜</span>
               <span>npx create-ai-stack@latest</span>
             </div>
-            <div class="text-slate-500 mt-2">
+
+            <div class="text-slate-500 mt-4">
               ? Which architecture would you like to use?
             </div>
-            <div class="text-blue-400">❯ Next.js Fullstack (React + Node)</div>
-            <div class="text-slate-500 ml-4">
+            <div class="text-purple-400 flex items-center gap-2">
+              <span>❯</span>
+              <span>Next.js Fullstack (React + Node)</span>
+            </div>
+            <div class="text-slate-600 ml-4">
               FastAPI Backend (Python + React)
             </div>
 
-            <div class="text-slate-500 mt-2">? Select your LLM provider:</div>
-            <div class="text-blue-400">❯ OpenAI (GPT-4)</div>
-            <div class="text-slate-500 ml-4">Anthropic (Claude 3)</div>
-            <div class="text-slate-500 ml-4">Ollama (Local Llama 3)</div>
+            <div class="text-slate-500 mt-4">? Select your LLM provider:</div>
+            <div class="text-purple-400 flex items-center gap-2">
+              <span>❯</span>
+              <span>OpenAI (GPT-4)</span>
+            </div>
+            <div class="text-slate-600 ml-4">Anthropic (Claude 3)</div>
+            <div class="text-slate-600 ml-4">Ollama (Local Llama 3)</div>
 
-            <div class="mt-4 text-green-400">
-              ✔ Project created successfully! 🚀
+            <div class="mt-6 flex items-center gap-2 text-green-400">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span>Project created successfully! 🚀</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    {/* Social Proof */}
-    <section class="py-12 border-y border-slate-900 bg-slate-950/50">
-      <div class="max-w-7xl mx-auto px-4 text-center">
-        <p
-          class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-8"
-        >
-          Trusted by AI Engineers at
-        </p>
-        <div class="flex flex-wrap justify-center gap-12 grayscale opacity-50">
-          {
-            /* Simple text placeholders for logos to avoid external images unless requested */
-          }
-          <div class="text-xl font-bold text-slate-400 flex items-center gap-2">
-            <Icon name="lucide:cpu" class="w-6 h-6" /> TechCorp
-          </div>
-          <div class="text-xl font-bold text-slate-400 flex items-center gap-2">
-            <Icon name="lucide:globe" class="w-6 h-6" /> GlobalAI
-          </div>
-          <div class="text-xl font-bold text-slate-400 flex items-center gap-2">
-            <Icon name="lucide:database" class="w-6 h-6" /> DataFlow
-          </div>
-          <div class="text-xl font-bold text-slate-400 flex items-center gap-2">
-            <Icon name="lucide:server" class="w-6 h-6" /> CloudScale
-          </div>
-        </div>
-      </div>
-    </section>
+    {/* Stats Section */}
+    <StatsSection client:load />
 
-    {/* Features Grid */}
-    <section class="py-32 px-4 max-w-7xl mx-auto">
-      <div class="text-center mb-20">
-        <h2 class="text-3xl lg:text-4xl font-bold mb-4">
-          Everything you need to ship
+    {/* Features Section */}
+    <FeaturesSection client:load />
+
+    {/* Tech Stack Section */}
+    <TechStackSection client:load />
+
+    {/* Final CTA */}
+    <section class="py-32 px-4 text-center relative">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+          <span
+            class="bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent"
+          >
+            Ready to build your AI app?
+          </span>
         </h2>
-        <p class="text-slate-400 max-w-2xl mx-auto">
-          Stop wasting weeks on boilerplate. We've handled the hard parts of
-          building production AI applications.
+        <p class="text-xl text-slate-400 mb-12 max-w-2xl mx-auto">
+          Join hundreds of developers shipping AI applications faster with our
+          production-ready boilerplate.
         </p>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-8">
         <div
-          class="p-8 rounded-2xl border border-slate-800 bg-slate-900/20 hover:bg-slate-900/40 transition-colors"
+          class="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <div
-            class="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-6"
+          <a
+            href="/builder"
+            class="group px-10 py-5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-full font-bold text-lg transition-all shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 inline-flex items-center gap-2"
           >
-            <Icon name="lucide:lock" class="w-6 h-6 text-blue-400" />
-          </div>
-          <h3 class="text-xl font-bold mb-3">Zero Vendor Lock-in</h3>
-          <p class="text-slate-400 leading-relaxed">
-            Switch between OpenAI, Anthropic, or local LLMs with a single
-            environment variable. Swap vector databases just as easily.
-          </p>
-        </div>
-
-        <div
-          class="p-8 rounded-2xl border border-slate-800 bg-slate-900/20 hover:bg-slate-900/40 transition-colors"
-        >
-          <div
-            class="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-6"
-          >
-            <Icon name="lucide:file-code-2" class="w-6 h-6 text-purple-400" />
-          </div>
-          <h3 class="text-xl font-bold mb-3">Typesafe Everywhere</h3>
-          <p class="text-slate-400 leading-relaxed">
-            End-to-end type safety with TypeScript, Pydantic, and tRPC style
-            patterns. Catch errors at build time, not runtime.
-          </p>
-        </div>
-
-        <div
-          class="p-8 rounded-2xl border border-slate-800 bg-slate-900/20 hover:bg-slate-900/40 transition-colors"
-        >
-          <div
-            class="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center mb-6"
-          >
-            <Icon name="lucide:rocket" class="w-6 h-6 text-green-400" />
-          </div>
-          <h3 class="text-xl font-bold mb-3">Production Ready</h3>
-          <p class="text-slate-400 leading-relaxed">
-            Built-in authentication, rate limiting, observability, and cost
-            tracking. Deploy to Vercel, Railway, or standard Docker.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    {/* Bento Grid / Tech Stack */}
-    <section class="py-20 px-4 border-t border-slate-900 bg-slate-950/30">
-      <div class="max-w-7xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 class="text-3xl lg:text-4xl font-bold mb-6">
-              Powered by the modern stack
-            </h2>
-            <p class="text-slate-400 mb-8 leading-relaxed">
-              We've curated the best tools in the ecosystem so you don't have
-              to. Whether you prefer a full-stack Next.js approach or a split
-              Python backend, we have you covered.
-            </p>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div
-                class="flex items-center gap-3 p-4 rounded-xl border border-slate-800 bg-slate-900/50"
-              >
-                <Icon name="lucide:box" class="w-5 h-5 text-white" />
-                <span class="font-medium text-slate-200">Next.js 14</span>
-              </div>
-              <div
-                class="flex items-center gap-3 p-4 rounded-xl border border-slate-800 bg-slate-900/50"
-              >
-                <Icon name="lucide:terminal" class="w-5 h-5 text-yellow-400" />
-                <span class="font-medium text-slate-200">FastAPI</span>
-              </div>
-              <div
-                class="flex items-center gap-3 p-4 rounded-xl border border-slate-800 bg-slate-900/50"
-              >
-                <Icon name="lucide:database" class="w-5 h-5 text-green-400" />
-                <span class="font-medium text-slate-200">Supabase / Neon</span>
-              </div>
-              <div
-                class="flex items-center gap-3 p-4 rounded-xl border border-slate-800 bg-slate-900/50"
-              >
-                <Icon name="lucide:shield" class="w-5 h-5 text-blue-400" />
-                <span class="font-medium text-slate-200">Better Auth</span>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="aspect-square rounded-2xl border border-slate-800 bg-slate-900/50 p-8 relative overflow-hidden group"
-          >
-            <div
-              class="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,transparent,black)]"
+            Build Your Stack Now
+            <svg
+              class="w-5 h-5 group-hover:translate-x-1 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-            </div>
-            <div class="relative z-10 grid gap-6">
-              {/* Visual representation of the stack hierarchy */}
-              <div
-                class="p-6 rounded-xl bg-slate-800 border border-slate-700 shadow-xl"
-              >
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-2">
-                    <Icon
-                      name="lucide:layout"
-                      class="w-4 h-4 text-purple-400"
-                    />
-                    <span class="font-bold text-sm">Frontend App</span>
-                  </div>
-                  <span class="text-xs text-slate-500">Next.js</span>
-                </div>
-                <div class="h-2 bg-slate-700 rounded w-3/4 mb-2"></div>
-                <div class="h-2 bg-slate-700 rounded w-1/2"></div>
-              </div>
-
-              <div class="flex justify-center text-slate-600">
-                <Icon name="lucide:arrow-down" class="w-5 h-5" />
-              </div>
-
-              <div
-                class="p-6 rounded-xl bg-slate-800 border border-slate-700 shadow-xl"
-              >
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-2">
-                    <Icon
-                      name="lucide:brain-circuit"
-                      class="w-4 h-4 text-blue-400"
-                    />
-                    <span class="font-bold text-sm">AI Gateway</span>
-                  </div>
-                  <span class="text-xs text-slate-500">Router</span>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                  <div
-                    class="p-2 rounded bg-slate-900/50 text-xs text-center border border-slate-700"
-                  >
-                    OpenAI
-                  </div>
-                  <div
-                    class="p-2 rounded bg-slate-900/50 text-xs text-center border border-slate-700"
-                  >
-                    Ollama
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </a>
+          <a
+            href="https://github.com/yourusername/ai-stack"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-10 py-5 bg-slate-900/80 hover:bg-slate-800 backdrop-blur-sm text-white rounded-full font-semibold text-lg border border-slate-800 hover:border-slate-700 transition-all inline-flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                fill-rule="evenodd"
+                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                clip-rule="evenodd"></path>
+            </svg>
+            View on GitHub
+          </a>
         </div>
-      </div>
-    </section>
-
-    {/* CTA */}
-    <section class="py-32 px-4 text-center">
-      <h2 class="text-4xl font-bold mb-8">Ready to build?</h2>
-      <div class="flex justify-center">
-        <a
-          href="/builder"
-          class="px-10 py-5 bg-white text-slate-950 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-purple-500/20"
-        >
-          Build Your Stack Now
-        </a>
       </div>
     </section>
   </main>
 
+  {/* Footer */}
   <footer
     class="py-12 border-t border-slate-800 bg-slate-950 text-slate-400 text-sm"
   >
     <div
-      class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4"
+      class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6"
     >
-      <p>© 2024 AI Stack. Open Source under MIT License.</p>
-      <div class="flex gap-6">
+      <p class="text-center md:text-left">
+        © 2024 AI Stack. Open Source under <a
+          href="#"
+          class="text-purple-400 hover:text-purple-300">MIT License</a
+        >.
+      </p>
+      <div class="flex flex-wrap justify-center gap-6">
         <a
           href="https://github.com/princepal9120/ai-stack"
-          class="hover:text-white transition">GitHub</a
+          target="_blank"
+          class="hover:text-white transition flex items-center gap-2"
         >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              fill-rule="evenodd"
+              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+              clip-rule="evenodd"></path>
+          </svg>
+          GitHub
+        </a>
         <a href="/docs" class="hover:text-white transition">Documentation</a>
-        <a href="https://twitter.com" class="hover:text-white transition"
-          >Twitter</a
+        <a href="/builder" class="hover:text-white transition">Builder</a>
+        <a
+          href="https://twitter.com"
+          target="_blank"
+          class="hover:text-white transition flex items-center gap-2"
         >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+            ></path>
+          </svg>
+          Twitter
+        </a>
       </div>
     </div>
   </footer>
 </Layout>
 
 <style>
-  /* Custom Grid Background */
-  .bg-grid-white\/\[0\.05\] {
-    background-size: 40px 40px;
-    background-image:
-      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out;
   }
 </style>

@@ -1,222 +1,294 @@
 ---
 title: Project Structure
-description: Understanding the structure of projects created by AI Stack CLI
+description: Understanding the AI Stack monorepo architecture
 ---
+
+import { Files, Folder, File } from '../../components/ui/file-tree';
 
 ## Overview
 
-AI Stack CLI scaffolds a production-ready project with organized directories for frontend, backend, and AI components. The exact structure depends on your architecture choice.
+AI Stack is organized as a TypeScript monorepo using Turborepo, containing the documentation site, CLI tool, backend services, and reusable packages for AI functionality.
 
-## Root Layout
+## Root Structure
 
-At the repository root you will see:
+<Files client:load>
+  <Folder name="ai-stack" defaultOpen>
+    <Folder name="apps" defaultOpen>
+      <Folder name="web">
+        <File name="package.json" />
+      </Folder>
+      <Folder name="cli">
+        <File name="package.json" />
+      </Folder>
+      <Folder name="backend">
+        <File name="package.json" />
+      </Folder>
+      <Folder name="frontend">
+        <File name="package.json" />
+      </Folder>
+    </Folder>
+    <Folder name="packages" defaultOpen>
+      <Folder name="ai-core">
+        <File name="package.json" />
+      </Folder>
+      <Folder name="vector-db">
+        <File name="package.json" />
+      </Folder>
+      <Folder name="types">
+        <File name="package.json" />
+      </Folder>
+      <Folder name="create-ai-stack">
+        <File name="package.json" />
+      </Folder>
+    </Folder>
+    <Folder name="docs">
+      <File name="ARCHITECTURE.md" />
+    </Folder>
+    <File name="turbo.json" />
+    <File name="package.json" />
+    <File name="docker-compose.yml" />
+    <File name=".env.example" />
+  </Folder>
+</Files>
 
-```
-my-ai-app/
-├── app/                    # Next.js App Router
-├── components/             # React components
-├── lib/                    # Shared utilities
-├── types/                  # TypeScript types
-├── public/                 # Static assets
-├── .env.example           # Environment template
-├── package.json
-├── tsconfig.json
-├── next.config.ts
-└── README.md
-```
+## Apps
 
-## Architecture-Specific Structures
+### `apps/web`
 
-### Next.js Fullstack
+The documentation website built with Astro and Starlight:
 
-```
-my-ai-app/
-├── app/
-│   ├── (auth)/            # Auth pages (if auth enabled)
-│   │   ├── login/
-│   │   └── register/
-│   ├── (dashboard)/       # Protected pages
-│   │   └── page.tsx
-│   ├── api/               # API routes
-│   │   ├── chat/
-│   │   ├── auth/
-│   │   └── health/
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   ├── chat/              # Chat UI components
-│   │   ├── chat-input.tsx
-│   │   ├── chat-message.tsx
-│   │   └── chat-list.tsx
-│   └── ui/                # shadcn/ui components
-├── lib/
-│   ├── ai/                # LLM client abstraction
-│   │   ├── index.ts
-│   │   ├── providers/
-│   │   └── config.ts
-│   ├── auth/              # Auth configuration
-│   ├── db/                # Database schema & client
-│   └── search/            # Vector search client
-└── types/
-```
+<Files client:load>
+  <Folder name="apps/web" defaultOpen>
+    <Folder name="src">
+      <Folder name="content">
+        <Folder name="docs">
+          <File name="index.mdx" />
+          <File name="getting-started.mdx" />
+          <File name="project-structure.mdx" />
+        </Folder>
+      </Folder>
+      <Folder name="components">
+        <Folder name="ui">
+          <File name="button.tsx" />
+          <File name="file-tree.tsx" />
+        </Folder>
+      </Folder>
+    </Folder>
+    <File name="astro.config.mjs" />
+    <File name="package.json" />
+  </Folder>
+</Files>
 
-### FastAPI + Next.js
+### `apps/cli`
 
-```
-my-ai-app/
-├── frontend/              # Next.js application
-│   ├── app/
-│   ├── components/
-│   └── lib/
-├── backend/               # FastAPI application
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── routes/
-│   │   │   └── deps.py
-│   │   ├── core/
-│   │   │   ├── config.py
-│   │   │   └── security.py
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   └── services/
-│   │       ├── ai.py
-│   │       └── rag.py
-│   ├── alembic/           # Database migrations
-│   ├── requirements.txt
-│   └── main.py
-└── docker-compose.yml
-```
+The CLI tool for scaffolding AI Stack projects:
 
-### TypeScript Backend
+<Files client:load>
+  <Folder name="apps/cli" defaultOpen>
+    <Folder name="src">
+      <Folder name="commands">
+        <File name="create.ts" />
+        <File name="init.ts" />
+      </Folder>
+      <Folder name="templates">
+        <Folder name="nextjs-fullstack">
+          <File name="..." />
+        </Folder>
+        <Folder name="fastapi-nextjs">
+          <File name="..." />
+        </Folder>
+      </Folder>
+      <Folder name="utils">
+        <File name="prompts.ts" />
+        <File name="files.ts" />
+      </Folder>
+      <File name="index.ts" />
+    </Folder>
+    <File name="package.json" />
+  </Folder>
+</Files>
 
-```
-my-ai-app/
-├── apps/
-│   ├── web/               # Frontend
-│   │   ├── app/
-│   │   └── components/
-│   └── server/            # Backend
-│       ├── src/
-│       │   ├── routes/
-│       │   ├── services/
-│       │   ├── db/
-│       │   └── index.ts
-│       └── package.json
-├── packages/
-│   └── shared/            # Shared types/utils
-├── turbo.json
-└── package.json
-```
+### `apps/backend`
 
-## Key Directories
+FastAPI backend service:
 
-### `lib/ai/`
+<Files client:load>
+  <Folder name="apps/backend" defaultOpen>
+    <Folder name="app">
+      <Folder name="api">
+        <Folder name="routes">
+          <File name="chat.py" />
+          <File name="documents.py" />
+        </Folder>
+        <File name="deps.py" />
+      </Folder>
+      <Folder name="core">
+        <File name="config.py" />
+        <File name="security.py" />
+      </Folder>
+      <Folder name="models">
+        <File name="user.py" />
+        <File name="document.py" />
+      </Folder>
+      <Folder name="services">
+        <File name="ai.py" />
+        <File name="rag.py" />
+      </Folder>
+    </Folder>
+    <File name="main.py" />
+    <File name="requirements.txt" />
+  </Folder>
+</Files>
 
-LLM provider abstraction:
+### `apps/frontend`
 
-```
-lib/ai/
-├── index.ts               # Main exports
-├── config.ts              # Provider configuration
-├── providers/
-│   ├── openai.ts
-│   ├── anthropic.ts
-│   ├── novita.ts
-│   └── ollama.ts
-└── types.ts
-```
+Next.js frontend application:
 
-### `lib/db/`
+<Files client:load>
+  <Folder name="apps/frontend" defaultOpen>
+    <Folder name="app">
+      <Folder name="(dashboard)">
+        <File name="page.tsx" />
+      </Folder>
+      <Folder name="api">
+        <Folder name="chat">
+          <File name="route.ts" />
+        </Folder>
+      </Folder>
+      <File name="layout.tsx" />
+      <File name="page.tsx" />
+    </Folder>
+    <Folder name="components">
+      <Folder name="chat">
+        <File name="chat-input.tsx" />
+        <File name="chat-message.tsx" />
+      </Folder>
+      <Folder name="ui">
+        <File name="..." />
+      </Folder>
+    </Folder>
+    <Folder name="lib">
+      <File name="api-client.ts" />
+    </Folder>
+    <File name="next.config.ts" />
+    <File name="package.json" />
+  </Folder>
+</Files>
 
-Database configuration:
+## Packages
 
-```
-lib/db/
-├── index.ts               # Database client
-├── schema/                # Drizzle or Prisma schema
-│   ├── users.ts
-│   ├── conversations.ts
-│   └── documents.ts
-└── migrations/            # Migration files
-```
+### `packages/ai-core`
 
-### `lib/search/`
+Core AI functionality and LLM provider abstractions:
 
-Vector search abstraction:
+<Files client:load>
+  <Folder name="packages/ai-core" defaultOpen>
+    <Folder name="src">
+      <Folder name="providers">
+        <File name="openai.ts" />
+        <File name="anthropic.ts" />
+        <File name="novita.ts" />
+        <File name="ollama.ts" />
+      </Folder>
+      <File name="index.ts" />
+      <File name="config.ts" />
+      <File name="types.ts" />
+    </Folder>
+    <File name="package.json" />
+  </Folder>
+</Files>
 
-```
-lib/search/
-├── index.ts               # Main exports
-├── config.ts
-├── providers/
-│   ├── qdrant.ts
-│   ├── weaviate.ts
-│   └── pgvector.ts
-└── types.ts
-```
+### `packages/vector-db`
 
-### `lib/auth/`
+Vector database abstractions for RAG:
 
-Authentication setup:
+<Files client:load>
+  <Folder name="packages/vector-db" defaultOpen>
+    <Folder name="src">
+      <Folder name="providers">
+        <File name="qdrant.ts" />
+        <File name="weaviate.ts" />
+        <File name="pgvector.ts" />
+      </Folder>
+      <File name="index.ts" />
+      <File name="config.ts" />
+      <File name="types.ts" />
+    </Folder>
+    <File name="package.json" />
+  </Folder>
+</Files>
 
-```
-lib/auth/
-├── index.ts
-├── config.ts              # Auth provider config
-└── middleware.ts          # Auth middleware
-```
+### `packages/types`
+
+Shared TypeScript type definitions:
+
+<Files client:load>
+  <Folder name="packages/types" defaultOpen>
+    <Folder name="src">
+      <File name="index.ts" />
+      <File name="chat.ts" />
+      <File name="user.ts" />
+      <File name="document.ts" />
+    </Folder>
+    <File name="package.json" />
+  </Folder>
+</Files>
+
+### `packages/create-ai-stack`
+
+Published npm package for project scaffolding:
+
+<Files client:load>
+  <Folder name="packages/create-ai-stack" defaultOpen>
+    <Folder name="src">
+      <File name="index.ts" />
+      <File name="cli.ts" />
+    </Folder>
+    <File name="package.json" />
+  </Folder>
+</Files>
 
 ## Configuration Files
 
-### `next.config.ts`
+### `turbo.json`
 
-```typescript
-import type { NextConfig } from 'next';
-
-const config: NextConfig = {
-  experimental: {
-    typedRoutes: true,
-  },
-};
-
-export default config;
-```
-
-### `drizzle.config.ts`
-
-```typescript
-import { defineConfig } from 'drizzle-kit';
-
-export default defineConfig({
-  schema: './lib/db/schema',
-  out: './lib/db/migrations',
-  dialect: 'postgresql',
-  dbCredentials: {
-    url: process.env.DATABASE_URL!,
-  },
-});
-```
-
-## Development Scripts
+Turborepo configuration for monorepo orchestration:
 
 ```json
 {
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:generate": "drizzle-kit generate",
-    "lint": "biome check .",
-    "format": "biome format --write ."
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "dev": {
+      "cache": false
+    },
+    "lint": {},
+    "typecheck": {}
   }
 }
 ```
 
-## Key Details
+### `docker-compose.yml`
 
-- **Type-safe**: Full TypeScript across the stack
-- **Modular**: Each provider is a separate module
-- **Swappable**: Change providers via configuration
-- **Production-ready**: Includes error handling, logging
+Development environment services:
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: aistack
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+```
