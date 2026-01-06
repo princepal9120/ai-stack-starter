@@ -20,6 +20,7 @@
     "astro-icon": "^1.1.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.15.0",
+    "fuse.js": "^7.1.0",
     "lucide-react": "^0.562.0",
     "memfs": "^4.51.1",
     "pathe": "^2.0.3",

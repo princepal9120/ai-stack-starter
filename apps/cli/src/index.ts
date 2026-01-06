@@ -9,11 +9,13 @@ import { execa } from 'execa';
 import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { trackProjectCreation } from './utils/analytics';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const AI_STACK_GRADIENT = gradient('#3b82f6', '#8b5cf6', '#ec4899');
+const CLI_VERSION = '1.2.0';
 
 // Directories to exclude when copying
 const EXCLUDE_DIRS = [
@@ -73,6 +75,7 @@ program
     .option('--use-npm', 'Use npm as package manager')
     .option('--skip-install', 'Skip dependency installation')
     .option('--skip-git', 'Skip git initialization')
+    .option('--disable-analytics', 'Disable anonymous usage analytics')
     .action(async (projectDirectory, options) => {
         console.log();
         console.log(AI_STACK_GRADIENT('╔════════════════════════════════════════════════════╗'));
@@ -227,13 +230,29 @@ program
             }
         }
 
-        // Scaffold the project
-        await scaffoldProject(config, options, initGit);
+        // Scaffold the project and get analytics data
+        const scaffoldResult = await scaffoldProject(config, options, initGit);
+
+        // Track anonymous analytics (respects --disable-analytics flag)
+        trackProjectCreation(config, scaffoldResult, options.disableAnalytics);
     });
 
-async function scaffoldProject(config: ProjectConfig, options: any, initGit: boolean) {
+type ScaffoldResult = {
+    packageManager: 'npm' | 'pnpm' | 'yarn' | 'bun';
+    gitInitialized: boolean;
+    dependenciesInstalled: boolean;
+};
+
+async function scaffoldProject(config: ProjectConfig, options: any, initGit: boolean): Promise<ScaffoldResult> {
     const projectPath = path.resolve(process.cwd(), config.projectName);
     const spinner = ora('Creating project...').start();
+
+    // Track results for analytics
+    const result: ScaffoldResult = {
+        packageManager: options.usePnpm ? 'pnpm' : options.useNpm ? 'npm' : 'npm',
+        gitInitialized: false,
+        dependenciesInstalled: false,
+    };
 
     // Check if directory exists
     if (await fs.pathExists(projectPath)) {
@@ -313,6 +332,7 @@ async function scaffoldProject(config: ProjectConfig, options: any, initGit: boo
                     }
                 }
                 spinner.succeed('Dependencies installed');
+                result.dependenciesInstalled = true;
             } catch (e) {
                 spinner.warn('Could not install dependencies automatically');
                 console.log(chalk.dim('  Run `npm install` manually after setup'));
@@ -327,6 +347,7 @@ async function scaffoldProject(config: ProjectConfig, options: any, initGit: boo
                 await execa('git', ['add', '.'], { cwd: projectPath, stdio: 'pipe' });
                 await execa('git', ['commit', '-m', 'Initial commit from create-ai-stack-starter'], { cwd: projectPath, stdio: 'pipe' });
                 spinner.succeed('Git repository initialized');
+                result.gitInitialized = true;
             } catch (e) {
                 spinner.warn('Could not initialize git');
             }
@@ -386,6 +407,8 @@ async function scaffoldProject(config: ProjectConfig, options: any, initGit: boo
         console.error(chalk.red('Error:'), error);
         process.exit(1);
     }
+
+    return result;
 }
 
 program.parse();

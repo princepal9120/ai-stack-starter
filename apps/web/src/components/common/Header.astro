@@ -74,6 +74,15 @@ const { activePath = "", showSidebarToggle = false } = Astro.props;
               : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/50",
           ]}>Showcase</a
         >
+        <a
+          href="/analytics"
+          class:list={[
+            "px-3 py-1.5 text-sm font-medium rounded-full transition-all border",
+            activePath.startsWith("/analytics")
+              ? "text-purple-400 bg-purple-500/10 border-purple-500/20"
+              : "text-slate-400 border-transparent hover:text-white hover:bg-slate-800/50",
+          ]}>Analytics</a
+        >
       </nav>
     </div>
 

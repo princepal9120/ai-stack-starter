@@ -1,6 +1,6 @@
 "use client";
 
-import { FiGithub, FiDownload, FiUsers, FiClock } from "react-icons/fi";
+import { FiGithub, FiDownload, FiUsers, FiTerminal, FiArrowRight } from "react-icons/fi";
 
 export default function StatsSection() {
     const stats = [
@@ -20,16 +20,16 @@ export default function StatsSection() {
             label: "Developers",
         },
         {
-            icon: <FiClock className="w-5 h-5" />,
-            value: "2 weeks",
-            label: "Time Saved",
+            icon: <FiTerminal className="w-5 h-5" />,
+            value: "1.2K+",
+            label: "Projects Created",
         },
     ];
 
     return (
         <section className="py-12 border-y border-slate-900 bg-slate-950/50">
             <div className="max-w-7xl mx-auto px-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-6">
                     {stats.map((stat) => (
                         <div key={stat.label} className="text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
@@ -40,7 +40,17 @@ export default function StatsSection() {
                         </div>
                     ))}
                 </div>
+                <div className="text-center">
+                    <a
+                        href="/analytics"
+                        className="inline-flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                    >
+                        View detailed CLI analytics
+                        <FiArrowRight className="w-4 h-4" />
+                    </a>
+                </div>
             </div>
         </section>
     );
 }
+
