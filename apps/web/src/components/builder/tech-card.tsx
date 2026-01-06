@@ -68,18 +68,27 @@ export function TechCard({
 
             {/* Content */}
             <div className="mt-4 flex items-center gap-2">
-                {tech.icon && (
-                    <div className={cn("h-5 w-5 shrink-0", tech.className)}>
+                {tech.iconComponent ? (
+                    <div className={cn("flex h-6 w-6 shrink-0 items-center justify-center text-slate-300", tech.className)}>
+                        <tech.iconComponent className="h-full w-full" />
+                    </div>
+                ) : tech.icon ? (
+                    <div className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded bg-slate-800 p-0.5", tech.className)}>
                         <img
                             src={tech.icon}
                             alt={tech.name}
                             className="h-full w-full object-contain"
                             onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = "none";
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = "none";
+                                const parent = target.parentElement;
+                                if (parent) {
+                                    parent.innerHTML = `<span class="text-xs font-bold text-slate-400">${tech.name.charAt(0)}</span>`;
+                                }
                             }}
                         />
                     </div>
-                )}
+                ) : null}
                 <span
                     className={cn(
                         "font-medium text-sm",

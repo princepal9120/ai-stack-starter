@@ -1,5 +1,20 @@
 import { motion } from "framer-motion";
-import { Terminal, Info } from "lucide-react";
+import {
+    Terminal,
+    Info,
+    Layers,
+    Sparkles,
+    Database,
+    Table,
+    Shield,
+    Search,
+    Brain,
+    BarChart3,
+    Puzzle,
+    Package,
+    GitBranch,
+    Download
+} from "lucide-react";
 import { TechCard } from "./tech-card";
 import type { TechOption, StackState, TechCategory } from "../../lib/stack-constants";
 import { TECH_OPTIONS, getCategoryDisplayName } from "../../lib/stack-constants";
@@ -20,6 +35,22 @@ export function CategorySection({
 }: CategorySectionProps) {
     const options = TECH_OPTIONS[category] || [];
     const displayName = getCategoryDisplayName(category);
+
+    const CategoryIcon = {
+        architecture: Layers,
+        llmProvider: Sparkles,
+        vectorDb: Database,
+        database: Database,
+        orm: Table,
+        auth: Shield,
+        search: Search,
+        memory: Brain,
+        observability: BarChart3,
+        addons: Puzzle,
+        packageManager: Package,
+        git: GitBranch,
+        install: Download
+    }[category] || Terminal;
 
     // Get current selection(s) for this category
     function isSelected(optionId: string): boolean {
@@ -43,7 +74,7 @@ export function CategorySection({
         >
             {/* Category header */}
             <div className="mb-3 flex items-center border-b border-slate-700 pb-2">
-                <Terminal className="mr-2 h-4 w-4 text-slate-400" />
+                <CategoryIcon className="mr-2 h-4 w-4 text-slate-400" />
                 <h2 className="font-mono font-semibold text-sm text-white">
                     {displayName}
                 </h2>

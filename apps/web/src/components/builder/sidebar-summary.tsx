@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ClipboardCopy, Check, Shuffle, RotateCcw, Save, FolderOpen, ChevronDown } from "lucide-react";
 import { cn } from "../../lib/utils";
-import type { StackState } from "../../lib/stack-constants";
+import type { StackState, TechOption } from "../../lib/stack-constants";
 import { TECH_OPTIONS, CATEGORY_ORDER, PRESET_TEMPLATES } from "../../lib/stack-constants";
 import { generateStackCommand, generateStackSharingUrl } from "../../lib/stack-state";
 
@@ -48,7 +48,7 @@ export function SidebarSummary({
 
     // Get selected tech badges
     function getBadges() {
-        const badges: { category: string; tech: { name: string; icon: string } }[] = [];
+        const badges: { category: string; tech: TechOption }[] = [];
 
         for (const category of CATEGORY_ORDER) {
             const options = TECH_OPTIONS[category];
@@ -143,24 +143,20 @@ export function SidebarSummary({
             <div>
                 <h3 className="mb-2 text-sm font-medium text-white">Selected Stack</h3>
                 <div className="flex flex-wrap gap-1.5">
-                    {badges.map(({ category, tech }) => (
-                        <span
-                            key={`${category}-${tech.name}`}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-800 px-2 py-0.5 text-xs text-slate-300"
-                        >
-                            {tech.icon && (
-                                <img
-                                    src={tech.icon}
-                                    alt=""
-                                    className="h-3 w-3"
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).style.display = "none";
-                                    }}
-                                />
-                            )}
-                            {tech.name}
-                        </span>
-                    ))}
+                    {badges.map(({ category, tech }) => {
+                        const IconComponent = tech.iconComponent;
+                        return (
+                            <span
+                                key={`${category}-${tech.name}`}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-800 px-2 py-0.5 text-xs text-slate-300"
+                            >
+                                {IconComponent && (
+                                    <IconComponent className="h-3 w-3 shrink-0" />
+                                )}
+                                {tech.name}
+                            </span>
+                        );
+                    })}
                     {badges.length === 0 && (
                         <span className="text-xs text-slate-500">No options selected</span>
                     )}

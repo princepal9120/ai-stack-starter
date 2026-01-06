@@ -29,10 +29,24 @@ type TreeContextProps = {
 
 const TreeContext = createContext<TreeContextProps | null>(null);
 
+// Default context for SSR safety
+const defaultTreeContext: TreeContextProps = {
+    selectedId: undefined,
+    expandedItems: [],
+    indicator: true,
+    handleExpand: () => { },
+    selectItem: () => { },
+    setExpandedItems: undefined,
+    openIcon: undefined,
+    closeIcon: undefined,
+    direction: "ltr",
+};
+
 const useTree = () => {
     const context = useContext(TreeContext);
+    // Return default context for SSR safety instead of throwing
     if (!context) {
-        throw new Error("useTree must be used within a TreeProvider");
+        return defaultTreeContext;
     }
     return context;
 };

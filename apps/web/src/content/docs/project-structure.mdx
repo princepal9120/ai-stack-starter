@@ -11,7 +11,7 @@ AI Stack is organized as a TypeScript monorepo using Turborepo, containing the d
 
 ## Root Structure
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="ai-stack" defaultOpen>
     <Folder name="apps" defaultOpen>
       <Folder name="web">
@@ -57,7 +57,7 @@ AI Stack is organized as a TypeScript monorepo using Turborepo, containing the d
 
 The documentation website built with Astro and Starlight:
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="apps/web" defaultOpen>
     <Folder name="src">
       <Folder name="content">
@@ -83,7 +83,7 @@ The documentation website built with Astro and Starlight:
 
 The CLI tool for scaffolding AI Stack projects:
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="apps/cli" defaultOpen>
     <Folder name="src">
       <Folder name="commands">
@@ -112,7 +112,7 @@ The CLI tool for scaffolding AI Stack projects:
 
 FastAPI backend service:
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="apps/backend" defaultOpen>
     <Folder name="app">
       <Folder name="api">
@@ -144,7 +144,7 @@ FastAPI backend service:
 
 Next.js frontend application:
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="apps/frontend" defaultOpen>
     <Folder name="app">
       <Folder name="(dashboard)">
@@ -181,7 +181,7 @@ Next.js frontend application:
 
 Core AI functionality and LLM provider abstractions:
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="packages/ai-core" defaultOpen>
     <Folder name="src">
       <Folder name="providers">
@@ -202,7 +202,7 @@ Core AI functionality and LLM provider abstractions:
 
 Vector database abstractions for RAG:
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="packages/vector-db" defaultOpen>
     <Folder name="src">
       <Folder name="providers">
@@ -222,7 +222,7 @@ Vector database abstractions for RAG:
 
 Shared TypeScript type definitions:
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="packages/types" defaultOpen>
     <Folder name="src">
       <File name="index.ts" />
@@ -238,7 +238,7 @@ Shared TypeScript type definitions:
 
 Published npm package for project scaffolding:
 
-<Files client:load>
+<Files client:only="react">
   <Folder name="packages/create-ai-stack" defaultOpen>
     <Folder name="src">
       <File name="index.ts" />

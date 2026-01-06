@@ -3,7 +3,7 @@ import { Terminal, FolderTree } from "lucide-react";
 import { Toaster, toast } from "sonner";
 
 import { useStackState } from "../../lib/stack-state";
-import { CATEGORY_ORDER, DEFAULT_STACK, PRESET_TEMPLATES, type StackState, type TechCategory } from "../../lib/stack-constants";
+import { CATEGORY_ORDER, DEFAULT_STACK, PRESET_TEMPLATES, TECH_OPTIONS, type StackState, type TechCategory } from "../../lib/stack-constants";
 import { analyzeStackCompatibility, validateProjectName } from "../../lib/stack-utils";
 import { cn } from "../../lib/utils";
 
@@ -99,7 +99,7 @@ export function StackBuilder() {
         const randomStack: Partial<StackState> = {};
 
         for (const cat of categories) {
-            const options = require("../../lib/stack-constants").TECH_OPTIONS[cat];
+            const options = TECH_OPTIONS[cat];
             if (options?.length > 0) {
                 const randomIdx = Math.floor(Math.random() * options.length);
                 (randomStack as Record<string, string>)[cat] = options[randomIdx].id;
