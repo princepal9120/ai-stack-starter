@@ -33,17 +33,17 @@ export default function StatsSection() {
                     {stats.map((stat) => (
                         <div key={stat.label} className="text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
-                                <div className="text-purple-400">{stat.icon}</div>
-                                <div className="text-3xl font-bold text-white">{stat.value}</div>
+                                <div className="text-white">{stat.icon}</div>
+                                <div className="text-3xl font-bold text-white tracking-tight">{stat.value}</div>
                             </div>
-                            <div className="text-sm text-slate-400">{stat.label}</div>
+                            <div className="text-sm text-slate-500 font-medium">{stat.label}</div>
                         </div>
                     ))}
                 </div>
                 <div className="text-center">
                     <a
                         href="/analytics"
-                        className="inline-flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors border-b border-transparent hover:border-slate-500 pb-0.5"
                     >
                         View detailed CLI analytics
                         <FiArrowRight className="w-4 h-4" />

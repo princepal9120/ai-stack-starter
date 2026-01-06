@@ -16,17 +16,17 @@ export function FeatureCard({
     className,
 }: FeatureCardProps) {
     const iconColors = {
-        default: "bg-slate-500/10 text-slate-400",
-        purple: "bg-purple-500/10 text-purple-400",
-        blue: "bg-blue-500/10 text-blue-400",
-        green: "bg-green-500/10 text-green-400",
+        default: "bg-white/5 text-slate-200",
+        purple: "bg-white/5 text-slate-200", // Mapped to monochrome
+        blue: "bg-white/5 text-slate-200",   // Mapped to monochrome
+        green: "bg-white/5 text-slate-200",  // Mapped to monochrome
     };
 
     return (
         <div
             className={cn(
-                "group p-8 rounded-2xl border border-slate-800 bg-slate-900/20",
-                "hover:bg-slate-900/40 hover:border-purple-500/30 transition-all duration-300",
+                "group p-8 rounded-xl border border-white/10 bg-black/50 backdrop-blur-sm",
+                "hover:border-white/20 hover:bg-white/[0.02] transition-all duration-300",
                 className
             )}
         >

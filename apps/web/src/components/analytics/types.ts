@@ -30,16 +30,14 @@ export type AggregatedAnalyticsData = {
 };
 
 export const CHART_COLORS = [
-    "hsl(142 76% 36%)",   // green
-    "hsl(221 83% 53%)",   // blue
-    "hsl(262 83% 58%)",   // purple
-    "hsl(24 95% 53%)",    // orange
-    "hsl(47 96% 53%)",    // yellow
-    "hsl(339 90% 51%)",   // pink
-    "hsl(173 80% 40%)",   // teal
-    "hsl(291 64% 42%)",   // violet
-    "hsl(210 40% 50%)",   // slate
-    "hsl(0 72% 51%)",     // red
+    "hsl(0 0% 100%)",         // White
+    "hsl(210 40% 80%)",       // Slate 200
+    "hsl(210 40% 60%)",       // Slate 400
+    "hsl(210 40% 40%)",       // Slate 600
+    "hsl(210 40% 30%)",       // Slate 700
+    "hsl(210 40% 20%)",       // Slate 800
+    "hsl(0 0% 90%)",          // Gray 200
+    "hsl(0 0% 70%)",          // Gray 400
 ];
 
 export function getColor(index: number): string {

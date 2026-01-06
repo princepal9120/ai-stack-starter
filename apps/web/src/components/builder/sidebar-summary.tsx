@@ -90,7 +90,7 @@ export function SidebarSummary({
                         "w-full rounded-lg border bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2",
                         projectNameError
                             ? "border-red-500 focus:ring-red-500/50"
-                            : "border-slate-700 focus:ring-purple-500/50"
+                            : "border-slate-700 focus:ring-white/50"
                     )}
                 />
                 {projectNameError && (
@@ -101,7 +101,7 @@ export function SidebarSummary({
             {/* Command preview */}
             <div className="rounded-lg border border-slate-700 bg-slate-900 p-3">
                 <div className="flex items-start">
-                    <span className="mr-2 select-none text-purple-400">$</span>
+                    <span className="mr-2 select-none text-slate-500">$</span>
                     <code className="flex-1 break-all text-xs text-slate-300 font-mono">
                         {command}
                     </code>
@@ -219,7 +219,7 @@ export function SidebarSummary({
                     <button
                         type="button"
                         onClick={() => setShowPresets(!showPresets)}
-                        className="flex w-full items-center justify-between rounded-lg border border-purple-500/50 bg-purple-500/10 px-3 py-2 text-xs font-medium text-purple-300 hover:bg-purple-500/20"
+                        className="flex w-full items-center justify-between rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs font-medium text-white hover:bg-white/10"
                     >
                         <span>Apply Preset</span>
                         <ChevronDown className={cn("h-4 w-4 transition-transform", showPresets && "rotate-180")} />

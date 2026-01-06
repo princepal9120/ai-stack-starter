@@ -1,0 +1,113 @@
+---
+import { Icon } from "astro-icon/components";
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="border-t border-white/10 bg-black text-slate-400 text-sm">
+  <div class="max-w-7xl mx-auto px-4 py-12 lg:px-8">
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12 mb-12">
+      {/* Column 1: Brand */}
+      <div class="sm:col-span-2 lg:col-span-1">
+        <a
+          href="/"
+          class="flex items-center gap-2 font-bold text-white text-base mb-4"
+        >
+          <span>AI Stack</span>
+        </a>
+        <p class="mb-6 leading-relaxed max-w-xs text-slate-400">
+          The complete full-stack boilerplate for AI Engineering. Zero vendor
+          lock-in.
+        </p>
+        <div class="flex gap-4">
+          <a
+            href="https://github.com/princepal9120/ai-stack"
+            target="_blank"
+            class="inline-flex items-center justify-center p-2 rounded-md hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+            aria-label="GitHub"
+          >
+            <Icon name="lucide:github" class="w-5 h-5" />
+          </a>
+          <a
+            href="https://twitter.com/prince_twets"
+            target="_blank"
+            class="inline-flex items-center justify-center p-2 rounded-md hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+            aria-label="Twitter"
+          >
+            <Icon name="lucide:twitter" class="w-5 h-5" />
+          </a>
+        </div>
+      </div>
+
+      {/* Column 2: Resources */}
+      <div>
+        <h3 class="font-semibold text-white mb-4">Resources</h3>
+        <ul class="space-y-3">
+          <li>
+            <a href="/docs" class="hover:text-white transition-colors"
+              >Documentation</a
+            >
+          </li>
+          <li>
+            <a href="/builder" class="hover:text-white transition-colors"
+              >Stack Builder</a
+            >
+          </li>
+          <li>
+            <a href="/showcase" class="hover:text-white transition-colors"
+              >Showcase</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://github.com/princepal9120/ai-stack"
+              target="_blank"
+              class="hover:text-white transition-colors">GitHub Repository</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      {/* Column 3: Built By */}
+      <div>
+        <h3 class="font-semibold text-white mb-4">Created By</h3>
+        <ul class="space-y-3">
+          <li>
+            <a
+              href="https://princepal.dev"
+              target="_blank"
+              class="hover:text-white transition-colors"
+            >
+              Prince Pal
+            </a>
+          </li>
+          <li>
+            <span class="text-slate-500">Supported by:</span>
+            <a
+              href="https://automateops.vercel.app"
+              target="_blank"
+              class="block hover:text-white transition-colors mt-1"
+            >
+              AutomateOps
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    {/* Bottom Bar */}
+    <div
+      class="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4"
+    >
+      <p>
+        © {currentYear} AI Stack. Open Source under <a
+          href="#"
+          class="text-slate-200 hover:text-white">MIT License</a
+        >.
+      </p>
+      <p class="flex items-center gap-1.5">
+        Built for
+        <span class="font-medium text-white">AI Engineers</span>
+      </p>
+    </div>
+  </div>
+</footer>

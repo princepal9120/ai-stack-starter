@@ -11,52 +11,52 @@ export default function FeaturesSection() {
             title: "Zero Lock-in",
             description:
                 "Swap LLMs or Vector DBs with one environment variable. No code changes required.",
-            variant: "blue" as const,
+            variant: "default" as const,
         },
         {
-            icon: <FiZap className="w-6 h-6" />,
+            icon: <FiZap className="w-5 h-5" />,
             title: "Production-Ready",
             description:
                 "Built-in auth, error handling, observability, and cost tracking from day one.",
-            variant: "purple" as const,
+            variant: "default" as const,
         },
         {
-            icon: <FiShield className="w-6 h-6" />,
+            icon: <FiShield className="w-5 h-5" />,
             title: "Type Safe",
             description:
                 "Full TypeScript + Pydantic across the entire stack with strict type checking.",
             variant: "default" as const,
         },
         {
-            icon: <FiHeart className="w-6 h-6" />,
+            icon: <FiHeart className="w-5 h-5" />,
             title: "Open Source",
             description:
                 "Free and open source forever. MIT licensed for commercial use.",
-            variant: "green" as const,
+            variant: "default" as const,
         },
         {
-            icon: <FiTrendingUp className="w-6 h-6" />,
+            icon: <FiTrendingUp className="w-5 h-5" />,
             title: "Scalable",
             description:
                 "From MVP to enterprise. Horizontal scaling built into the architecture.",
-            variant: "purple" as const,
+            variant: "default" as const,
         },
         {
-            icon: <FiCode className="w-6 h-6" />,
+            icon: <FiCode className="w-5 h-5" />,
             title: "Developer First",
             description:
                 "Exceptional DX with hot reload, type hints, and comprehensive documentation.",
-            variant: "blue" as const,
+            variant: "default" as const,
         },
     ];
 
     return (
         <section className="py-32 px-4 max-w-7xl mx-auto">
             <div className="text-center mb-20">
-                <h2 className="text-3xl lg:text-5xl font-bold mb-6 bg-gradient-to-br from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                <h2 className="text-3xl lg:text-5xl font-bold mb-6 text-white tracking-tight">
                     Everything you need to ship
                 </h2>
-                <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+                <p className="text-xl text-slate-400 max-w-2xl mx-auto font-light">
                     Stop wasting weeks on boilerplate. We've handled the hard parts of building production AI applications.
                 </p>
             </div>

@@ -110,16 +110,15 @@ const CATEGORIES = [
 
 function ProjectCard({ project }: { project: ShowcaseProject }) {
     return (
-        <div className="group relative rounded-xl border border-slate-800 bg-slate-900/50 p-6 hover:border-purple-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition duration-500" />
+        <div className="group relative rounded-xl border border-white/10 bg-black/50 p-6 hover:border-white/20 transition-all duration-300 backdrop-blur-sm">
 
             <div className="relative z-10">
                 {/* Header with icon */}
                 <div className="flex items-center gap-4 mb-4">
-                    <div className={`w-10 h-10 rounded-lg ${project.color} flex items-center justify-center shadow-lg`}>
-                        <FiBox className="w-5 h-5 text-white/90" />
+                    <div className={`w-10 h-10 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center`}>
+                        <FiBox className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-white">{project.name}</h3>
+                    <h3 className="text-lg font-bold text-white tracking-tight">{project.name}</h3>
                 </div>
 
                 {/* Description */}
@@ -134,7 +133,7 @@ function ProjectCard({ project }: { project: ShowcaseProject }) {
                         return (
                             <span
                                 key={tag}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/50 text-xs font-mono text-slate-300"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-slate-300"
                             >
                                 {TagIcon && <TagIcon className="w-3 h-3 text-slate-400" />}
                                 {tag}
@@ -146,7 +145,7 @@ function ProjectCard({ project }: { project: ShowcaseProject }) {
                 {/* Action link */}
                 <a
                     href={project.sourceUrl || "#"}
-                    className="inline-flex items-center gap-1 text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors group/link"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-white hover:text-slate-300 transition-colors group/link bg-white/10 px-3 py-1.5 rounded-full hover:bg-white/20"
                 >
                     View Source
                     <FiArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
@@ -171,9 +170,9 @@ export function ShowcasePage() {
             <div className="flex-1">
                 {/* Header */}
                 <div className="mb-12">
-                    <h1 className="text-4xl font-bold mb-4">
+                    <h1 className="text-4xl font-bold mb-4 tracking-tight">
                         Built with{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                        <span className="text-white">
                             AI Stack
                         </span>
                     </h1>
@@ -195,8 +194,8 @@ export function ShowcasePage() {
                                 type="button"
                                 onClick={() => setActiveCategory(cat.id)}
                                 className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${activeCategory === cat.id
-                                        ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                                        : "bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:text-white"
+                                    ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                                    : "bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:text-white"
                                     }`}
                             >
                                 {cat.name} ({cat.count})
@@ -252,15 +251,15 @@ export function ShowcasePage() {
                                 type="button"
                                 onClick={() => setActiveCategory(cat.id)}
                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between group ${activeCategory === cat.id
-                                        ? "bg-purple-500/10 text-purple-400 font-medium"
-                                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                                    ? "bg-purple-500/10 text-purple-400 font-medium"
+                                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
                                     }`}
                             >
                                 {cat.name}
                                 <span
                                     className={`text-xs ${activeCategory === cat.id
-                                            ? "text-purple-500"
-                                            : "text-slate-600 group-hover:text-slate-500"
+                                        ? "text-purple-500"
+                                        : "text-slate-600 group-hover:text-slate-500"
                                         }`}
                                 >
                                     {cat.count}

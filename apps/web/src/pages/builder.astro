@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { StackBuilder } from "../components/builder/stack-builder";
 import Header from "../components/common/Header.astro";
+import Footer from "../components/common/Footer.astro";
 ---
 
 <Layout
@@ -9,7 +10,10 @@ import Header from "../components/common/Header.astro";
   description="Interactive UI to configure your AI application stack"
 >
   <Header activePath="/builder" />
-  <div class="pt-16 h-screen w-full overflow-hidden bg-slate-950">
-    <StackBuilder client:only="react" />
+  <div class="pt-16 min-h-screen w-full bg-black flex flex-col">
+    <div class="flex-1 overflow-hidden">
+      <StackBuilder client:only="react" />
+    </div>
+    <Footer />
   </div>
 </Layout>

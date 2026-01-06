@@ -170,15 +170,15 @@ export function StackBuilder() {
             {/* Main content */}
             <main className="flex flex-1 flex-col overflow-hidden">
                 {/* Tab bar */}
-                <div className="flex items-center border-b border-slate-800 bg-slate-900/30 px-4">
+                <div className="flex items-center border-b border-white/10 bg-black px-4">
                     <button
                         type="button"
                         onClick={() => setViewMode("configure")}
                         className={cn(
                             "flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors",
                             viewMode === "configure"
-                                ? "border-purple-500 text-purple-300"
-                                : "border-transparent text-slate-400 hover:text-white"
+                                ? "border-white text-white"
+                                : "border-transparent text-slate-400 hover:text-slate-200"
                         )}
                     >
                         <Terminal className="h-4 w-4" />
@@ -190,8 +190,8 @@ export function StackBuilder() {
                         className={cn(
                             "flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors",
                             viewMode === "preview"
-                                ? "border-purple-500 text-purple-300"
-                                : "border-transparent text-slate-400 hover:text-white"
+                                ? "border-white text-white"
+                                : "border-transparent text-slate-400 hover:text-slate-200"
                         )}
                     >
                         <FolderTree className="h-4 w-4" />

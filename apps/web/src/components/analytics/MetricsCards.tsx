@@ -11,7 +11,7 @@ type MetricCardProps = {
 
 function MetricCard({ title, value, subtitle, icon, highlight }: MetricCardProps) {
     return (
-        <div className="group cursor-default rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm transition-all hover:border-purple-500/30 hover:bg-slate-800/50">
+        <div className="group cursor-default rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-slate-800/50">
             <div className="space-y-3 p-4">
                 <div className="flex items-center justify-between">
                     <span className="flex items-center gap-2 font-mono text-slate-400 text-xs uppercase tracking-wide">
@@ -21,7 +21,7 @@ function MetricCard({ title, value, subtitle, icon, highlight }: MetricCardProps
                 </div>
 
                 <div
-                    className={`truncate font-bold font-mono text-2xl ${highlight ? "bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent" : "text-white"}`}
+                    className={`truncate font-bold font-mono text-2xl ${highlight ? "text-white" : "text-white"}`}
                 >
                     {typeof value === "number" ? value.toLocaleString() : value}
                 </div>

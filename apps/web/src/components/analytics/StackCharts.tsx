@@ -11,12 +11,12 @@ function ChartCard({
     children: React.ReactNode;
 }) {
     return (
-        <div className="group rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm transition-all hover:border-purple-500/30">
+        <div className="group rounded-xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm transition-all hover:border-white/20">
             <div className="space-y-4 p-6">
                 <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                            <span className="text-purple-400 text-xs">$</span>
+                            <span className="text-slate-500 text-xs">$</span>
                             <span className="font-semibold font-mono text-sm text-white">{title}</span>
                         </div>
                         <p className="text-slate-400 text-xs">{description}</p>

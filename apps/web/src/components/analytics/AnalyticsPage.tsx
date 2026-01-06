@@ -114,16 +114,16 @@ export function AnalyticsPage() {
     // and replace getMockData() with actual Convex queries
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white">
+        <div className="min-h-screen bg-black text-white">
             <div className="container mx-auto space-y-12 px-4 py-8 pt-24 max-w-7xl">
                 <AnalyticsHeader lastUpdated={data.lastUpdated} />
                 <MetricsCards data={data} />
                 <TimelineCharts data={data} />
                 <StackCharts data={data} />
 
-                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-200 text-sm">
-                    <strong>Note:</strong> Currently showing demo data. To enable real analytics, deploy the Convex backend
-                    and configure the <code className="bg-slate-800 px-1 rounded">PUBLIC_CONVEX_URL</code> environment variable.
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10 text-slate-400 text-sm">
+                    <strong className="text-white">Note:</strong> Currently showing demo data. To enable real analytics, deploy the Convex backend
+                    and configure the <code className="bg-white/10 px-1 rounded text-white">PUBLIC_CONVEX_URL</code> environment variable.
                 </div>
             </div>
         </div>

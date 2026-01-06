@@ -1,97 +1,72 @@
 ---
-title: Quick Start
-description: Create your first AI Stack project in minutes
+title: Introduction
+description: Build production-ready AI applications with Next.js, TypeScript, and modern tooling.
 ---
 
-## Philosophy
+AI Stack is a full-stack framework for building AI-powered applications. It provides authentication, database integration, vector storage, and LLM connectivity out of the box.
 
-- **Zero vendor lock-in**: Swap LLMs or Vector DBs with one environment variable.
-- **Production-ready**: Built-in auth, error handling, observability, and cost tracking.
-- **Type-safe**: Full TypeScript + Pydantic across the entire stack.
-- **Free and open source**: Forever.
+## How to use the docs
 
-## Get Started
+The docs are organized into 3 sections:
 
-### Prerequisites
+- **Getting Started**: Set up your first project
+- **Guides**: Learn specific features in depth
+- **Reference**: Detailed configuration options
 
-- **Node.js LTS** - [Download from nodejs.org](https://nodejs.org/)
-- **Git** - [Download from git-scm.com](https://git-scm.com/)
-- **Docker** (optional) - For running local vector databases
+Use the sidebar to navigate, or press `Ctrl+K` to search.
 
-### CLI Installation
+## Quick Start
+
+### Requirements
+
+- Node.js 18 or later
+- Git
+
+### Create a project
 
 ```bash
-# npm
 npx create-ai-stack-starter@latest
-
-# pnpm
-pnpm create ai-stack-starter@latest
-
-# bun
-bun create ai-stack-starter@latest
 ```
 
-Follow the interactive prompts to choose your architecture, database, auth, LLM provider, and add-ons.
+The CLI will prompt you to choose:
 
-### Skip Prompts (Default Stack)
+- **Architecture**: Next.js, FastAPI + Next.js, or TypeScript backend
+- **Database**: Neon, Supabase, Turso, or SQLite
+- **Authentication**: Better Auth, NextAuth, Clerk, or none
+- **LLM Provider**: OpenAI, Anthropic, or Novita
+
+### Start development
+
+```bash
+cd my-app
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to see your application.
+
+## Skip prompts
+
+Use `--yes` to scaffold with defaults:
 
 ```bash
 npx create-ai-stack-starter@latest my-app --yes
 ```
 
-### Stack Builder (UI)
-
-Visit [/builder](/builder) to pick your stack visually and copy the generated command.
-
-## Common Setups
-
-### Next.js Fullstack (Recommended)
+Or specify options directly:
 
 ```bash
 npx create-ai-stack-starter@latest my-app \
   --architecture nextjs \
   --database neon \
   --auth better-auth \
-  --llm openai \
-  --addons tailwind,biome
-```
-
-### FastAPI + Next.js (ML Teams)
-
-```bash
-npx create-ai-stack-starter@latest my-app \
-  --architecture fastapi \
-  --database supabase \
-  --auth clerk \
-  --llm anthropic \
-  --vector qdrant
-```
-
-### TypeScript Backend (Edge)
-
-```bash
-npx create-ai-stack-starter@latest my-app \
-  --architecture typescript \
-  --backend hono \
-  --database turso \
-  --auth better-auth \
   --llm openai
 ```
 
-## Flags Cheat Sheet
+See [CLI Options](/docs/cli/options) for the full list of flags.
 
-See the full list in the [CLI Reference](/docs/cli). Key flags:
+## Next steps
 
-- `--architecture`: nextjs, fastapi, typescript
-- `--database`: neon, supabase, turso, sqlite
-- `--auth`: better-auth, nextauth, clerk, none
-- `--llm`: openai, anthropic, novita, ollama
-- `--vector`: qdrant, weaviate, pgvector, pinecone
-- `--addons`: tailwind, biome, pwa, analytics
-
-## Next Steps
-
-- [CLI Reference](/docs/cli) - Flags, usage, and examples
-- [Project Structure](/docs/project-structure) - See how projects are generated
-- [Guides](/docs/guides) - LLM providers, vector databases, RAG pipelines
-- [FAQ](/docs/faq) - Common questions answered
+- [Project Structure](/docs/project-structure) - Understand the generated files
+- [LLM Providers](/docs/guides/llm-providers) - Connect to OpenAI, Anthropic, or local models
+- [RAG Pipeline](/docs/guides/rag-pipeline) - Build retrieval-augmented generation
+- [Deployment](/docs/guides/deployment) - Deploy to Vercel, Docker, or Kubernetes

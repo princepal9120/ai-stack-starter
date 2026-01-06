@@ -1,4 +1,6 @@
 ---
+import { Icon } from "astro-icon/components";
+
 interface Props {
   type?: "note" | "tip" | "warning" | "caution" | "important";
   title?: string;
@@ -8,52 +10,70 @@ const { type = "note", title } = Astro.props;
 
 const config = {
   note: {
-    icon: "ℹ️",
-    bg: "bg-blue-500/10",
-    border: "border-blue-500",
+    icon: "lucide:info",
+    bg: "bg-blue-950/50",
+    border: "border-blue-500/30",
     title: "Note",
     titleColor: "text-blue-400",
+    iconColor: "text-blue-400",
   },
   tip: {
-    icon: "💡",
-    bg: "bg-green-500/10",
-    border: "border-green-500",
-    title: "Tip",
-    titleColor: "text-green-400",
+    icon: "lucide:lightbulb",
+    bg: "bg-emerald-950/50",
+    border: "border-emerald-500/30",
+    title: "Good to know",
+    titleColor: "text-emerald-400",
+    iconColor: "text-emerald-400",
   },
   warning: {
-    icon: "⚠️",
-    bg: "bg-yellow-500/10",
-    border: "border-yellow-500",
+    icon: "lucide:alert-triangle",
+    bg: "bg-amber-950/50",
+    border: "border-amber-500/30",
     title: "Warning",
-    titleColor: "text-yellow-400",
+    titleColor: "text-amber-400",
+    iconColor: "text-amber-400",
   },
   caution: {
-    icon: "🚨",
-    bg: "bg-red-500/10",
-    border: "border-red-500",
+    icon: "lucide:alert-circle",
+    bg: "bg-red-950/50",
+    border: "border-red-500/30",
     title: "Caution",
     titleColor: "text-red-400",
+    iconColor: "text-red-400",
   },
   important: {
-    icon: "📌",
-    bg: "bg-purple-500/10",
-    border: "border-purple-500",
+    icon: "lucide:star",
+    bg: "bg-purple-950/50",
+    border: "border-purple-500/30",
     title: "Important",
     titleColor: "text-purple-400",
+    iconColor: "text-purple-400",
   },
 };
 
-const { icon, bg, border, title: defaultTitle, titleColor } = config[type];
+const {
+  icon,
+  bg,
+  border,
+  title: defaultTitle,
+  titleColor,
+  iconColor,
+} = config[type];
 const displayTitle = title || defaultTitle;
 ---
 
-<aside class={`callout my-6 rounded-lg ${bg} border-l-4 ${border} p-4`}>
-  <div class="flex items-start gap-3">
-    <span class="text-lg shrink-0" aria-hidden="true">{icon}</span>
+<aside class={`callout my-6 rounded-lg ${bg} border ${border} p-4`}>
+  <div class="flex gap-3">
+    <Icon name={icon} class={`w-5 h-5 shrink-0 mt-0.5 ${iconColor}`} />
     <div class="flex-1 min-w-0">
-      <p class={`font-semibold ${titleColor} mb-1`}>{displayTitle}</p>
-      <div class="text-slate-300 text-sm [&>p]:m-0">
+      {
+        displayTitle && (
+          <p class={`font-semibold text-sm ${titleColor} mb-1`}>
+            {displayTitle}
+          </p>
+        )
+      }
+      <div class="text-slate-300 text-sm leading-relaxed [&>p]:m-0">
         <slot />
       </div>
     </div>
@@ -67,5 +87,12 @@ const displayTitle = title || defaultTitle;
   .callout :global(a) {
     color: inherit;
     text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .callout :global(a:hover) {
+    opacity: 0.8;
+  }
+  .callout :global(code) {
+    font-size: 0.875em;
   }
 </style>

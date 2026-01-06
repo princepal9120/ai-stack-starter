@@ -26,7 +26,7 @@ export function TechCard({
                 "relative flex w-full cursor-pointer flex-col rounded-lg border p-3 text-left transition-all",
                 "hover:scale-[1.02] active:scale-[0.98]",
                 isSelected
-                    ? "border-purple-500 bg-purple-500/10 ring-1 ring-purple-500/50"
+                    ? "border-white bg-white/5 ring-1 ring-white/20"
                     : isDisabled
                         ? "border-slate-700 bg-slate-900/50 opacity-50 cursor-not-allowed"
                         : "border-slate-700 bg-slate-900 hover:border-slate-600 hover:bg-slate-800/50"
@@ -34,9 +34,9 @@ export function TechCard({
         >
             {/* Selected indicator */}
             {isSelected && (
-                <div className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-purple-500">
+                <div className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-white">
                     <svg
-                        className="h-3 w-3 text-white"
+                        className="h-3 w-3 text-black"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -92,7 +92,7 @@ export function TechCard({
                 <span
                     className={cn(
                         "font-medium text-sm",
-                        isSelected ? "text-purple-300" : "text-white"
+                        isSelected ? "text-white" : "text-white"
                     )}
                 >
                     {tech.name}
