@@ -4,7 +4,7 @@ import { Toaster, toast } from "sonner";
 
 import { useStackState } from "../../lib/stack-state";
 import { CATEGORY_ORDER, DEFAULT_STACK, PRESET_TEMPLATES, TECH_OPTIONS, type StackState, type TechCategory } from "../../lib/stack-constants";
-import { analyzeStackCompatibility, validateProjectName } from "../../lib/stack-utils";
+import { analyzeStackCompatibility, validateProjectName, applyArchitectureDefaults } from "../../lib/stack-utils";
 import { cn } from "../../lib/utils";
 
 import { CategorySection } from "./category-section";
@@ -59,6 +59,13 @@ export function StackBuilder() {
             setStack((prev) => {
                 const key = category as keyof StackState;
                 const current = prev[key];
+
+                // Handle architecture change - apply PRD-based defaults
+                if (category === "architecture" && optionId !== prev.architecture) {
+                    const newStack = applyArchitectureDefaults(prev, optionId);
+                    toast.info(`Switched to ${optionId === "nextjs-fullstack" ? "Next.js" : "FastAPI"} defaults`, { duration: 3000 });
+                    return newStack;
+                }
 
                 // Handle array categories (addons)
                 if (category === "addons") {

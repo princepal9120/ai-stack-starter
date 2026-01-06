@@ -18,7 +18,7 @@ import {
 import { TechCard } from "./tech-card";
 import type { TechOption, StackState, TechCategory } from "../../lib/stack-constants";
 import { TECH_OPTIONS, getCategoryDisplayName } from "../../lib/stack-constants";
-import { isOptionCompatible, getDisabledReason, type CompatibilityNote } from "../../lib/stack-utils";
+import { isOptionCompatible, getDisabledReason, shouldShowOption, type CompatibilityNote } from "../../lib/stack-utils";
 
 type CategorySectionProps = {
     category: TechCategory;
@@ -33,11 +33,14 @@ export function CategorySection({
     note,
     onSelect,
 }: CategorySectionProps) {
-    const options = TECH_OPTIONS[category] || [];
+    const allOptions = TECH_OPTIONS[category] || [];
+    // Filter options based on architecture compatibility
+    const options = allOptions.filter((tech) => shouldShowOption(stack, category, tech.id));
     const displayName = getCategoryDisplayName(category);
 
     const CategoryIcon = {
         architecture: Layers,
+        agenticFramework: Sparkles,
         llmProvider: Sparkles,
         vectorDb: Database,
         database: Database,
@@ -48,6 +51,7 @@ export function CategorySection({
         observability: BarChart3,
         addons: Puzzle,
         packageManager: Package,
+        pyPackageManager: Package,
         git: GitBranch,
         install: Download
     }[category] || Terminal;

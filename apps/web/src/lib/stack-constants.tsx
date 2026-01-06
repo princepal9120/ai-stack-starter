@@ -10,6 +10,7 @@ import {
     SiPostgresql,
     SiSupabase,
     SiDrizzle,
+    SiPrisma,
     SiSqlalchemy,
     SiRedis,
     SiPrometheus,
@@ -22,15 +23,18 @@ import {
     SiCelery,
     SiJsonwebtokens,
     SiAuth0,
-    SiPython
+    SiPython,
+    SiPoetry,
+    SiPypi,
+    SiLangchain,
+    SiClerk
 } from "react-icons/si";
-import { Terminal, Database, FileCode, Shield, Search, Brain, BarChart3, Box, Package, Globe, Cpu, Server, Link, Download, Filter } from "lucide-react";
+import { Terminal, Database, FileCode, Shield, Search, Brain, BarChart3, Box, Package, Globe, Cpu, Server, Link, Download, Filter, Workflow, Zap, Bot, Sparkles, Settings } from "lucide-react";
 import type { IconType } from "react-icons";
-
-export const ICON_BASE_URL = "/icons";
 
 export type TechCategory =
     | "architecture"
+    | "agenticFramework"
     | "llmProvider"
     | "vectorDb"
     | "database"
@@ -41,6 +45,7 @@ export type TechCategory =
     | "observability"
     | "addons"
     | "packageManager"
+    | "pyPackageManager"
     | "git"
     | "install";
 
@@ -48,7 +53,7 @@ export type TechOption = {
     id: string;
     name: string;
     description: string;
-    icon: string;
+    icon?: string; // Optional - prefer iconComponent
     iconComponent?: React.ElementType; // React component for the icon
     color: string;
     default?: boolean;
@@ -62,7 +67,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "nextjs-fullstack",
             name: "Next.js Full-Stack",
             description: "AI Command Center with Vercel AI SDK, single codebase",
-            icon: `${ICON_BASE_URL}/nextjs.svg`,
             iconComponent: SiNextdotjs,
             color: "from-gray-700 to-black",
             default: true,
@@ -71,9 +75,51 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "fastapi-nextjs",
             name: "FastAPI + Next.js",
             description: "Python backend with React frontend, RAG-focused monorepo",
-            icon: `${ICON_BASE_URL}/fastapi.svg`,
             iconComponent: SiFastapi,
             color: "from-teal-500 to-teal-700",
+        },
+    ],
+    agenticFramework: [
+        {
+            id: "vercel-ai-sdk",
+            name: "Vercel AI SDK",
+            description: "Streaming UI, tool calling, multi-provider support",
+            iconComponent: Zap,
+            color: "from-gray-700 to-black",
+            default: true,
+            badge: "free",
+        },
+        {
+            id: "openai-sdk",
+            name: "OpenAI SDK",
+            description: "Direct OpenAI API with function calling",
+            iconComponent: SiOpenai,
+            color: "from-emerald-500 to-emerald-700",
+            badge: "api-key",
+        },
+        {
+            id: "langchain",
+            name: "LangChain",
+            description: "Composable chains for complex AI workflows",
+            iconComponent: SiLangchain,
+            color: "from-green-500 to-green-700",
+            badge: "free",
+        },
+        {
+            id: "langgraph",
+            name: "LangGraph",
+            description: "Stateful agents with cycles and branching",
+            iconComponent: Workflow,
+            color: "from-blue-500 to-blue-700",
+            badge: "free",
+        },
+        {
+            id: "crewai",
+            name: "CrewAI",
+            description: "Multi-agent orchestration framework",
+            iconComponent: Bot,
+            color: "from-purple-500 to-purple-700",
+            badge: "free",
         },
     ],
     llmProvider: [
@@ -81,7 +127,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "novita",
             name: "Novita AI",
             description: "Primary provider with GPT-4 Turbo via OpenAI-compatible API",
-            icon: `${ICON_BASE_URL}/novita.svg`,
             iconComponent: Brain, // No simple icon yet
             color: "from-purple-500 to-purple-700",
             default: true,
@@ -91,7 +136,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "openai",
             name: "OpenAI",
             description: "GPT-4, GPT-3.5-turbo, embeddings",
-            icon: `${ICON_BASE_URL}/openai.svg`,
             iconComponent: SiOpenai,
             color: "from-emerald-500 to-emerald-700",
             badge: "api-key",
@@ -100,7 +144,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "anthropic",
             name: "Anthropic",
             description: "Claude 3.5, Claude 3 with longer context",
-            icon: `${ICON_BASE_URL}/anthropic.svg`,
             iconComponent: SiAnthropic,
             color: "from-orange-400 to-orange-600",
             badge: "api-key",
@@ -109,7 +152,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "gemini",
             name: "Google Gemini",
             description: "Multimodal AI with vision capabilities",
-            icon: `${ICON_BASE_URL}/google.svg`,
             iconComponent: SiGoogle,
             color: "from-blue-400 to-blue-600",
             badge: "api-key",
@@ -118,7 +160,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "ollama",
             name: "Ollama",
             description: "Local open-source models, no API key needed",
-            icon: `${ICON_BASE_URL}/ollama.svg`,
             iconComponent: Terminal, // No simple icon
             color: "from-gray-500 to-gray-700",
             badge: "local",
@@ -129,7 +170,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "qdrant",
             name: "Qdrant",
             description: "Self-hosted, production-ready vector search",
-            icon: `${ICON_BASE_URL}/qdrant.svg`,
             iconComponent: Database, // Fallback
             color: "from-red-400 to-red-600",
             default: true,
@@ -139,7 +179,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "weaviate",
             name: "Weaviate",
             description: "Hybrid search with built-in ML models",
-            icon: `${ICON_BASE_URL}/weaviate.svg`,
             iconComponent: Database, // Fallback
             color: "from-green-400 to-green-600",
             badge: "local",
@@ -148,7 +187,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "pgvector",
             name: "pgvector",
             description: "PostgreSQL extension, simple setup",
-            icon: `${ICON_BASE_URL}/postgres.svg`,
             iconComponent: SiPostgresql,
             color: "from-blue-400 to-blue-600",
             badge: "cloud",
@@ -157,7 +195,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "milvus",
             name: "Milvus",
             description: "Distributed, highly scalable for enterprise",
-            icon: `${ICON_BASE_URL}/milvus.svg`,
             iconComponent: Server, // Fallback
             color: "from-cyan-400 to-cyan-600",
             badge: "local",
@@ -176,7 +213,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "postgresql",
             name: "PostgreSQL",
             description: "Production database with pgvector support",
-            icon: `${ICON_BASE_URL}/postgres.svg`,
             iconComponent: SiPostgresql,
             color: "from-blue-500 to-blue-700",
             default: true,
@@ -186,7 +222,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "neon",
             name: "Neon",
             description: "Serverless PostgreSQL with autoscaling",
-            icon: `${ICON_BASE_URL}/neon.svg`,
             // iconComponent: SiNeon, // Might not exist in old versions
             iconComponent: Database,
             color: "from-green-400 to-green-600",
@@ -196,7 +231,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "supabase",
             name: "Supabase",
             description: "PostgreSQL with realtime and auth built-in",
-            icon: `${ICON_BASE_URL}/supabase.svg`,
             iconComponent: SiSupabase,
             color: "from-emerald-400 to-emerald-600",
             badge: "cloud",
@@ -206,17 +240,22 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
         {
             id: "drizzle",
             name: "Drizzle ORM",
-            description: "TypeScript-first ORM for Next.js frontend",
-            icon: `${ICON_BASE_URL}/drizzle.svg`,
+            description: "TypeScript-first ORM, lightweight and fast",
             iconComponent: SiDrizzle,
             color: "from-yellow-400 to-yellow-600",
             default: true,
         },
         {
+            id: "prisma",
+            name: "Prisma",
+            description: "Type-safe ORM with schema-first design",
+            iconComponent: SiPrisma,
+            color: "from-indigo-500 to-indigo-700",
+        },
+        {
             id: "sqlalchemy",
             name: "SQLAlchemy 2.0",
-            description: "Python ORM for FastAPI backend with Alembic migrations",
-            icon: `${ICON_BASE_URL}/python.svg`,
+            description: "Python ORM for FastAPI with Alembic migrations",
             iconComponent: SiSqlalchemy,
             color: "from-blue-500 to-blue-700",
         },
@@ -226,35 +265,39 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "better-auth",
             name: "Better Auth",
             description: "Modern TypeScript auth with email, OAuth2, passkeys",
-            icon: `${ICON_BASE_URL}/better-auth.svg`,
             iconComponent: Shield,
             color: "from-green-400 to-green-600",
             default: true,
             badge: "free",
         },
         {
+            id: "clerk",
+            name: "Clerk",
+            description: "Managed auth for TypeScript and Python",
+            iconComponent: SiClerk,
+            color: "from-purple-500 to-purple-700",
+            badge: "cloud",
+        },
+        {
             id: "jwt",
             name: "JWT Auth",
             description: "Stateless JWT tokens for FastAPI backend",
-            icon: `${ICON_BASE_URL}/jwt.svg`,
             iconComponent: SiJsonwebtokens,
             color: "from-purple-400 to-purple-600",
             badge: "free",
         },
         {
-            id: "oauth2",
-            name: "OAuth2 + PKCE",
-            description: "Social login with Google, GitHub",
-            icon: `${ICON_BASE_URL}/oauth.svg`,
-            iconComponent: SiAuth0, // Proxy for OAuth
-            color: "from-blue-400 to-blue-600",
+            id: "custom",
+            name: "Custom Auth",
+            description: "Build your own authentication system",
+            iconComponent: Settings,
+            color: "from-slate-500 to-slate-700",
             badge: "free",
         },
         {
             id: "none",
             name: "No Auth",
             description: "Skip authentication setup",
-            icon: "",
             iconComponent: Box,
             color: "from-gray-400 to-gray-600",
         },
@@ -264,7 +307,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "exa",
             name: "Exa.AI",
             description: "Neural web search with AI-powered relevance",
-            icon: `${ICON_BASE_URL}/exa.svg`,
             iconComponent: Search,
             color: "from-blue-500 to-blue-700",
             default: true,
@@ -274,7 +316,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "tavily",
             name: "Tavily",
             description: "Reddit and web grounding for AI responses",
-            icon: `${ICON_BASE_URL}/tavily.svg`,
             iconComponent: Globe,
             color: "from-purple-400 to-purple-600",
             badge: "api-key",
@@ -293,7 +334,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "mem0",
             name: "Mem0",
             description: "Persistent conversation memory across sessions",
-            icon: `${ICON_BASE_URL}/mem0.svg`,
             iconComponent: Brain,
             color: "from-pink-500 to-pink-700",
             default: true,
@@ -303,7 +343,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "redis",
             name: "Redis",
             description: "Session cache and conversation history",
-            icon: `${ICON_BASE_URL}/redis.svg`,
             iconComponent: SiRedis,
             color: "from-red-500 to-red-700",
             badge: "local",
@@ -322,7 +361,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "langfuse",
             name: "Langfuse",
             description: "LLM tracing, prompt logging, cost tracking",
-            icon: `${ICON_BASE_URL}/langfuse.svg`,
             iconComponent: BarChart3,
             color: "from-indigo-500 to-indigo-700",
             default: true,
@@ -332,7 +370,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "prometheus",
             name: "Prometheus + Grafana",
             description: "Metrics, CPU, memory, API latency",
-            icon: `${ICON_BASE_URL}/prometheus.svg`,
             iconComponent: SiPrometheus,
             color: "from-orange-500 to-orange-700",
             badge: "local",
@@ -351,7 +388,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "daytona",
             name: "Daytona Code Sandbox",
             description: "Secure code execution in isolated environment",
-            icon: `${ICON_BASE_URL}/daytona.svg`,
             iconComponent: FileCode,
             color: "from-cyan-400 to-cyan-600",
             badge: "api-key",
@@ -369,7 +405,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "celery",
             name: "Celery Workers",
             description: "Background jobs for document processing",
-            icon: `${ICON_BASE_URL}/celery.svg`,
             iconComponent: SiCelery,
             color: "from-green-500 to-green-700",
         },
@@ -385,7 +420,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "docker",
             name: "Docker Compose",
             description: "Local dev with Postgres, Redis, Qdrant",
-            icon: `${ICON_BASE_URL}/docker.svg`,
             iconComponent: SiDocker,
             color: "from-blue-400 to-blue-600",
             default: true,
@@ -394,7 +428,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "kubernetes",
             name: "Kubernetes Manifests",
             description: "Production K8s deployment configs",
-            icon: `${ICON_BASE_URL}/kubernetes.svg`,
             iconComponent: SiKubernetes,
             color: "from-blue-500 to-blue-700",
         },
@@ -404,7 +437,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "pnpm",
             name: "pnpm",
             description: "Fast, disk-efficient package manager",
-            icon: `${ICON_BASE_URL}/pnpm.svg`,
             iconComponent: SiPnpm,
             color: "from-orange-400 to-orange-600",
             default: true,
@@ -413,7 +445,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "npm",
             name: "npm",
             description: "Default Node.js package manager",
-            icon: `${ICON_BASE_URL}/npm.svg`,
             iconComponent: SiNpm,
             color: "from-red-500 to-red-700",
         },
@@ -421,9 +452,35 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "bun",
             name: "bun",
             description: "All-in-one JavaScript toolkit",
-            icon: `${ICON_BASE_URL}/bun.svg`,
             iconComponent: SiBun,
             color: "from-amber-400 to-amber-600",
+        },
+    ],
+    pyPackageManager: [
+        {
+            id: "uv",
+            name: "uv",
+            description: "Extremely fast Python package manager",
+            iconComponent: Zap,
+            color: "from-purple-500 to-purple-700",
+            default: true,
+            badge: "free",
+        },
+        {
+            id: "poetry",
+            name: "Poetry",
+            description: "Dependency management and packaging",
+            iconComponent: SiPoetry,
+            color: "from-blue-500 to-blue-700",
+            badge: "free",
+        },
+        {
+            id: "pip",
+            name: "pip",
+            description: "Standard Python package installer",
+            iconComponent: SiPypi,
+            color: "from-yellow-500 to-yellow-700",
+            badge: "free",
         },
     ],
     git: [
@@ -431,7 +488,6 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
             id: "true",
             name: "Initialize Git",
             description: "Create Git repository with .gitignore",
-            icon: `${ICON_BASE_URL}/git.svg`,
             iconComponent: SiGit,
             color: "from-orange-500 to-orange-700",
             default: true,
@@ -469,6 +525,7 @@ export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
 // Category display order - AI Stack specific flow
 export const CATEGORY_ORDER: TechCategory[] = [
     "architecture",
+    "agenticFramework",
     "llmProvider",
     "vectorDb",
     "database",
@@ -479,6 +536,7 @@ export const CATEGORY_ORDER: TechCategory[] = [
     "observability",
     "addons",
     "packageManager",
+    "pyPackageManager",
     "git",
     "install",
 ];
@@ -487,6 +545,7 @@ export const CATEGORY_ORDER: TechCategory[] = [
 export function getCategoryDisplayName(category: string): string {
     const names: Record<string, string> = {
         architecture: "Architecture",
+        agenticFramework: "Agentic Framework",
         llmProvider: "LLM Provider",
         vectorDb: "Vector Database",
         database: "Database",
@@ -497,6 +556,7 @@ export function getCategoryDisplayName(category: string): string {
         observability: "Observability",
         addons: "Add-ons",
         packageManager: "Package Manager",
+        pyPackageManager: "Python Package Manager",
         git: "Git",
         install: "Dependencies",
     };
@@ -507,6 +567,7 @@ export function getCategoryDisplayName(category: string): string {
 export type StackState = {
     projectName: string;
     architecture: string;
+    agenticFramework: string;
     llmProvider: string;
     vectorDb: string;
     database: string;
@@ -517,14 +578,16 @@ export type StackState = {
     observability: string;
     addons: string[];
     packageManager: string;
+    pyPackageManager: string;
     git: string;
     install: string;
 };
 
-// Default stack - production-ready AI Stack config
+// Default stack - production-ready AI Stack config (Next.js Full-Stack)
 export const DEFAULT_STACK: StackState = {
     projectName: "my-ai-app",
     architecture: "nextjs-fullstack",
+    agenticFramework: "vercel-ai-sdk",
     llmProvider: "novita",
     vectorDb: "qdrant",
     database: "postgresql",
@@ -535,9 +598,46 @@ export const DEFAULT_STACK: StackState = {
     observability: "langfuse",
     addons: ["streaming", "docker"],
     packageManager: "pnpm",
+    pyPackageManager: "uv",
     git: "true",
     install: "true",
 };
+
+// Architecture-specific defaults based on PRD specs
+// Next.js: Vercel AI SDK, Drizzle, Better Auth, Exa, Mem0 (ai-stack-nextjs-spec.md)
+// FastAPI: LangChain, SQLAlchemy, JWT, Qdrant, Celery (ai-stack-fastapi-spec.md)
+export const ARCHITECTURE_DEFAULTS: Record<string, Partial<StackState>> = {
+    "nextjs-fullstack": {
+        agenticFramework: "vercel-ai-sdk",
+        orm: "drizzle",
+        auth: "better-auth",
+        search: "exa",
+        memory: "mem0",
+        observability: "langfuse",
+        addons: ["streaming", "docker"],
+    },
+    "fastapi-nextjs": {
+        agenticFramework: "langchain",
+        orm: "sqlalchemy",
+        auth: "jwt",
+        search: "none",
+        memory: "redis",
+        observability: "langfuse",
+        addons: ["streaming", "docker", "celery"],
+    },
+};
+
+// Get default value for a category based on architecture
+export function getDefaultForArchitecture(
+    architecture: string,
+    category: keyof StackState
+): string | string[] | undefined {
+    const archDefaults = ARCHITECTURE_DEFAULTS[architecture];
+    if (archDefaults && category in archDefaults) {
+        return archDefaults[category as keyof typeof archDefaults];
+    }
+    return undefined;
+}
 
 // Preset templates - Real AI Stack use cases
 export const PRESET_TEMPLATES = [

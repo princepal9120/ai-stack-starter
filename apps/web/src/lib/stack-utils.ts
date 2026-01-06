@@ -1,8 +1,6 @@
-// AI Stack Compatibility Engine
-// Validates and auto-adjusts stack configurations for AI Stack-specific rules
 
 import type { StackState, TechCategory } from "./stack-constants";
-import { TECH_OPTIONS } from "./stack-constants";
+import { TECH_OPTIONS, ARCHITECTURE_DEFAULTS, getDefaultForArchitecture } from "./stack-constants";
 
 export type CompatibilityChange = {
     category: string;
@@ -23,7 +21,6 @@ export type CompatibilityAnalysis = {
     notes: Record<string, CompatibilityNote>;
 };
 
-// Analyze stack and return adjusted version if needed
 export function analyzeStackCompatibility(stack: StackState): CompatibilityAnalysis {
     const changes: CompatibilityChange[] = [];
     const notes: Record<string, CompatibilityNote> = {};
@@ -47,7 +44,7 @@ export function analyzeStackCompatibility(stack: StackState): CompatibilityAnaly
         };
     }
 
-    // Rule 2: FastAPI architecture uses SQLAlchemy, not Drizzle
+
     if (adjusted.architecture === "fastapi-nextjs" && adjusted.orm === "drizzle") {
         changes.push({
             category: "orm",
@@ -58,7 +55,6 @@ export function analyzeStackCompatibility(stack: StackState): CompatibilityAnaly
         adjusted.orm = "sqlalchemy";
     }
 
-    // Rule 3: FastAPI architecture prefers JWT auth over Better Auth
     if (adjusted.architecture === "fastapi-nextjs" && adjusted.auth === "better-auth") {
         notes.auth = {
             hasIssue: true,
@@ -66,7 +62,6 @@ export function analyzeStackCompatibility(stack: StackState): CompatibilityAnaly
         };
     }
 
-    // Rule 4: Celery workers only for FastAPI
     if (adjusted.addons.includes("celery") && adjusted.architecture !== "fastapi-nextjs") {
         adjusted.addons = adjusted.addons.filter((a) => a !== "celery");
         changes.push({
@@ -77,7 +72,6 @@ export function analyzeStackCompatibility(stack: StackState): CompatibilityAnaly
         });
     }
 
-    // Rule 5: Ollama is local-only, requires Docker
     if (adjusted.llmProvider === "ollama") {
         if (!adjusted.addons.includes("docker")) {
             adjusted.addons.push("docker");
@@ -94,7 +88,6 @@ export function analyzeStackCompatibility(stack: StackState): CompatibilityAnaly
         };
     }
 
-    // Rule 6: Mem0 requires API key
     if (adjusted.memory === "mem0") {
         notes.memory = {
             hasIssue: false,
@@ -102,7 +95,6 @@ export function analyzeStackCompatibility(stack: StackState): CompatibilityAnaly
         };
     }
 
-    // Rule 7: Reranking addon adds latency warning
     if (adjusted.addons.includes("reranking")) {
         notes.addons = {
             hasIssue: true,
@@ -145,6 +137,68 @@ export function analyzeStackCompatibility(stack: StackState): CompatibilityAnaly
         changes,
         notes,
     };
+}
+
+export function shouldShowOption(
+    stack: StackState,
+    category: keyof typeof TECH_OPTIONS,
+    optionId: string
+): boolean {
+    // Always show "none" options
+    if (optionId === "none") return true;
+
+    const isNextJs = stack.architecture === "nextjs-fullstack";
+    const isFastAPI = stack.architecture === "fastapi-nextjs";
+
+    // Hide architecture-specific ORMs when wrong architecture is selected
+    if (category === "orm") {
+        // Drizzle and Prisma are TypeScript ORMs
+        if ((optionId === "drizzle" || optionId === "prisma") && !isNextJs) {
+            return false;
+        }
+        // SQLAlchemy is Python ORM
+        if (optionId === "sqlalchemy" && !isFastAPI) {
+            return false;
+        }
+    }
+
+    // Hide Python package managers for Next.js only projects
+    if (category === "pyPackageManager") {
+        return isFastAPI;
+    }
+
+    // Hide TypeScript-only auth for FastAPI
+    if (category === "auth") {
+        // Better Auth is TypeScript only
+        if (optionId === "better-auth" && isFastAPI) {
+            return false;
+        }
+        // JWT is primarily for FastAPI, but show for all
+    }
+
+    // Hide architecture-specific agentic frameworks
+    if (category === "agenticFramework") {
+        // Vercel AI SDK is Next.js specific
+        if (optionId === "vercel-ai-sdk" && !isNextJs) {
+            return false;
+        }
+        // LangChain/LangGraph/CrewAI are Python focused, show for FastAPI
+        if ((optionId === "langchain" || optionId === "langgraph" || optionId === "crewai") && !isFastAPI) {
+            return false;
+        }
+    }
+
+    // Hide Celery for non-FastAPI architectures
+    if (category === "addons" && optionId === "celery") {
+        return isFastAPI;
+    }
+
+    // Hide reranking if no vector DB (keep it simple - it's confusing otherwise)
+    if (category === "addons" && optionId === "reranking") {
+        return stack.vectorDb !== "none";
+    }
+
+    return true;
 }
 
 // Check if a specific option is compatible with current stack
@@ -239,4 +293,65 @@ export function validateProjectName(name: string): string | null {
     }
 
     return null;
+}
+
+// Apply architecture-specific defaults when switching architectures
+// Based on PRD specs:
+// - Next.js: Vercel AI SDK, Drizzle, Better Auth, Exa, Mem0 (ai-stack-nextjs-spec.md)
+// - FastAPI: LangChain, SQLAlchemy, JWT, Qdrant, Celery (ai-stack-fastapi-spec.md)
+export function applyArchitectureDefaults(
+    currentStack: StackState,
+    newArchitecture: string
+): StackState {
+    if (currentStack.architecture === newArchitecture) {
+        return currentStack;
+    }
+
+    const archDefaults = ARCHITECTURE_DEFAULTS[newArchitecture];
+    if (!archDefaults) {
+        return { ...currentStack, architecture: newArchitecture };
+    }
+
+    const newStack: StackState = {
+        ...currentStack,
+        architecture: newArchitecture,
+    };
+
+    // Apply architecture-specific defaults
+    if (archDefaults.agenticFramework) {
+        newStack.agenticFramework = archDefaults.agenticFramework;
+    }
+    if (archDefaults.orm) {
+        newStack.orm = archDefaults.orm;
+    }
+    if (archDefaults.auth) {
+        newStack.auth = archDefaults.auth;
+    }
+    if (archDefaults.search) {
+        newStack.search = archDefaults.search;
+    }
+    if (archDefaults.memory) {
+        newStack.memory = archDefaults.memory;
+    }
+    if (archDefaults.observability) {
+        newStack.observability = archDefaults.observability;
+    }
+    if (archDefaults.addons) {
+        newStack.addons = [...archDefaults.addons];
+    }
+
+    return newStack;
+}
+
+// Check if current option is the architecture-specific default
+export function isArchitectureDefault(
+    architecture: string,
+    category: keyof StackState,
+    optionId: string
+): boolean {
+    const defaultValue = getDefaultForArchitecture(architecture, category);
+    if (Array.isArray(defaultValue)) {
+        return defaultValue.includes(optionId);
+    }
+    return defaultValue === optionId;
 }
