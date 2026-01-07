@@ -2,6 +2,9 @@
   "name": "create-ai-stack",
   "version": "1.0.0",
   "description": "Create AI Stack applications with zero configuration",
+  "dependencies": {
+    "ai-stack-cli": "workspace:*"
+  },
   "type": "module",
   "exports": {
     ".": "./index.js"

@@ -35,6 +35,8 @@ export default defineSchema({
         nodeVersion: distributionValidator,
         cliVersion: distributionValidator,
         hourlyDistribution: v.optional(distributionValidator),
+        stackCombinations: v.optional(distributionValidator),
+        dbOrmCombinations: v.optional(distributionValidator),
     }),
 
     analyticsDailyStats: defineTable({

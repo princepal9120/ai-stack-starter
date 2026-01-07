@@ -101,6 +101,14 @@ function main() {
     console.log('  📁 Copying frontend...');
     copyDirFiltered(frontendSrc, frontendDest);
 
+    // Verify nextjs-fullstack exists
+    const nextjsTemplatePath = path.join(TEMPLATE_PATH, 'nextjs-fullstack');
+    if (fs.existsSync(nextjsTemplatePath)) {
+        console.log('  ✅ Verified nextjs-fullstack template exists');
+    } else {
+        console.log('  ⚠️  Warning: nextjs-fullstack template not found in template directory!');
+    }
+
     console.log('\n✅ Template prepared successfully!\n');
     
     // Show what was created

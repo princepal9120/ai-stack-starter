@@ -1,5 +1,4 @@
 import { v } from "convex/values";
-
 import { internalMutation, mutation, query } from "./_generated/server";
 
 // =============================================================================
@@ -108,6 +107,16 @@ export const ingestEvent = internalMutation({
 
         const hourKey = String(new Date(now).getUTCHours()).padStart(2, "0");
 
+        // Calculate Combination Keys
+        const arch = sanitizedArgs.architecture || "none";
+        // Since we don't have explicit frontend/backend splitting in this schema like better-t-stack,
+        // we use architecture as the main "stack" differentiator.
+        const stackKey = arch;
+
+        const db = sanitizedArgs.database || "none";
+        const o = sanitizedArgs.orm || "none";
+        const dbOrmKey = `${db} + ${o}`;
+
         // Update aggregated stats atomically
         const existingStats = await ctx.db.query("analyticsStats").first();
 
@@ -128,6 +137,8 @@ export const ingestEvent = internalMutation({
                 nodeVersion: incrementKey(existingStats.nodeVersion, getMajorVersion(sanitizedArgs.node_version)),
                 cliVersion: incrementKey(existingStats.cliVersion, sanitizedArgs.cli_version),
                 hourlyDistribution: incrementKey(existingStats.hourlyDistribution || {}, hourKey),
+                stackCombinations: incrementKey(existingStats.stackCombinations || {}, stackKey),
+                dbOrmCombinations: incrementKey(existingStats.dbOrmCombinations || {}, dbOrmKey),
             });
         } else {
             const emptyDist: Record<string, number> = {};
@@ -147,6 +158,8 @@ export const ingestEvent = internalMutation({
                 nodeVersion: incrementKey(emptyDist, getMajorVersion(sanitizedArgs.node_version)),
                 cliVersion: incrementKey(emptyDist, sanitizedArgs.cli_version),
                 hourlyDistribution: incrementKey(emptyDist, hourKey),
+                stackCombinations: incrementKey(emptyDist, stackKey),
+                dbOrmCombinations: incrementKey(emptyDist, dbOrmKey),
             });
         }
 
@@ -192,6 +205,8 @@ export const getStats = query({
             nodeVersion: distributionValidator,
             cliVersion: distributionValidator,
             hourlyDistribution: distributionValidator,
+            stackCombinations: distributionValidator,
+            dbOrmCombinations: distributionValidator,
         }),
         v.null()
     ),
@@ -214,6 +229,8 @@ export const getStats = query({
             nodeVersion: stats.nodeVersion,
             cliVersion: stats.cliVersion,
             hourlyDistribution: stats.hourlyDistribution || {},
+            stackCombinations: stats.stackCombinations || {},
+            dbOrmCombinations: stats.dbOrmCombinations || {},
         };
     },
 });
@@ -330,6 +347,8 @@ export const backfillStats = mutation({
             nodeVersion: { ...emptyDist },
             cliVersion: { ...emptyDist },
             hourlyDistribution: { ...emptyDist },
+            stackCombinations: { ...emptyDist },
+            dbOrmCombinations: { ...emptyDist },
         };
 
         const dailyCounts = new Map<string, number>();
@@ -341,6 +360,12 @@ export const backfillStats = mutation({
             }
 
             const hourKey = String(new Date(ev._creationTime).getUTCHours()).padStart(2, "0");
+            const arch = ev.architecture || "none";
+            const stackKey = arch;
+            const db = ev.database || "none";
+            const o = ev.orm || "none";
+            const dbOrmKey = `${db} + ${o}`;
+
 
             stats.architecture = incrementKey(stats.architecture, ev.architecture);
             stats.database = incrementKey(stats.database, ev.database);
@@ -355,6 +380,8 @@ export const backfillStats = mutation({
             stats.nodeVersion = incrementKey(stats.nodeVersion, getMajorVersion(ev.node_version));
             stats.cliVersion = incrementKey(stats.cliVersion, ev.cli_version);
             stats.hourlyDistribution = incrementKey(stats.hourlyDistribution, hourKey);
+            stats.stackCombinations = incrementKey(stats.stackCombinations, stackKey);
+            stats.dbOrmCombinations = incrementKey(stats.dbOrmCombinations, dbOrmKey);
 
             const date = new Date(ev._creationTime).toISOString().slice(0, 10);
             dailyCounts.set(date, (dailyCounts.get(date) || 0) + 1);

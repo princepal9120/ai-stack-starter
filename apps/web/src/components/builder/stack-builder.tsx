@@ -149,11 +149,11 @@ export function StackBuilder() {
     }
 
     return (
-        <div className="flex h-full w-full overflow-hidden bg-slate-950 text-white">
+        <div className="flex w-full min-h-[calc(100vh-4rem)] bg-black text-white">
             <Toaster position="bottom-right" theme="dark" />
 
             {/* Sidebar */}
-            <aside className="hidden w-72 shrink-0 flex-col border-r border-slate-800 bg-slate-900/50 lg:flex xl:w-80">
+            <aside className="hidden w-72 shrink-0 flex-col border-r border-slate-800 bg-slate-900/50 lg:flex xl:w-80 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
                 <SidebarSummary
                     stack={stack}
                     projectNameError={projectNameError}
@@ -168,9 +168,9 @@ export function StackBuilder() {
             </aside>
 
             {/* Main content */}
-            <main className="flex flex-1 flex-col overflow-hidden">
+            <main className="flex flex-1 flex-col">
                 {/* Tab bar */}
-                <div className="flex items-center border-b border-white/10 bg-black px-4">
+                <div className="sticky top-16 z-10 flex items-center border-b border-white/10 bg-black px-4">
                     <button
                         type="button"
                         onClick={() => setViewMode("configure")}
@@ -200,7 +200,7 @@ export function StackBuilder() {
                 </div>
 
                 {/* Content area */}
-                <div className="flex-1 overflow-auto p-4 lg:p-6">
+                <div className="flex-1 p-4 lg:p-6">
                     {viewMode === "configure" ? (
                         <div>
                             {CATEGORY_ORDER.map((category) => (
@@ -214,7 +214,7 @@ export function StackBuilder() {
                             ))}
                         </div>
                     ) : (
-                        <div className="h-full">
+                        <div className="h-full min-h-[500px]">
                             <PreviewPanel
                                 stack={stack}
                                 selectedFile={selectedFile}
